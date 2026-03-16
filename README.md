@@ -61,6 +61,18 @@ Run the linter with automatic fixes where available:
 npm run lint:fix
 ```
 
+Run the browser test suite once:
+
+```bash
+npm run test
+```
+
+Run the browser test suite in watch mode:
+
+```bash
+npm run test:watch
+```
+
 A pre-commit hook runs formatting and linting before commits.
 
 ## Project Notes

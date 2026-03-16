@@ -8,7 +8,7 @@
         "isolatedModules": true,
         "esModuleInterop": true,
         "noEmit": true,
-        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "lib": ["ES2020", "DOM", "DOM.Iterable", "ESNext.Disposable"],
 
         "allowJs": false,
         "alwaysStrict": true,

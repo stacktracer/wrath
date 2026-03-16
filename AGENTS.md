@@ -10,3 +10,6 @@
 - After modifying files, run `npm run format` and `npm run lint` before considering the task complete
 - Update `README.md` when the edits warrant it, e.g. by changing project behavior, setup, workflow, or structure
 - Resolve linter errors if you can; otherwise stop and ask the user what to do
+- Run relevant tests after modifying code; for app changes, run `npm run test`
+- Resolve test failures if you can; otherwise stop and ask the user what to do
+- Write tests so failures help indicate what may need to change to resolve them
