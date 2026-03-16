@@ -8,11 +8,7 @@
         "isolatedModules": true,
         "esModuleInterop": true,
         "noEmit": true,
-        "lib": [
-            "ES2020",
-            "DOM",
-            "DOM.Iterable"
-        ],
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
 
         "allowJs": false,
         "alwaysStrict": true,
@@ -28,7 +24,5 @@
         "forceConsistentCasingInFileNames": true,
         "strictPropertyInitialization": true
     },
-    "include": [
-        "src"
-    ]
+    "include": ["src"]
 }
