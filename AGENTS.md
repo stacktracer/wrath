@@ -8,4 +8,5 @@
 ## Verify After Edits
 
 - After modifying files, run `npm run format` and `npm run lint` before considering the task complete
+- Update `README.md` when the edits warrant it, e.g. by changing project behavior, setup, workflow, or structure
 - Resolve linter errors if you can; otherwise stop and ask the user what to do
