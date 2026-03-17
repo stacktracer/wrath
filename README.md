@@ -73,7 +73,7 @@ Run the browser test suite in watch mode:
 npm run test:watch
 ```
 
-A pre-commit hook runs formatting and linting before commits.
+A pre-commit hook runs formatting and linting before commits. GitHub Actions runs formatting checks, linting, browser tests, and the production build on pushes and pull requests.
 
 ## Project Notes
 
