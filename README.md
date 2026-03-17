@@ -1,8 +1,8 @@
 # Wrath
 
-Wrath is a small Vite + TypeScript frontend scaffold.
+Wrath is a Vite + React + TypeScript frontend scaffold.
 
-At the moment, the app renders a minimal single-screen shell with a light/dark theme that follows `prefers-color-scheme`.
+At the moment, the app renders a basic React Aria tree with direct, intentionally minimal styling so the widget behavior can be evaluated before a more deliberate visual design pass.
 
 ## Requirements
 
@@ -77,16 +77,20 @@ A pre-commit hook runs formatting and linting before commits. GitHub Actions run
 
 ## Project Notes
 
+- The current tree widget uses `react-aria-components` with direct CSS styling rather than a starter kit.
+- The current styling is deliberately sparse so the raw widget behavior is easy to evaluate.
 - The Vite base path is configured as relative in [`vite.config.ts`](./vite.config.ts), so built assets can be served from an arbitrary path prefix.
 - Keep asset and resource URLs relative rather than absolute.
 - If client-side routing is added later, it should use hash routing rather than path-based routing.
 
 ## Current Structure
 
-- [`src/main.ts`](./src/main.ts): app entry point and DOM assembly
-- [`src/main.css`](./src/main.css): page styling
+- [`src/app.tsx`](./src/app.tsx): main React application and hard-coded tree data
+- [`src/app.test.tsx`](./src/app.test.tsx): browser test for the rendered tree shell
+- [`src/main.tsx`](./src/main.tsx): React bootstrap entry point
+- [`src/main.css`](./src/main.css): intentionally minimal tree and page styling
 - [`index.html`](./index.html): app host page
-- [`vite.config.ts`](./vite.config.ts): Vite configuration
+- [`vite.config.ts`](./vite.config.ts): Vite and Vitest configuration
 - [`eslint.config.mjs`](./eslint.config.mjs): ESLint flat config
 - [`.prettierrc.json`](./.prettierrc.json): Prettier configuration
 
