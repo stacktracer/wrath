@@ -1,9 +1,11 @@
+import { useMemo, useState } from 'react';
 import {
     Button,
     Cell,
     Collection,
     Column,
     Row,
+    type SortDescriptor,
     Table,
     TableBody,
     TableHeader,
@@ -47,11 +49,11 @@ const treeData = [
 ];
 
 const tableData = [
-    { id: 'f1', name: 'today.txt', size: '2 KB', modified: 'Today' },
-    { id: 'f2', name: 'ideas.txt', size: '8 KB', modified: 'Yesterday' },
-    { id: 'f3', name: 'api.md', size: '15 KB', modified: '3 days ago' },
-    { id: 'f4', name: 'schema.md', size: '4 KB', modified: 'Last week' },
-    { id: 'f5', name: 'todo.txt', size: '1 KB', modified: 'Today' },
+    { id: 'f1', name: 'today.txt', size: '2 KB', sizeKb: 2, modified: 'Today', modifiedOrder: 0 },
+    { id: 'f2', name: 'ideas.txt', size: '8 KB', sizeKb: 8, modified: 'Yesterday', modifiedOrder: 1 },
+    { id: 'f3', name: 'api.md', size: '15 KB', sizeKb: 15, modified: '3 days ago', modifiedOrder: 3 },
+    { id: 'f4', name: 'schema.md', size: '4 KB', sizeKb: 4, modified: 'Last week', modifiedOrder: 7 },
+    { id: 'f5', name: 'todo.txt', size: '1 KB', sizeKb: 1, modified: 'Today', modifiedOrder: 0 },
 ];
 
 type TreeNode = {
@@ -61,6 +63,31 @@ type TreeNode = {
 };
 
 export function App(): React.JSX.Element {
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
+
+    const sortedTableData = useMemo(() => {
+        if (!sortDescriptor.column) {
+            return tableData;
+        }
+        return [...tableData].sort((a, b) => {
+            let cmp: number;
+            switch (sortDescriptor.column) {
+                case 'name':
+                    cmp = a.name.localeCompare(b.name);
+                    break;
+                case 'size':
+                    cmp = a.sizeKb - b.sizeKb;
+                    break;
+                case 'modified':
+                    cmp = a.modifiedOrder - b.modifiedOrder;
+                    break;
+                default:
+                    cmp = 0;
+            }
+            return sortDescriptor.direction === 'descending' ? -cmp : cmp;
+        });
+    }, [sortDescriptor]);
+
     return (
         <main className="app-shell">
             <section className="app-card">
@@ -76,15 +103,26 @@ export function App(): React.JSX.Element {
                 >
                     <Collection items={treeData}>{item => renderTreeItem(item)}</Collection>
                 </Tree>
-                <Table aria-label="Files" className="app-table" selectionMode="single">
+                <Table
+                    aria-label="Files"
+                    className="app-table"
+                    selectionMode="multiple"
+                    selectionBehavior="replace"
+                    sortDescriptor={sortDescriptor}
+                    onSortChange={setSortDescriptor}
+                >
                     <TableHeader>
-                        <Column id="name" isRowHeader>
+                        <Column id="name" isRowHeader allowsSorting>
                             Name
                         </Column>
-                        <Column id="size">Size</Column>
-                        <Column id="modified">Modified</Column>
+                        <Column id="size" allowsSorting>
+                            Size
+                        </Column>
+                        <Column id="modified" allowsSorting>
+                            Modified
+                        </Column>
                     </TableHeader>
-                    <TableBody items={tableData}>
+                    <TableBody items={sortedTableData}>
                         {row => (
                             <Row id={row.id}>
                                 <Cell>{row.name}</Cell>
