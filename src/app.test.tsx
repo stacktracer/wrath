@@ -1,7 +1,13 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { App } from './app';
+
+// RTL would register cleanup automatically if a global afterEach were defined,
+// but that's not the case here so we register cleanup explicitly
+afterEach(() => {
+    cleanup();
+});
 
 describe('App', () => {
     it('renders the tree shell with the default expanded branch', () => {
@@ -16,8 +22,8 @@ describe('App', () => {
     it('renders the file table', () => {
         render(<App />);
 
-        expect(screen.getAllByRole('columnheader', { name: 'Modified' }).length).toBeGreaterThan(0);
-        expect(screen.getAllByText('2 KB').length).toBeGreaterThan(0);
-        expect(screen.getAllByText('Yesterday').length).toBeGreaterThan(0);
+        expect(screen.getByRole('columnheader', { name: 'Modified' })).toBeTruthy();
+        expect(screen.getByText('2 KB')).toBeTruthy();
+        expect(screen.getByText('Yesterday')).toBeTruthy();
     });
 });
