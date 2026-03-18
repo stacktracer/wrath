@@ -21,6 +21,9 @@ pnpm-debug.log*
 # Coverage
 coverage/
 
+# Test artifacts
+**/__screenshots__/
+
 # Editor and OS files
 .vscode/
 .idea/
