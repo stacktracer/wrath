@@ -25,10 +25,6 @@ export default tseslint.config(
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
-            globals: {
-                document: 'readonly',
-                window: 'readonly',
-            },
         },
         rules: {
             curly: ['error', 'all'],
