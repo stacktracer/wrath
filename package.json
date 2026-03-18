@@ -4,13 +4,14 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
+        "setup": "git config core.hooksPath .githooks",
         "dev": "vite",
         "build": "tsc && vite build",
         "preview": "vite preview",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
-        "test": "vitest --browser.enabled --run",
-        "test:watch": "vitest --browser.enabled",
+        "test": "vitest --run",
+        "test:watch": "vitest",
         "format": "prettier --write .",
         "format:check": "prettier --check ."
     },

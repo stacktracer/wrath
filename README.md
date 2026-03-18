@@ -17,6 +17,12 @@ Install dependencies:
 npm install
 ```
 
+One-time setup (per clone):
+
+```bash
+npm run setup
+```
+
 Start the dev server:
 
 ```bash
