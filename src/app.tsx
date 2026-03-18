@@ -63,10 +63,10 @@ type TreeNode = {
 };
 
 export function App(): React.JSX.Element {
-    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({});
+    const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor | undefined>();
 
     const sortedTableData = useMemo(() => {
-        if (!sortDescriptor.column) {
+        if (!sortDescriptor) {
             return tableData;
         }
         return [...tableData].sort((a, b) => {
