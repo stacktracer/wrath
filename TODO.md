@@ -5,3 +5,4 @@
 - Checkbox column — evaluate RAC's built-in checkbox selection UI vs. custom, since multiple-select is now on the table
 - Empty and loading states — how does RAC's Table handle these, and how much styling work are they?
 - Responsive behavior — does the table need horizontal scroll, column hiding, or anything at smaller widths?
+- Implement meaningful tests — current coverage is smoke tests only; add interaction and behavior coverage
