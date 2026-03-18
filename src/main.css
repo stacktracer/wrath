@@ -61,3 +61,18 @@ body {
 .tree-label {
     font-family: monospace;
 }
+
+.app-table {
+    margin-top: 16px;
+    border-collapse: collapse;
+    max-width: 360px;
+    border: 1px solid currentColor;
+}
+
+.app-table th,
+.app-table td {
+    border: 1px solid currentColor;
+    padding: 4px 8px;
+    font-family: monospace;
+    text-align: left;
+}

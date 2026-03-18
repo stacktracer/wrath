@@ -1,4 +1,16 @@
-import { Button, Collection, Tree, TreeItem, TreeItemContent } from 'react-aria-components';
+import {
+    Button,
+    Cell,
+    Collection,
+    Column,
+    Row,
+    Table,
+    TableBody,
+    TableHeader,
+    Tree,
+    TreeItem,
+    TreeItemContent,
+} from 'react-aria-components';
 
 const treeData = [
     {
@@ -34,6 +46,14 @@ const treeData = [
     },
 ];
 
+const tableData = [
+    { id: 'f1', name: 'today.txt', size: '2 KB', modified: 'Today' },
+    { id: 'f2', name: 'ideas.txt', size: '8 KB', modified: 'Yesterday' },
+    { id: 'f3', name: 'api.md', size: '15 KB', modified: '3 days ago' },
+    { id: 'f4', name: 'schema.md', size: '4 KB', modified: 'Last week' },
+    { id: 'f5', name: 'todo.txt', size: '1 KB', modified: 'Today' },
+];
+
 type TreeNode = {
     id: string;
     name: string;
@@ -46,7 +66,7 @@ export function App(): React.JSX.Element {
             <section className="app-card">
                 <h1 className="app-title">Wrath</h1>
                 <p className="app-copy">
-                    React Aria tree, direct styled, intentionally mostly ugly for evaluation.
+                    RAC tree and table, direct styled, intentionally mostly ugly for evaluation.
                 </p>
                 <Tree
                     aria-label="Project tree"
@@ -56,6 +76,24 @@ export function App(): React.JSX.Element {
                 >
                     <Collection items={treeData}>{item => renderTreeItem(item)}</Collection>
                 </Tree>
+                <Table aria-label="Files" className="app-table" selectionMode="single">
+                    <TableHeader>
+                        <Column id="name" isRowHeader>
+                            Name
+                        </Column>
+                        <Column id="size">Size</Column>
+                        <Column id="modified">Modified</Column>
+                    </TableHeader>
+                    <TableBody items={tableData}>
+                        {row => (
+                            <Row id={row.id}>
+                                <Cell>{row.name}</Cell>
+                                <Cell>{row.size}</Cell>
+                                <Cell>{row.modified}</Cell>
+                            </Row>
+                        )}
+                    </TableBody>
+                </Table>
             </section>
         </main>
     );

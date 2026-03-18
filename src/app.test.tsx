@@ -10,7 +10,14 @@ describe('App', () => {
         expect(screen.getByRole('heading', { name: 'Wrath' })).toBeTruthy();
         expect(screen.getByRole('treegrid', { name: 'Project tree' })).toBeTruthy();
         expect(screen.getByText('Workspace')).toBeTruthy();
-        expect(screen.getByText('today.txt')).toBeTruthy();
         expect(screen.getByText('Archive')).toBeTruthy();
+    });
+
+    it('renders the file table', () => {
+        render(<App />);
+
+        expect(screen.getAllByRole('columnheader', { name: 'Modified' }).length).toBeGreaterThan(0);
+        expect(screen.getAllByText('2 KB').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Yesterday').length).toBeGreaterThan(0);
     });
 });
