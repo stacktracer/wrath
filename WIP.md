@@ -1,3 +1,3 @@
 # WIP
 
-- Try React Aria with no styling
+- Try RAC with no styling
