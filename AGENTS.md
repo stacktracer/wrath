@@ -5,6 +5,10 @@
 - Use relative asset and resource URLs so the app can be relocated without rebuilding
 - Keep client-side routes in the URL fragment (hash routing) rather than path segments
 
+## Keep WIP in Mind
+
+- Review `WIP.md` to stay aware of work currently in progress
+
 ## Verify After Edits
 
 - After modifying files, run `npm run format` and `npm run lint` before considering the task complete
