@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { App } from './app';
@@ -17,6 +17,20 @@ describe('App', () => {
         expect(screen.getByRole('treegrid', { name: 'Project tree' })).toBeTruthy();
         expect(screen.getByText('Workspace')).toBeTruthy();
         expect(screen.getByText('Archive')).toBeTruthy();
+    });
+
+    it('leaf tree items have no child-items marker; branch items do', () => {
+        render(<App />);
+
+        const tree = screen.getByRole('treegrid', { name: 'Project tree' });
+
+        // today.txt is a leaf under Notes, which is expanded by default
+        const leafItem = within(tree).getByText('today.txt').closest('.tree-item');
+        expect(leafItem?.hasAttribute('data-has-child-items')).toBe(false);
+
+        // Notes is a branch node, expanded by default
+        const branchItem = within(tree).getByText('Notes').closest('.tree-item');
+        expect(branchItem?.hasAttribute('data-has-child-items')).toBe(true);
     });
 
     it('renders the file table', () => {
