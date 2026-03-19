@@ -2,7 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './app';
-import './main.css';
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/tree.css';
+import './styles/table.css';
 
 const app = document.querySelector('#app');
 

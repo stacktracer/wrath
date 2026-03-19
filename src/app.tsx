@@ -147,9 +147,7 @@ function renderTreeItem(item: TreeNode): React.JSX.Element {
         >
             <TreeItemContent>
                 <div className="tree-row">
-                    <Button slot="chevron" className="tree-chevron">
-                        ▸
-                    </Button>
+                    <Button slot="chevron" className="tree-chevron" />
                     <span className="tree-label">{item.name}</span>
                 </div>
             </TreeItemContent>
