@@ -89,12 +89,27 @@ A pre-commit hook runs formatting and linting before commits. GitHub Actions run
 - Keep asset and resource URLs relative rather than absolute.
 - If client-side routing is added later, it should use hash routing rather than path-based routing.
 
+## CSS and Styling
+
+Components are styled by targeting class names and RAC's `data-*` attribute selectors directly in CSS — no CSS Modules, no wrapper components.
+
+All styles live in `src/styles/`:
+
+- `tokens.css` — CSS custom properties: colors (light and dark mode), font families, data font size
+- `base.css` — reset, body, and app shell layout
+- `tree.css`, `table.css` — one file per component
+
+To add a new component: create `src/styles/<component>.css` and import it in `src/main.tsx`.
+
+Fonts (Inter and Intel One Mono) are vendored as WOFF2 files in `src/fonts/` for air-gapped deployability.
+
 ## Current Structure
 
-- [`src/app.tsx`](./src/app.tsx): main React application and hard-coded tree data
-- [`src/app.test.tsx`](./src/app.test.tsx): browser test for the rendered tree shell
-- [`src/main.tsx`](./src/main.tsx): React bootstrap entry point
-- [`src/main.css`](./src/main.css): intentionally minimal tree and page styling
+- [`src/app.tsx`](./src/app.tsx): main React application and hard-coded tree/table data
+- [`src/app.test.tsx`](./src/app.test.tsx): browser tests
+- [`src/main.tsx`](./src/main.tsx): React entry point; imports all CSS files
+- [`src/styles/`](./src/styles/): all CSS (tokens, base, per-component)
+- [`src/fonts/`](./src/fonts/): vendored WOFF2 font files
 - [`index.html`](./index.html): app host page
 - [`vite.config.ts`](./vite.config.ts): Vite and Vitest configuration
 - [`eslint.config.mjs`](./eslint.config.mjs): ESLint flat config

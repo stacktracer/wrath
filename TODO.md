@@ -6,3 +6,5 @@
 - Empty and loading states — how does RAC's Table handle these, and how much styling work are they?
 - Responsive behavior — does the table need horizontal scroll, column hiding, or anything at smaller widths?
 - Implement meaningful tests — current coverage is smoke tests only; add interaction and behavior coverage
+- Spacing tokens — as more components are added, identify which spacing values warrant tokens and define them with clear semantic names
+- Variants — catalogue the distinct visual variants needed across components and establish the data-attribute pattern
