@@ -1,4 +1,10 @@
 .app-tree {
+    --tree-chevron-label-gap: 4px;
+    --tree-pad-top: 2px;
+    --tree-pad-right: 4px;
+    --tree-pad-bottom: 2px;
+    --tree-pad-left: 4px;
+    --tree-indent-step: 1.25em;
     border: 1px solid var(--color-border);
     padding: 4px;
     max-width: 360px;
@@ -13,10 +19,15 @@
 .tree-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--tree-chevron-label-gap);
     border-radius: 3px;
     /* --tree-item-level is 1-based; subtract 1 so root items have no extra indent */
-    padding: 2px 6px 2px calc((var(--tree-item-level, 1) - 1) * 1.25em + 6px);
+    padding-top: var(--tree-pad-top);
+    padding-right: var(--tree-pad-right);
+    padding-bottom: var(--tree-pad-bottom);
+    padding-left: calc(var(--tree-pad-left) + (var(--tree-item-level, 1) - 1) * var(--tree-indent-step));
+    cursor: default;
+    user-select: none;
 }
 
 .tree-row:hover {

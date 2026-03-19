@@ -1,4 +1,8 @@
 .app-table {
+    --table-cell-pad-top: 2px;
+    --table-cell-pad-right: 8px;
+    --table-cell-pad-bottom: 2px;
+    --table-cell-pad-left: 8px;
     margin-top: 16px;
     border-collapse: collapse;
     max-width: 360px;
@@ -9,7 +13,10 @@
 .app-table th,
 .app-table td {
     border: 1px solid var(--color-border);
-    padding: 2px 8px;
+    padding-top: var(--table-cell-pad-top);
+    padding-right: var(--table-cell-pad-right);
+    padding-bottom: var(--table-cell-pad-bottom);
+    padding-left: var(--table-cell-pad-left);
     font-family: var(--font-data);
     font-size: var(--font-size-data);
     text-align: left;
