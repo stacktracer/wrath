@@ -50,7 +50,7 @@ export default defineConfig({
     cacheDir: viteCacheDir,
     plugins: [react()],
     optimizeDeps: {
-        include: ['react', 'react-dom/client'],
+        include: ['react', 'react-dom/client', 'react-aria-components'],
     },
     build: {
         outDir: '../dist',

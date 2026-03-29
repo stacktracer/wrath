@@ -22,10 +22,14 @@ body {
     min-height: 100vh;
     padding: 24px;
     box-sizing: border-box;
+    display: grid;
+    gap: 24px;
 }
 
 .rac-card {
-    max-width: 720px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: 20px;
 }
 
 .rac-eyebrow {
@@ -42,6 +46,11 @@ body {
     font-size: 2rem;
 }
 
+.rac-section-title {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+}
+
 .rac-copy {
     margin: 0 0 16px;
     max-width: 48rem;
@@ -54,4 +63,44 @@ body {
 
 .rac-copy-muted {
     color: var(--color-text-muted);
+}
+
+.rac-comparison {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.rac-panel {
+    min-width: 0;
+}
+
+.rac-panel-header {
+    margin-bottom: 16px;
+}
+
+.rac-panel-header .rac-copy {
+    margin-bottom: 0;
+}
+
+.rac-scroll-region {
+    overflow: auto;
+}
+
+.rac-tree-item-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rac-tree-spacer {
+    display: inline-block;
+    width: 2rem;
+}
+
+@media (max-width: 1100px) {
+    .rac-comparison {
+        grid-template-columns: 1fr;
+    }
 }
