@@ -18,7 +18,7 @@
 
 ## Verification
 
-- After modifying files, run `npm run format` and `npm run lint` before considering the task complete.
+- After modifying source code or project config files, run `npm run format` and `npm run lint` before considering the task complete.
 - Update `README.md` when the edits warrant it, e.g. by changing project behavior, setup, workflow, or structure.
 - Run relevant tests after modifying code. For structural changes, run `npm run test`.
 - Run `npm run build` after changes that affect entrypoints, HTML pages, styles, tokens, or Vite configuration.
