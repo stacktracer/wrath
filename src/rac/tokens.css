@@ -1,0 +1,56 @@
+/* ── Font faces ───────────────────────────────────────────────────────── */
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Intel One Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/intel-one-mono-latin-400-normal.woff2') format('woff2');
+}
+
+/* ── Tokens ───────────────────────────────────────────────────────────── */
+
+:root {
+    color-scheme: light dark;
+
+    /* Fonts */
+    --font-ui: 'Inter', sans-serif;
+    --font-data: 'Intel One Mono', monospace;
+    --font-size-data: 13px;
+
+    /* Light mode colors */
+    --color-bg: #f3f4f8;
+    --color-surface: #ffffff;
+    --color-surface-hover: #eef0f6;
+    --color-surface-selected: #e3ecfb;
+    --color-text: #1a1d2e;
+    --color-text-muted: #6b7280;
+    --color-border: #d0d4e0;
+    --color-accent: #2563eb;
+    --color-accent-subtle: #eff4ff;
+    --color-error: #dc2626;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Dark mode colors */
+        --color-bg: #0f1117;
+        --color-surface: #1c1f2b;
+        --color-surface-hover: #252838;
+        --color-surface-selected: #1e2d45;
+        --color-text: #dde1ec;
+        --color-text-muted: #7a8196;
+        --color-border: #2d3147;
+        --color-accent: #4d94f7;
+        --color-accent-subtle: #1a2840;
+        --color-error: #e05555;
+    }
+}
