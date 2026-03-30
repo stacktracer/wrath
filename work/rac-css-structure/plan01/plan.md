@@ -22,7 +22,7 @@ Afaict, standard CSS with CSS variables is plenty flexible for what we want, and
 
 So step 0, let's decompose this problem into a manageable number of steps:
 
-Subagent mechanics note: the context for a subagent comes from two places: this shared plan file, and the short prompt used when spawning that specific subagent. No separate context file is required. Put durable shared context here in `plan.md`; put task ownership and any one-off instructions in the spawn prompt.
+Subagent mechanics note: the context for a subagent comes from two places: this shared plan file, and the short prompt used when spawning that specific subagent. No separate context file is required. Put durable shared context here in `work/rac-css-structure/plan01/plan.md`; put task ownership and any one-off instructions in the spawn prompt.
 
 1. Identify relevant open-source prior art:
     - React Spectrum
@@ -33,11 +33,11 @@ Subagent mechanics note: the context for a subagent comes from two places: this 
 
 2. For each prior-art project identified above, spawn a subagent to do the following:
     - Keep the shared context in this file. When spawning the subagent, give it a short prompt that says which single project it owns, which single work file it owns, and that it should reread this file before doing anything else. Do not rely on the subagent inferring which project it owns from surrounding chatter.
-    - Example spawn prompt: "Investigate React Spectrum only. Own `work/rac-css-structure/react-spectrum.md`. Reread `work/rac-css-structure/plan.md`, then answer the common questions from that file in your work file. Stop after completing Step 2. Do not execute Steps 3 or 4 yet."
+    - Example spawn prompt: "Investigate React Spectrum only. Own `work/rac-css-structure/plan01/10-research/react-spectrum.md`. Reread `work/rac-css-structure/plan01/plan.md`, then answer the common questions from that file in your work file. Stop after completing Step 2. Do not execute Steps 3 or 4 yet."
     - The subagent's work file should be named after the project, e.g. `react-spectrum.md`, `tailwind.md`, etc.
     - Reread this file to understand the goals of the investigation
     - Keep these constraints in mind while investigating: plain CSS, RAC styled directly with `data-*` selectors, local ownership unless reuse is clearly established, and a strong bias against abstractions that increase cognitive load without paying for themselves quickly.
-    - Create or update the work file under `work/rac-css-structure/` for the specific project
+    - Create or update the work file under `work/rac-css-structure/plan01/10-research/` for the specific project
     - Organize the work file using headings that mirror the common questions below, so the project files are easy to compare later
     - Learn how the project in question structures its CSS
     - As you learn, record what you're learning in the work file you created above
@@ -64,14 +64,14 @@ Subagent mechanics note: the context for a subagent comes from two places: this 
         - coherence and guardrails
         - flexibility and escape hatches
         - developer ergonomics and cognitive load
-    - Keep the shared context in this file. When spawning the subagent, give it a short prompt assigning it a unique filename to write its output to, and instruct it to reread `plan.md`, then read all per-project notes in this subdir.
+    - Keep the shared context in this file. When spawning the subagent, give it a short prompt assigning it a unique filename to write its output to, and instruct it to reread `work/rac-css-structure/plan01/plan.md`, then read all per-project notes in `work/rac-css-structure/plan01/10-research/`.
     - Each digest subagent should ignore files whose names contain `digest`, and also ignore `synthesis.md`, so the digest files stay independent of one another.
-    - Example spawn prompt: "Own `work/rac-css-structure/digest-coherence.md`. Reread `work/rac-css-structure/plan.md`, then read all `.md` files in `work/rac-css-structure/` except `plan.md`, files whose names contain `digest`, and `synthesis.md`. Focus on coherence and guardrails. Based on those files, write to `work/rac-css-structure/digest-coherence.md` a set of recommendations for our project, and a set of open questions. Do not execute Step 4 yet."
+    - Example spawn prompt: "Own `work/rac-css-structure/plan01/20-digest/coherence.md`. Reread `work/rac-css-structure/plan01/plan.md`, then read all `.md` files in `work/rac-css-structure/plan01/10-research/`. Focus on coherence and guardrails. Based on those files, write to `work/rac-css-structure/plan01/20-digest/coherence.md` a set of recommendations for our project, and a set of open questions. Do not execute Step 4 yet."
 
 4. Synthesize:
-    - Read all files in `work/rac-css-structure/` whose filenames contain the word `digest`.
+    - Read all files in `work/rac-css-structure/plan01/20-digest/` whose filenames contain the word `digest`.
     - When a digest makes a surprising claim, or when digest files disagree, check the underlying per-project notes before deciding what to say in the synthesis.
-    - In a new file called `work/rac-css-structure/synthesis.md`, write:
+    - In a new file called `work/rac-css-structure/plan01/30-synthesis/synthesis.md`, write:
         - common themes from the digest files
         - digest findings that are not common themes but are nevertheless thought provoking, promising, or important
         - open questions that still matter after reading both the digests and the underlying project notes

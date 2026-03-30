@@ -16,11 +16,11 @@ Everything else should stay in tokens, component-local CSS variables, or RAC `da
 
 The prior art is consistent about keeping variant vocabularies curated rather than open-ended.
 
-- [Radix Themes](work/rac-css-structure/radix-themes.md) exposes a small set of props such as `size`, `variant`, `color`, and `radius`, but each component gets its own limited menu rather than a universal variant taxonomy.
-- [Primer](work/rac-css-structure/primer.md) uses size and modifier variants like `btn-sm`, `btn-primary`, and `btn-danger`, but the class-based surface is still intentionally bounded.
-- [React Spectrum](work/rac-css-structure/react-spectrum.md) is the cautionary example: it keeps the supported styling surface narrow and steers people away from arbitrary visual variants.
-- [Tailwind](work/rac-css-structure/tailwind.md) shows the opposite extreme. It can represent almost any variant, but the mental model grows quickly once variants become a general-purpose language.
-- [Open Props](work/rac-css-structure/open-props.md) does not really define component variants at all, which is a useful reminder that many visual differences are better handled as token selection than as a variant system.
+- [Radix Themes](radix-themes.md) exposes a small set of props such as `size`, `variant`, `color`, and `radius`, but each component gets its own limited menu rather than a universal variant taxonomy.
+- [Primer](primer.md) uses size and modifier variants like `btn-sm`, `btn-primary`, and `btn-danger`, but the class-based surface is still intentionally bounded.
+- [React Spectrum](react-spectrum.md) is the cautionary example: it keeps the supported styling surface narrow and steers people away from arbitrary visual variants.
+- [Tailwind](tailwind.md) shows the opposite extreme. It can represent almost any variant, but the mental model grows quickly once variants become a general-purpose language.
+- [Open Props](open-props.md) does not really define component variants at all, which is a useful reminder that many visual differences are better handled as token selection than as a variant system.
 
 The shared lesson is that variants are worth standardizing only when they are:
 
@@ -50,12 +50,12 @@ If a change can be expressed as a token adjustment, it should usually stay a tok
 
 ## Sources
 
-- `work/rac-css-structure/plan.md`
-- `work/rac-css-structure/tailwind.md`
-- `work/rac-css-structure/radix-themes.md`
-- `work/rac-css-structure/primer.md`
-- `work/rac-css-structure/open-props.md`
-- `work/rac-css-structure/react-spectrum.md`
+- `work/rac-css-structure/plan01/plan.md`
+- `work/rac-css-structure/plan01/10-research/tailwind.md`
+- `work/rac-css-structure/plan01/10-research/radix-themes.md`
+- `work/rac-css-structure/plan01/10-research/primer.md`
+- `work/rac-css-structure/plan01/10-research/open-props.md`
+- `work/rac-css-structure/plan01/10-research/react-spectrum.md`
 - https://tailwindcss.com/docs/hover-focus-and-other-states
 - https://tailwindcss.com/docs/dark-mode
 - https://tailwindcss.com/docs/customizing-spacing/

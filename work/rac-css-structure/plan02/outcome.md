@@ -2,7 +2,7 @@
 
 ## Final Status
 
-- `plan02.md` has been executed to a practical first-pass completion.
+- `plan.md` has been executed to a practical first-pass completion.
 - `src/rac/` now uses a local `styles/` directory with:
     - `alias.css`
     - `semantic.css`
@@ -25,7 +25,7 @@
 - The overlay gallery was adjusted after first render testing so the page stays interactive:
     - always-open popover/menu demos now use non-modal popovers
     - the modal example is launchable rather than mounted open on load
-- `work/rac-css-structure/exec.md` was kept as the running implementation log.
+- `work/rac-css-structure/plan02/exec.md` was kept as the running implementation log.
 
 ## Verification
 

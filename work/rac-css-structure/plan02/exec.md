@@ -3,7 +3,7 @@
 ## Initial Read
 
 - The repo is still very small: one RAC experiment, one stylesheet, one token file, one mount test.
-- `plan02.md` is materially more ambitious than the current app. This is a ground-up gallery and CSS-architecture replacement, not an incremental refactor.
+- `plan.md` is materially more ambitious than the current app. This is a ground-up gallery and CSS-architecture replacement, not an incremental refactor.
 
 ## API Surprises
 

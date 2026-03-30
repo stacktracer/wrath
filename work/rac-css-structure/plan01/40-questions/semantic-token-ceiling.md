@@ -4,16 +4,16 @@
 
 My recommendation is a semantic token layer in the **low dozens**, with a working target of **24-32 tokens** and a practical soft ceiling of **around 40**. If the semantic layer grows past **40-50**, it is probably doing too much and should be split into component-local tokens, narrower semantic subfamilies, or raw alias scales.
 
-That is an inference from the prior art and from the team constraint in `plan.md`: a mixed-experience team needs a vocabulary that is small enough to remember, but still large enough to cover recurring cross-cutting concerns.
+That is an inference from the prior art and from the team constraint in `work/rac-css-structure/plan01/plan.md`: a mixed-experience team needs a vocabulary that is small enough to remember, but still large enough to cover recurring cross-cutting concerns.
 
 ## Why This Range
 
 The shared pattern across the notes is not “make semantic tokens tiny”; it is “keep the shared semantic layer deliberately small and cross-cutting.”
 
-- [Open Props](work/rac-css-structure/open-props.md) shows the most compact semantic alias layer: `--brand`, `--text-1`, `--text-2`, and `--surface-1` through `--surface-4`, with everything else staying in raw scales.
-- [Radix Themes](work/rac-css-structure/radix-themes.md) keeps the public theme surface similarly compact: a few global knobs like `appearance`, `accentColor`, `grayColor`, `radius`, and `scaling`, plus semantic color roles such as background, overlay, surface, and functional accent/gray tokens.
-- [Primer](work/rac-css-structure/primer.md) explicitly separates `base`, `functional`, and `component/pattern` tokens, and its docs recommend generic patterns like `control` so shared tokens do not explode into per-component names too early.
-- [Tailwind](work/rac-css-structure/tailwind.md) is the cautionary counterexample: it has broad token namespaces and lots of escape hatches, but no strong semantic/component boundary. That is useful for flexibility, but it is not a good memory model for a mixed-experience team.
+- [Open Props](open-props.md) shows the most compact semantic alias layer: `--brand`, `--text-1`, `--text-2`, and `--surface-1` through `--surface-4`, with everything else staying in raw scales.
+- [Radix Themes](radix-themes.md) keeps the public theme surface similarly compact: a few global knobs like `appearance`, `accentColor`, `grayColor`, `radius`, and `scaling`, plus semantic color roles such as background, overlay, surface, and functional accent/gray tokens.
+- [Primer](primer.md) explicitly separates `base`, `functional`, and `component/pattern` tokens, and its docs recommend generic patterns like `control` so shared tokens do not explode into per-component names too early.
+- [Tailwind](tailwind.md) is the cautionary counterexample: it has broad token namespaces and lots of escape hatches, but no strong semantic/component boundary. That is useful for flexibility, but it is not a good memory model for a mixed-experience team.
 
 The practical reading is that the semantic layer should cover recurring concerns like:
 
@@ -37,11 +37,11 @@ If a new semantic token only helps one or two components, it should probably be 
 
 ## Sources
 
-- `work/rac-css-structure/plan.md`
-- `work/rac-css-structure/open-props.md`
-- `work/rac-css-structure/radix-themes.md`
-- `work/rac-css-structure/primer.md`
-- `work/rac-css-structure/tailwind.md`
+- `work/rac-css-structure/plan01/plan.md`
+- `work/rac-css-structure/plan01/10-research/open-props.md`
+- `work/rac-css-structure/plan01/10-research/radix-themes.md`
+- `work/rac-css-structure/plan01/10-research/primer.md`
+- `work/rac-css-structure/plan01/10-research/tailwind.md`
 - https://open-props.style/
 - https://www.radix-ui.com/themes/docs/overview/styling
 - https://www.radix-ui.com/themes/docs/theme/spacing

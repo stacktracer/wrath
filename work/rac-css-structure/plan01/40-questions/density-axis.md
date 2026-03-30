@@ -39,12 +39,12 @@ That would add cognitive load without buying much flexibility. The useful middle
 
 ## Sources
 
-- [Plan context](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/plan.md)
-- [React Spectrum notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/react-spectrum.md)
-- [Tailwind notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/tailwind.md)
-- [Open Props notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/open-props.md)
-- [Radix Themes notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/radix-themes.md)
-- [Primer notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/primer.md)
+- [Plan context](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/plan01/plan.md)
+- [React Spectrum notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/plan01/10-research/react-spectrum.md)
+- [Tailwind notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/plan01/10-research/tailwind.md)
+- [Open Props notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/plan01/10-research/open-props.md)
+- [Radix Themes notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/plan01/10-research/radix-themes.md)
+- [Primer notes](/home/mike/Documents/projects/wrath/code/work/rac-css-structure/plan01/10-research/primer.md)
 - [Atlassian spacing](https://atlassian.design/foundations/spacing/)
 - [Atlassian typography](https://atlassian.design/foundations/typography/)
 - [Atlassian design tokens](https://atlassian.design/foundations/tokens/design-tokens/)
