@@ -1,0 +1,125 @@
+.react-aria-Popper,
+.react-aria-Popover,
+.react-aria-Tooltip,
+.react-aria-Modal,
+.react-aria-Dialog {
+    max-inline-size: min(30rem, calc(100vw - 2rem));
+}
+
+.react-aria-Popover,
+.react-aria-Tooltip,
+.react-aria-Modal,
+.react-aria-Dialog {
+    color: var(--text-primary);
+}
+
+.react-aria-Popover,
+.react-aria-Tooltip,
+.react-aria-Modal {
+    border-radius: var(--radius-3);
+}
+
+.react-aria-Popover {
+    padding: var(--space-layout-1);
+    border: var(--border-1) solid var(--border-subtle);
+    background: var(--surface-overlay);
+    box-shadow: var(--overlay-shadow);
+}
+
+.react-aria-Popover[data-entering] {
+    animation: rac-pop-in var(--duration-normal) var(--ease-standard);
+}
+
+.react-aria-Dialog {
+    display: grid;
+    gap: var(--space-layout-1);
+}
+
+.react-aria-OverlayArrow {
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+}
+
+.react-aria-OverlayArrow svg {
+    inline-size: 100%;
+    block-size: 100%;
+    display: block;
+    fill: var(--surface-overlay);
+    stroke: var(--border-subtle);
+    transform: rotate(45deg);
+}
+
+.react-aria-Tooltip {
+    padding: var(--space-2) var(--space-3);
+    background: color-mix(in srgb, var(--surface-overlay) 88%, var(--gray-12));
+    border: var(--border-1) solid var(--border-strong);
+    box-shadow: var(--shadow-1);
+    color: var(--text-primary);
+}
+
+.react-aria-Tooltip[data-entering] {
+    animation: rac-pop-in var(--duration-fast) var(--ease-standard);
+}
+
+.react-aria-ModalOverlay {
+    display: grid;
+    place-items: center;
+    padding: var(--space-layout-2);
+    background: var(--overlay-backdrop);
+}
+
+.react-aria-Modal {
+    inline-size: min(36rem, 100%);
+    padding: var(--space-layout-2);
+    background: var(--surface-overlay);
+    border: var(--border-1) solid var(--border-subtle);
+    box-shadow: var(--overlay-shadow);
+}
+
+.react-aria-DropZone {
+    display: grid;
+    gap: var(--space-2);
+    place-items: center;
+    min-block-size: 8.5rem;
+    padding: var(--space-layout-1);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-2);
+    background: color-mix(in srgb, var(--surface-panel) 72%, var(--surface-page));
+    text-align: center;
+}
+
+.react-aria-DropZone[data-drop-target] {
+    border-color: var(--accent-bg);
+    background: color-mix(in srgb, var(--accent-bg) 12%, var(--surface-panel));
+}
+
+.react-aria-DropZone[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+.react-aria-DropIndicator {
+    padding: var(--space-2) var(--space-3);
+    border: var(--border-1) dashed color-mix(in srgb, var(--accent-bg) 55%, var(--control-border));
+    border-radius: var(--radius-2);
+    background: color-mix(in srgb, var(--accent-bg) 10%, transparent);
+    color: var(--text-link);
+    font-family: var(--font-data);
+    font-size: var(--font-size-1);
+}
+
+.react-aria-DropIndicator[data-drop-target] {
+    border-style: solid;
+}
+
+@keyframes rac-pop-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.35rem) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

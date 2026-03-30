@@ -1,0 +1,47 @@
+.react-aria-ToastRegion {
+    position: absolute;
+    inset: var(--space-3);
+    pointer-events: none;
+}
+
+.react-aria-ToastList {
+    display: grid;
+    justify-items: end;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.react-aria-Toast {
+    pointer-events: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    align-items: start;
+    min-inline-size: min(24rem, 100%);
+    padding: var(--space-3);
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: var(--radius-2);
+    background: var(--surface-overlay);
+    box-shadow: var(--shadow-1);
+}
+
+.react-aria-Toast[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+.react-aria-ToastContent {
+    display: grid;
+    gap: 0.125rem;
+}
+
+.react-aria-ToastContent .react-aria-Text[slot='title'] {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.react-aria-ToastContent .react-aria-Text[slot='description'] {
+    color: var(--text-secondary);
+}

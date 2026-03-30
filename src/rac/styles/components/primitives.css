@@ -1,0 +1,127 @@
+.react-aria-Breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.react-aria-Breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+}
+
+.react-aria-Breadcrumb:not([data-current])::after {
+    content: '/';
+    color: var(--text-muted);
+    font-family: var(--font-data);
+}
+
+.react-aria-Breadcrumb[data-current] {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.react-aria-Form {
+    display: grid;
+    gap: var(--space-layout-2);
+}
+
+.react-aria-Group {
+    display: flex;
+    align-items: center;
+    gap: var(--control-gap);
+    min-width: 0;
+}
+
+.react-aria-Header {
+    color: var(--text-muted);
+    font-family: var(--font-data);
+    font-size: var(--font-size-1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.react-aria-Heading {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--font-size-4);
+    line-height: var(--line-height-2);
+}
+
+.react-aria-Label {
+    color: var(--text-secondary);
+    font-size: var(--font-size-2);
+    font-weight: 600;
+}
+
+.react-aria-Link {
+    color: var(--text-link);
+    text-decoration: none;
+    text-underline-offset: 0.18em;
+}
+
+.react-aria-Link:hover,
+.react-aria-Link[data-hovered] {
+    text-decoration: underline;
+}
+
+.react-aria-Link[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-1);
+}
+
+.react-aria-Text {
+    color: inherit;
+}
+
+.react-aria-Text[slot='description'] {
+    color: var(--text-muted);
+    font-size: var(--font-size-1);
+}
+
+.react-aria-Text[slot='errorMessage'],
+.react-aria-FieldError {
+    color: var(--danger-border);
+    font-size: var(--font-size-1);
+}
+
+.react-aria-Keyboard {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 1.75rem;
+    padding: 0.18rem 0.45rem;
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: var(--radius-1);
+    background: color-mix(in srgb, var(--surface-panel) 84%, var(--surface-raised));
+    color: var(--text-secondary);
+    font-family: var(--font-data);
+    font-size: var(--font-size-0);
+}
+
+.react-aria-SelectionIndicator {
+    display: inline-grid;
+    place-items: center;
+    width: var(--size-1);
+    height: var(--size-1);
+    color: currentColor;
+    font-size: var(--font-size-0);
+    font-weight: 700;
+}
+
+.react-aria-Separator {
+    border: 0;
+    border-block-start: var(--border-1) solid var(--border-subtle);
+}
+
+.react-aria-Separator[aria-orientation='vertical'] {
+    inline-size: 1px;
+    block-size: 1.5rem;
+    border-block-start: 0;
+    border-inline-start: var(--border-1) solid var(--border-subtle);
+}

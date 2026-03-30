@@ -1,0 +1,87 @@
+.react-aria-ResizableTableContainer {
+    overflow: auto;
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: var(--radius-2);
+    background: var(--surface-panel);
+}
+
+.react-aria-Table {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.react-aria-TableHeader {
+    background: color-mix(in srgb, var(--surface-raised) 86%, transparent);
+}
+
+.react-aria-Column {
+    position: relative;
+    padding: var(--space-3);
+    border-block-end: var(--border-1) solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-data);
+    font-size: var(--font-size-1);
+    text-align: left;
+}
+
+.react-aria-Column[data-hovered] {
+    background: color-mix(in srgb, var(--surface-page) 34%, transparent);
+}
+
+.react-aria-Column[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: -2px;
+}
+
+.react-aria-ColumnResizer {
+    position: absolute;
+    inset-block: var(--space-2);
+    inset-inline-end: 0;
+    inline-size: 0.75rem;
+    cursor: col-resize;
+}
+
+.react-aria-ColumnResizer::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 50%;
+    inline-size: 1px;
+    background: var(--border-strong);
+}
+
+.react-aria-ColumnResizer[data-resizing]::before,
+.react-aria-ColumnResizer[data-hovered]::before {
+    inline-size: 2px;
+    background: var(--accent-bg);
+}
+
+.react-aria-Row {
+    transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.react-aria-Row[data-hovered] {
+    background: color-mix(in srgb, var(--surface-page) 32%, transparent);
+}
+
+.react-aria-Row[data-selected] {
+    background: color-mix(in srgb, var(--accent-bg) 10%, transparent);
+}
+
+.react-aria-Row[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: -2px;
+}
+
+.react-aria-Cell {
+    padding: var(--space-3);
+    border-block-end: var(--border-1) solid var(--border-subtle);
+    color: var(--text-primary);
+    vertical-align: top;
+}
+
+.react-aria-TableLoadMoreItem {
+    color: var(--text-muted);
+    font-size: var(--font-size-1);
+}

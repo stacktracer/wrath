@@ -1,0 +1,97 @@
+:is(.react-aria-CheckboxGroup, .react-aria-RadioGroup) {
+    display: grid;
+    gap: var(--space-layout-1);
+}
+
+.react-aria-RadioGroup[data-orientation='horizontal'] {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+:is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch) {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-2);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+:is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch):hover,
+:is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch)[data-hovered] {
+    background: color-mix(in srgb, var(--surface-panel) 72%, var(--surface-page));
+}
+
+:is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch)[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+:is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch)[data-disabled] {
+    color: var(--text-muted);
+    cursor: default;
+}
+
+.rac-choice-indicator {
+    display: inline-grid;
+    place-items: center;
+    inline-size: 1.2rem;
+    block-size: 1.2rem;
+    border: var(--border-1) solid var(--control-border);
+    background: var(--control-bg);
+    color: transparent;
+    flex: none;
+    transition:
+        background-color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard);
+}
+
+.react-aria-Checkbox .rac-choice-indicator {
+    border-radius: calc(var(--control-radius) - 2px);
+}
+
+.react-aria-Radio .rac-choice-indicator {
+    border-radius: 999px;
+}
+
+:is(.react-aria-Checkbox, .react-aria-Radio)[data-selected] .rac-choice-indicator {
+    border-color: var(--accent-bg);
+    background: var(--accent-bg);
+    color: var(--accent-fg);
+}
+
+.rac-switch-track {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    inline-size: 2.75rem;
+    block-size: 1.6rem;
+    padding: 0.15rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--control-bg-disabled) 78%, var(--surface-page));
+    border: var(--border-1) solid var(--control-border);
+    flex: none;
+    transition:
+        background-color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
+}
+
+.rac-switch-thumb {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    border-radius: 999px;
+    background: var(--surface-raised);
+    box-shadow: var(--shadow-1);
+    transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.react-aria-Switch[data-selected] .rac-switch-track {
+    background: color-mix(in srgb, var(--accent-bg) 32%, var(--surface-page));
+    border-color: color-mix(in srgb, var(--accent-bg) 48%, var(--control-border));
+}
+
+.react-aria-Switch[data-selected] .rac-switch-thumb {
+    transform: translateX(1.1rem);
+    background: var(--accent-bg);
+}

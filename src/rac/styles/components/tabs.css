@@ -1,0 +1,42 @@
+.react-aria-Tabs {
+    display: grid;
+    gap: var(--space-layout-1);
+}
+
+.react-aria-TabList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: var(--space-1);
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: calc(var(--control-radius) + 4px);
+    background: color-mix(in srgb, var(--surface-panel) 74%, var(--surface-page));
+}
+
+.react-aria-Tab {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--control-radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.react-aria-Tab[data-selected] {
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    box-shadow: inset 0 0 0 1px var(--border-subtle);
+}
+
+.react-aria-Tab[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}
+
+.react-aria-TabPanels {
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: var(--radius-2);
+    background: var(--surface-panel);
+}
+
+.react-aria-TabPanel {
+    padding: var(--space-layout-1);
+}

@@ -1,0 +1,83 @@
+.react-aria-ColorField {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.react-aria-ColorField .react-aria-Input {
+    border: var(--border-1) solid var(--control-border);
+    border-radius: var(--control-radius);
+    background: var(--control-bg);
+}
+
+.react-aria-ColorArea {
+    min-block-size: 15rem;
+    border-radius: var(--radius-2);
+    overflow: hidden;
+    border: var(--border-1) solid var(--border-subtle);
+}
+
+.react-aria-ColorWheel {
+    inline-size: min(100%, 18rem);
+    aspect-ratio: 1;
+}
+
+.react-aria-ColorWheelTrack {
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: 50%;
+    border: var(--border-1) solid var(--border-subtle);
+}
+
+.react-aria-ColorSlider {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.react-aria-ColorSlider .react-aria-SliderTrack {
+    min-block-size: 1rem;
+    border-radius: 999px;
+    border: var(--border-1) solid var(--border-subtle);
+}
+
+.react-aria-ColorSwatch {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: var(--radius-2);
+    border: var(--border-1) solid var(--border-subtle);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.react-aria-ColorSwatchPicker {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr));
+    gap: var(--space-2);
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+.react-aria-ColorSwatchPickerItem {
+    display: grid;
+    place-items: center;
+    padding: var(--space-1);
+    border: var(--border-1) solid transparent;
+    border-radius: var(--radius-2);
+}
+
+.react-aria-ColorSwatchPickerItem[data-selected] {
+    border-color: color-mix(in srgb, var(--accent-bg) 46%, var(--control-border));
+    background: color-mix(in srgb, var(--accent-bg) 12%, transparent);
+}
+
+.react-aria-ColorThumb {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22);
+}
+
+.react-aria-ColorThumb[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 3px;
+}

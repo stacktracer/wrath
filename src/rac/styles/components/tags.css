@@ -1,0 +1,36 @@
+.react-aria-TagGroup {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.react-aria-TagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.react-aria-Tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 2.1rem;
+    padding-inline: var(--space-3);
+    border: var(--border-1) solid var(--control-border);
+    border-radius: 999px;
+    background: var(--control-bg);
+    color: var(--control-fg);
+}
+
+.react-aria-Tag[data-hovered] {
+    background: var(--control-bg-hover);
+}
+
+.react-aria-Tag[data-selected] {
+    border-color: color-mix(in srgb, var(--accent-bg) 42%, var(--control-border));
+    background: color-mix(in srgb, var(--accent-bg) 16%, var(--control-bg));
+}
+
+.react-aria-Tag[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: 2px;
+}

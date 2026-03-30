@@ -8,22 +8,18 @@ describe('rac page', () => {
         await import('./main');
 
         await expect
-            .element(page.getByRole('heading', { name: 'Table and tree comparison' }))
+            .element(page.getByRole('heading', { name: 'RAC Gallery and CSS Structure' }))
             .toBeInTheDocument();
-        await expect.element(page.getByText('React Aria Components')).toBeVisible();
+        await expect.element(page.getByText('Nested dark compact island')).toBeVisible();
         await expect
-            .element(
-                page.getByText(/The RAC experiment now mounts a plain table and a plain tree side-by-side/),
-            )
+            .element(page.getByText(/long-lived plain-CSS structure for React Aria Components/i))
             .toBeVisible();
-        await expect.element(page.getByRole('heading', { name: 'Major airports' })).toBeVisible();
-        await expect.element(page.getByRole('heading', { name: 'Consumer vehicles' })).toBeVisible();
         await expect.element(page.getByLabelText('Major airports')).toBeVisible();
-        await expect
-            .element(page.getByText('Hartsfield-Jackson Atlanta International Airport'))
-            .toBeVisible();
-        await expect.element(page.getByText('Heathrow Airport')).toBeVisible();
-        await expect.element(page.getByText('Toyota')).toBeVisible();
-        await expect.element(page.getByText('Camry')).toBeVisible();
+        await expect.element(page.getByLabelText('Service tree')).toBeVisible();
+        await expect.element(page.getByLabelText('Shipment lanes')).toBeVisible();
+        await expect.element(page.getByText('Drop manifest bundle or paste it here')).toBeVisible();
+        await expect.element(page.getByText('Queued insert position')).toBeVisible();
+        await expect.element(page.getByText('Layout audit preview')).toBeVisible();
+        await expect.element(page.getByText('Slotting report ready')).toBeVisible();
     });
 });

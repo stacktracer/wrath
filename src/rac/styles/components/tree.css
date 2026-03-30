@@ -1,0 +1,55 @@
+.react-aria-Tree {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: var(--radius-2);
+    background: var(--surface-panel);
+}
+
+.react-aria-TreeHeader {
+    color: var(--text-muted);
+    font-family: var(--font-data);
+    font-size: var(--font-size-1);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.react-aria-TreeSection {
+    display: grid;
+    gap: var(--space-1);
+}
+
+.react-aria-TreeItem {
+    padding-inline-start: calc((var(--tree-item-level, 1) - 1) * var(--space-4));
+    border-radius: calc(var(--control-radius) + 2px);
+}
+
+.react-aria-TreeItem[data-hovered] {
+    background: color-mix(in srgb, var(--surface-page) 38%, transparent);
+}
+
+.react-aria-TreeItem[data-selected] {
+    background: color-mix(in srgb, var(--accent-bg) 12%, transparent);
+}
+
+.react-aria-TreeItem[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: -2px;
+}
+
+.react-aria-TreeItemContent {
+    display: contents;
+}
+
+.react-aria-TreeItem .react-aria-Button {
+    min-inline-size: 1.75rem;
+    min-block-size: 1.75rem;
+    padding: 0;
+}
+
+.react-aria-TreeLoadMoreItem {
+    padding-inline-start: calc((var(--tree-item-level, 1) - 1) * var(--space-4));
+    color: var(--text-muted);
+    font-size: var(--font-size-1);
+}

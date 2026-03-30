@@ -1,0 +1,43 @@
+.react-aria-Menu {
+    display: grid;
+    gap: var(--space-1);
+    min-inline-size: min(22rem, 100%);
+    padding: var(--space-2);
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: var(--radius-2);
+    background: var(--surface-overlay);
+}
+
+.react-aria-MenuSection {
+    display: grid;
+    gap: var(--space-1);
+}
+
+.react-aria-MenuItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: calc(var(--control-radius) + 2px);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.react-aria-MenuItem[data-hovered] {
+    background: color-mix(in srgb, var(--surface-page) 36%, var(--surface-overlay));
+}
+
+.react-aria-MenuItem[data-selected] {
+    background: color-mix(in srgb, var(--accent-bg) 15%, var(--surface-overlay));
+}
+
+.react-aria-MenuItem[data-focus-visible] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: -1px;
+}
+
+.react-aria-MenuItem[data-disabled] {
+    color: var(--text-muted);
+    cursor: default;
+}

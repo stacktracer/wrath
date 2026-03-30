@@ -1,0 +1,61 @@
+:is(.react-aria-TextField, .react-aria-SearchField, .react-aria-NumberField) {
+    display: grid;
+    gap: var(--space-2);
+}
+
+:is(.react-aria-Input, .react-aria-TextArea) {
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding-block: var(--control-padding-block);
+    padding-inline: var(--control-padding-inline);
+    border: var(--border-1) solid var(--control-border);
+    border-radius: var(--control-radius);
+    background: var(--control-bg);
+    color: var(--control-fg);
+    font: inherit;
+    transition:
+        background-color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard),
+        box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.react-aria-TextArea {
+    min-block-size: 8rem;
+    resize: vertical;
+}
+
+:is(.react-aria-Input, .react-aria-TextArea)::placeholder {
+    color: var(--text-muted);
+}
+
+:is(.react-aria-Input, .react-aria-TextArea):focus {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+}
+
+:is(.react-aria-SearchField, .react-aria-NumberField) .react-aria-Group {
+    padding: var(--space-1);
+    border: var(--border-1) solid var(--control-border);
+    border-radius: var(--control-radius);
+    background: var(--control-bg);
+}
+
+:is(.react-aria-SearchField, .react-aria-NumberField) .react-aria-Input {
+    border: 0;
+    background: transparent;
+    padding: calc(var(--control-padding-block) - 1px) calc(var(--control-padding-inline) - 1px);
+}
+
+:is(.react-aria-SearchField, .react-aria-NumberField) .react-aria-Input:focus {
+    outline: 0;
+}
+
+:is(.react-aria-TextField, .react-aria-SearchField, .react-aria-NumberField)[data-invalid]
+    :is(.react-aria-Input, .react-aria-TextArea, .react-aria-Group) {
+    border-color: color-mix(in srgb, var(--danger-border) 75%, var(--control-border));
+}
+
+:is(.react-aria-TextField, .react-aria-SearchField, .react-aria-NumberField)[data-disabled]
+    :is(.react-aria-Input, .react-aria-TextArea, .react-aria-Group) {
+    background: var(--control-bg-disabled);
+}

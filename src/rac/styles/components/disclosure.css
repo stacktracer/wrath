@@ -1,0 +1,27 @@
+.react-aria-DisclosureGroup {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.react-aria-Disclosure {
+    overflow: hidden;
+    border: var(--border-1) solid var(--border-subtle);
+    border-radius: var(--radius-2);
+    background: var(--surface-panel);
+}
+
+.react-aria-Disclosure > .react-aria-Button[slot='trigger'] {
+    inline-size: 100%;
+    justify-content: space-between;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.react-aria-Disclosure[data-expanded] > .react-aria-Button[slot='trigger'] {
+    border-block-end: var(--border-1) solid var(--border-subtle);
+}
+
+.react-aria-DisclosurePanel {
+    padding: var(--space-layout-1);
+}
