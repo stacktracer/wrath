@@ -22,6 +22,9 @@
     - color controls
     - range / meter / progress
     - overlays / drop surfaces / toast
+- The overlay gallery was adjusted after first render testing so the page stays interactive:
+    - always-open popover/menu demos now use non-modal popovers
+    - the modal example is launchable rather than mounted open on load
 - `work/rac-css-structure/exec.md` was kept as the running implementation log.
 
 ## Verification

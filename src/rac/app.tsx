@@ -1417,14 +1417,14 @@ export function App() {
                 <div className="rac-section-grid">
                     <OverlaySandbox
                         title="Popover and dialog"
-                        description="Popover and Dialog are rendered open in-place so their first-pass styles are visible immediately."
+                        description="Popover and Dialog are rendered open in-place and kept non-modal so the gallery remains scrollable and interactive."
                     >
                         {portalContainer => (
                             <>
                                 <div className="rac-overlay-trigger-row">
                                     <DialogTrigger defaultOpen>
                                         <Button data-tone="accent">Preview layout audit</Button>
-                                        <Popover UNSTABLE_portalContainer={portalContainer}>
+                                        <Popover isNonModal UNSTABLE_portalContainer={portalContainer}>
                                             <OverlayArrow>
                                                 <svg aria-hidden="true" viewBox="0 0 12 12">
                                                     <path d="M0 0h12v12H0z" />
@@ -1451,13 +1451,13 @@ export function App() {
 
                     <OverlaySandbox
                         title="Open menu"
-                        description="Menu, MenuSection, and MenuItem are rendered open with a local portal so keyboard hints and selection indicators stay visible."
+                        description="Menu, MenuSection, and MenuItem are rendered open with a local non-modal portal so the page does not lock underneath the demo."
                     >
                         {portalContainer => (
                             <div className="rac-overlay-trigger-row">
                                 <MenuTrigger defaultOpen>
                                     <Button>Open actions</Button>
-                                    <Popover UNSTABLE_portalContainer={portalContainer}>
+                                    <Popover isNonModal UNSTABLE_portalContainer={portalContainer}>
                                         <OverlayArrow>
                                             <svg aria-hidden="true" viewBox="0 0 12 12">
                                                 <path d="M0 0h12v12H0z" />

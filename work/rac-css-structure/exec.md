@@ -23,3 +23,9 @@
 - `SelectionIndicator` cannot be dropped arbitrarily into any selected-looking control. It requires `SharedElementTransition` context, so it works naturally in families like `ListBox`, `Menu`, `Tree`, `Table`, `RadioGroup`, and `TagGroup`, but not in `Checkbox` without additional scaffolding.
 - The color demos are sensitive to color-space alignment. A hue `ColorSlider` needed an explicit `colorSpace="hsb"` so it could speak the same channel vocabulary as the `ColorArea` and `ColorWheel`.
 - React Aria field composition will warn if `defaultValue` is put on `Input` / `TextArea` children instead of the owning field component. The stable pattern is to keep value props on `TextField`, `SearchField`, `NumberField`, `ColorField`, and similar roots.
+
+## Post-Implementation Regression
+
+- The first overlay gallery pass still had an interaction bug: open `Popover` demos looked visually local because of the custom portal container, but RAC still rendered a fixed underlay unless `isNonModal` was set.
+- That underlay explained the browser symptoms immediately: no page scrolling, no text selection, and no interaction with controls outside the overlay examples.
+- The fix was to keep the always-open popover and menu demos `isNonModal`, and to keep the modal example launchable rather than booting open.
