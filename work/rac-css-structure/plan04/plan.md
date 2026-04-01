@@ -18,7 +18,6 @@ The plan:
 5. Pause. Re-read all of `exec.md`. Reflect. Then, with all that in mind, loop back to Step 2. Repeat until you've looped 10 times. After you've looped 10 times, proceed to Step 5.
 6. Re-read all of `exec.md` one last time, then pause and reflect. Digest. Synthesize. Whatever. Boil down your thoughts to a diagnosis, or a small set of diagnoses, and a set of suggestions for straightening out the underlying mindset -- so that next time we try to restructure the CSS, we will get it right, and not end up with complaints like those above. Record your diagnosis (or diagnoses) and your suggestions in `outcome.md`.
 
-
 ## Bonus gripes
 
 Two more things to respond to. Don't read these until after you finish everything above. After you finish everything above, read these while you still have all the context from above fresh in your mind. Record your responses to these at the end of `outcome.md`:

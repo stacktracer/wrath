@@ -32,8 +32,8 @@ The problem is not that every one of those should be a public semantic token. Th
 ### Prior-Art Findings
 
 - [Primer token names](https://primer.style/product/primitives/token-names/) separates `base`, `functional`, and `component/pattern` tokens. Two details matter here:
-  - token names always include the property, which forces authors to name the actual design decision rather than stash a naked number
-  - patterns should be generic when possible, and Primer explicitly gives `control` as the example of a name that should influence several related components
+    - token names always include the property, which forces authors to name the actual design decision rather than stash a naked number
+    - patterns should be generic when possible, and Primer explicitly gives `control` as the example of a name that should influence several related components
 - [Radix Themes styling](https://www.radix-ui.com/themes/docs/overview/styling) keeps the public surface relatively small, but still exposes the same CSS variables that power its own components so custom components can stay aligned. That is a small public surface plus rich internal structure, not small surface plus raw literals everywhere.
 - [Radix Themes theme overview](https://www.radix-ui.com/themes/docs/theme/overview) and [spacing](https://www.radix-ui.com/themes/docs/theme/spacing) make `scaling` an explicit axis. Layout-affecting values scale together rather than being left as unrelated local numbers.
 - [Radix Themes radius](https://www.radix-ui.com/themes/docs/theme/radius) is especially relevant to the `999px` complaint. Radix has a `full` radius setting, a `--radius-full` variable, and a `--radius-thumb` variable. It does not leave "big enough to be fully rounded" as an unnamed nuisance literal.
@@ -115,9 +115,9 @@ Hypothesis revision:
 Implication:
 
 - Repeated mix percentages should be classified into:
-  - theme leaf values when they are theme-specific concrete colors
-  - semantic state/emphasis tokens when they are shared visual roles
-  - family-local tokens when they are local to one anatomy
+    - theme leaf values when they are theme-specific concrete colors
+    - semantic state/emphasis tokens when they are shared visual roles
+    - family-local tokens when they are local to one anatomy
 
 ### Loop 6
 
@@ -138,12 +138,12 @@ Implication:
 Re-read result:
 
 - The component files show several cross-cutting value families beyond spacing:
-  - control heights
-  - emphasis font weights
-  - fully rounded versus control-rounded shapes
-  - thumb and indicator geometry
-  - focus offsets
-  - selected/hover/invalid emphasis strengths
+    - control heights
+    - emphasis font weights
+    - fully rounded versus control-rounded shapes
+    - thumb and indicator geometry
+    - focus offsets
+    - selected/hover/invalid emphasis strengths
 
 Hypothesis revision:
 
@@ -158,9 +158,9 @@ Implication:
 Re-read result:
 
 - Prior art converges on the same layered pattern:
-  - named primitives or scales
-  - a bounded set of shared roles
-  - local component variables where needed
+    - named primitives or scales
+    - a bounded set of shared roles
+    - local component variables where needed
 
 Hypothesis revision:
 
