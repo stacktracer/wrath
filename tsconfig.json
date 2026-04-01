@@ -9,7 +9,7 @@
         "isolatedModules": true,
         "esModuleInterop": true,
         "noEmit": true,
-        "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2021.Intl", "ESNext.Disposable"],
+        "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2021.Intl", "ES2021.WeakRef", "ESNext.Disposable"],
 
         "allowJs": false,
         "alwaysStrict": true,

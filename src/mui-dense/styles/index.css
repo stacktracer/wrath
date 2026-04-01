@@ -1,0 +1,173 @@
+:root {
+    color-scheme: light;
+}
+
+body {
+    margin: 0;
+}
+
+#app {
+    min-height: 100vh;
+}
+
+.mui-dense-shell {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+.mui-dense-toolbar-layout {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.mui-dense-toolbar-links {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.mui-dense-intro {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.mui-dense-toc {
+    padding: 1rem 1.25rem;
+}
+
+.mui-dense-toc-links {
+    display: flex;
+    gap: 0.75rem 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+}
+
+.mui-dense-sections {
+    display: grid;
+    gap: 3rem;
+}
+
+.mui-dense-section {
+    display: grid;
+    gap: 1rem;
+    scroll-margin-top: 5rem;
+}
+
+.mui-dense-section__heading {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.mui-dense-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.mui-dense-demo {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 16px;
+    padding: 1rem;
+    background: rgba(248, 250, 252, 0.9);
+}
+
+.mui-dense-demo--wide {
+    grid-column: 1 / -1;
+}
+
+.mui-dense-demo__header {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.mui-dense-demo__body {
+    min-width: 0;
+}
+
+.mui-dense-data-grid {
+    height: 360px;
+    min-width: 0;
+}
+
+.mui-dense-tree-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.mui-dense-tree-panel {
+    min-width: 0;
+}
+
+.mui-dense-speed-dial-shell {
+    position: relative;
+    min-height: 200px;
+    overflow: hidden;
+}
+
+.mui-dense-portal-target {
+    min-height: 84px;
+    border: 1px dashed rgba(15, 23, 42, 0.2);
+    border-radius: 12px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.mui-dense-overlay-content {
+    padding: 1rem;
+    max-width: 280px;
+}
+
+.mui-dense-modal-surface {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(420px, calc(100vw - 2rem));
+    padding: 1.5rem;
+    outline: none;
+}
+
+.mui-dense-drawer-panel {
+    width: min(320px, 85vw);
+    padding: 1rem;
+}
+
+.mui-dense-transition-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+    align-items: start;
+}
+
+.mui-dense-transition-cell {
+    min-height: 92px;
+}
+
+.mui-dense-transition-cell > * {
+    width: 100%;
+}
+
+.mui-dense-trap-surface {
+    padding: 1rem;
+}
+
+@media (max-width: 720px) {
+    .mui-dense-shell {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+
+    .mui-dense-demo {
+        padding: 0.85rem;
+    }
+}

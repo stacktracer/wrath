@@ -14,6 +14,14 @@ The ultimate goal, which is well beyond the scope of this plan, will be to use M
 
 For now, simply make the hodgepodge page(s) so I can look at it by running `vite dev`. Don't adjust component styles. Don't provide controls for dynamic style adjustment. Make sure the hodgepodge page(s) successfully build and render; for now don't write automated tests that are more specific than that.
 
+## Amendment: MUI X Tree View
+
+Extend the hodgepodge scope to include MUI X Tree View. Include both a non-Pro Tree, and a Pro Tree using the existing MUI X license-key mechanism.
+
+Add representative Tree View samples to the hodgepodge page. If feasible, show both flavors exposed by the Tree View package: a simple hard-coded tree and a richer item-driven tree. If showing both is not feasible, include at least one representative tree sample.
+
+Keep the Tree View samples under the same constraints as the rest of this plan: enough CSS to place them in the page layout, but no custom styling of the Tree View components themselves beyond their default MUI appearance.
+
 ## Background
 
 MUI has a great set of components, and attractive styling. Its ample padding and spacing, and its large default fonts, are appropriate for touch interfaces.
