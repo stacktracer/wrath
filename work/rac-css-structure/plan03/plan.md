@@ -19,56 +19,56 @@ The current CSS appears to have drifted from parts of that intent. This plan sta
 ## Potential Issues To Validate
 
 1. The semantic layer is thinner than intended, and its boundary with density is unclear.
-   - `semantic.css` currently defines only a small set of focus, control, and layout tokens.
-   - `density.css` repeats the comfortable defaults and overrides the same token names.
-   - It is not yet clear whether this is a good separation of concerns, or whether it creates duplication and confusion about where the "real" defaults live.
+    - `semantic.css` currently defines only a small set of focus, control, and layout tokens.
+    - `density.css` repeats the comfortable defaults and overrides the same token names.
+    - It is not yet clear whether this is a good separation of concerns, or whether it creates duplication and confusion about where the "real" defaults live.
 
 2. `themes.css` mixes alias-backed values with raw literals in a way that may weaken the alias -> semantic -> component-local story.
-   - Some theme values are derived from alias tokens.
-   - Others are raw hex, `rgba()`, or shadow literals.
-   - This may be fine for some values, but the rule is unclear, which makes later theme customization harder to do consistently.
+    - Some theme values are derived from alias tokens.
+    - Others are raw hex, `rgba()`, or shadow literals.
+    - This may be fine for some values, but the rule is unclear, which makes later theme customization harder to do consistently.
 
 3. The component-local token layer is much weaker than planned.
-   - `plan02` expected family files to map semantic tokens into local `--_...` tokens where family-specific tuning was needed.
-   - In the current CSS, private tokens exist only in a few places.
-   - Many family files style directly from semantic tokens, alias tokens, or literals, leaving little structured room for safe local tuning.
+    - `plan02` expected family files to map semantic tokens into local `--_...` tokens where family-specific tuning was needed.
+    - In the current CSS, private tokens exist only in a few places.
+    - Many family files style directly from semantic tokens, alias tokens, or literals, leaving little structured room for safe local tuning.
 
 4. Component files frequently bypass the intended token layers with raw `px`, `rem`, font-weight, radius, and color values.
-   - Some of these may be harmless implementation details.
-   - Some may be missing aliases, missing semantic tokens, or missing family-local tokens.
-   - Right now the distinction is not explicit, which makes the customization story hard to trust.
+    - Some of these may be harmless implementation details.
+    - Some may be missing aliases, missing semantic tokens, or missing family-local tokens.
+    - Right now the distinction is not explicit, which makes the customization story hard to trust.
 
 5. Shared state styling may be coherent visually today, but it is not modeled coherently in the CSS architecture.
-   - Hover, selected, pressed, disabled, focus, invalid, error, and danger treatments are often expressed with one-off `color-mix()` formulas, offsets, and radius adjustments inside each family file.
-   - That may make future tuning fragile, because changing interaction contrast or emphasis may require touching many files independently.
-   - Compound state precedence may also be unclear, especially where RAC stacks several state hooks on the same element.
+    - Hover, selected, pressed, disabled, focus, invalid, error, and danger treatments are often expressed with one-off `color-mix()` formulas, offsets, and radius adjustments inside each family file.
+    - That may make future tuning fragile, because changing interaction contrast or emphasis may require touching many files independently.
+    - Compound state precedence may also be unclear, especially where RAC stacks several state hooks on the same element.
 
-9. Motion may be an unreviewed shared axis.
-   - The current CSS already uses shared duration and easing tokens alongside family-local transitions and overlay animations.
-   - It is not yet clear whether motion belongs in this review as a supported cross-family tuning surface, should be fenced as local implementation detail, or should be explicitly deferred.
+6. Motion may be an unreviewed shared axis.
+    - The current CSS already uses shared duration and easing tokens alongside family-local transitions and overlay animations.
+    - It is not yet clear whether motion belongs in this review as a supported cross-family tuning surface, should be fenced as local implementation detail, or should be explicitly deferred.
 
-6. `document.css` has unclear ownership, unclear scope, and probably the wrong name.
-   - The file currently contains:
-     - minimal document-level rules
-     - app-shell layout
-     - gallery card styling
-     - helper layout classes
-     - demo-only scaffolding
-     - some visuals that look closer to component demo helpers than document styles
-   - That makes it hard to tell what is host-page baseline, what is gallery-specific, and what is meant to be reusable.
-   - It is also unclear whether host-level element selectors should be allowed at all, or whether they should be fenced tightly to the experiment shell.
+7. `document.css` has unclear ownership, unclear scope, and probably the wrong name.
+    - The file currently contains:
+        - minimal document-level rules
+        - app-shell layout
+        - gallery card styling
+        - helper layout classes
+        - demo-only scaffolding
+        - some visuals that look closer to component demo helpers than document styles
+    - That makes it hard to tell what is host-page baseline, what is gallery-specific, and what is meant to be reusable.
+    - It is also unclear whether host-level element selectors should be allowed at all, or whether they should be fenced tightly to the experiment shell.
 
-7. The current structure may be missing a clear rule for which values should stay literal on purpose.
-   - Some literals may be the right choice because they are intrinsic to a specific anatomy or CSS trick.
-   - Others may be accidental leaks from implementation expedience.
-   - Without a rule, future authors are likely to make inconsistent choices.
+8. The current structure may be missing a clear rule for which values should stay literal on purpose.
+    - Some literals may be the right choice because they are intrinsic to a specific anatomy or CSS trick.
+    - Others may be accidental leaks from implementation expedience.
+    - Without a rule, future authors are likely to make inconsistent choices.
 
-8. The selector and markup contract may be driftier than the plan currently acknowledges.
-   - `plan02` wanted the primary styling surface to stay centered on RAC roots and RAC state hooks.
-   - The current implementation relies on `.react-aria-*` root selectors, RAC state hooks, project-local helper classes, anatomy selectors, custom attributes, and some authored child DOM or render scaffolding.
-   - Some of those may be good and necessary.
-   - Others may be accidental public surface area that makes customization harder to understand and maintain.
-   - The current CSS also mixes browser pseudo-classes with RAC-emitted state hooks, and the intended rule for when each is acceptable is not yet explicit.
+9. The selector and markup contract may be driftier than the plan currently acknowledges.
+    - `plan02` wanted the primary styling surface to stay centered on RAC roots and RAC state hooks.
+    - The current implementation relies on `.react-aria-*` root selectors, RAC state hooks, project-local helper classes, anatomy selectors, custom attributes, and some authored child DOM or render scaffolding.
+    - Some of those may be good and necessary.
+    - Others may be accidental public surface area that makes customization harder to understand and maintain.
+    - The current CSS also mixes browser pseudo-classes with RAC-emitted state hooks, and the intended rule for when each is acceptable is not yet explicit.
 
 ## Decision Criteria
 
@@ -126,8 +126,8 @@ At minimum, test proposals against these tasks:
 2. Tune one component family locally without changing unrelated families, using a documented public family-level override only if `conclusions.md` explicitly decides that such a public surface is needed.
 3. Apply a subtree theme or density override to one contained gallery region.
 4. Verify whether overlays keep or lose theme and density behavior across real portal boundaries under at least two consumer setups:
-   - document-scoped carriers such as `html`, `body`, or `#app`
-   - nested app or subtree-scoped carriers
+    - document-scoped carriers such as `html`, `body`, or `#app`
+    - nested app or subtree-scoped carriers
 5. Override an approved custom selector or helper convention from outside the owning stylesheet without raising selector weight.
 6. Leave one intentionally literal value alone and explain why it should not become a token.
 7. Introduce or classify one new family-local value or state treatment without growing the public surface unnecessarily.
@@ -225,22 +225,22 @@ Also include a lightweight quantitative baseline:
 - where those patterns cluster
 - where the currently exposed tokens, helper classes, and custom attributes are actually used in the repo
 - a cascade and specificity baseline, including:
-  - representative selector weight
-  - import-order dependencies
-  - cases where overrides depend on descendant structure or unusually specific selectors
+    - representative selector weight
+    - import-order dependencies
+    - cases where overrides depend on descendant structure or unusually specific selectors
 - a small mandatory pre-change default-appearance baseline for representative default states, captured as screenshots or computed-style assertions for a sentinel set of components
 - include in that sentinel set the awkward contracts already surfaced in `plan02/exec.md`, including:
-  - provider-only `ColorPicker`
-  - `DropIndicator` scaffolding
-  - `SelectionIndicator` context limits
-  - the non-modal and default-portal overlay path
+    - provider-only `ColorPicker`
+    - `DropIndicator` scaffolding
+    - `SelectionIndicator` context limits
+    - the non-modal and default-portal overlay path
 - benchmark-task results captured through the standard override harness, using a fixed result template:
-  - works / works with caveats / fails
-  - files touched
-  - markup changes required
-  - selector-weight increase required
-  - whether the path depends on a private token
-  - the concrete success observable for the task, such as a target element and computed-style assertion
+    - works / works with caveats / fails
+    - files touched
+    - markup changes required
+    - selector-weight increase required
+    - whether the path depends on a private token
+    - the concrete success observable for the task, such as a target element and computed-style assertion
 
 Also include a shared decision matrix for disputed values and patterns. For each item, record the current location plus the leading candidates for where it belongs:
 
@@ -295,18 +295,18 @@ Each subagent should:
 - use evidence that matches the installed `react-aria-components` version in this repo, not a newer or older release
 - treat the Step 1 dependency ledger as the shared source of truth for repo-wide RAC selector, state-hook, CSS-custom-property, and unstable-API classification, extending it only when issue-specific dependencies were not already recorded there
 - label each such dependency by stability:
-  - documented RAC contract
-  - documented but explicitly unstable RAC API
-  - source-observed RAC behavior
-  - repo-local convention
+    - documented RAC contract
+    - documented but explicitly unstable RAC API
+    - source-observed RAC behavior
+    - repo-local convention
 - label each such dependency by support level as well:
-  - supported external override surface
-  - internal implementation dependency
+    - supported external override surface
+    - internal implementation dependency
 - for every retained external RAC dependency, record:
-  - a citation to the installed package source or other version-matched evidence for the repo’s pinned `react-aria-components` version
+    - a citation to the installed package source or other version-matched evidence for the repo’s pinned `react-aria-components` version
 - for any dependency labeled `documented but explicitly unstable RAC API` or `source-observed RAC behavior`, record:
-  - the exact `react-aria-components` version in use
-  - the likely upgrade risk
+    - the exact `react-aria-components` version in use
+    - the likely upgrade risk
 - do not recommend increasing reliance on `documented but explicitly unstable RAC API` or `source-observed RAC behavior` unless there is no sufficiently stable documented alternative and the payoff is explicitly justified
 - decide whether the issue is real, overstated, or not a problem
 - if it is real, propose specific improvements
@@ -316,10 +316,10 @@ Each subagent should:
 - when making claims about overrideability, selector weight, portal behavior, or benchmark outcomes, use the shared harness directly or cite the Step 1 baseline artifact
 - use the fixed benchmark result template from Step 1 so findings are directly comparable
 - distinguish clearly between:
-  - values that should become alias tokens
-  - values that should become semantic tokens
-  - values that should become component-local `--_...` tokens
-  - values that should stay literal
+    - values that should become alias tokens
+    - values that should become semantic tokens
+    - values that should become component-local `--_...` tokens
+    - values that should stay literal
 - stop after writing its findings file
 
 Each findings file should answer:
@@ -361,9 +361,9 @@ Read all findings files, compare them against the actual CSS, and write `work/ra
 - accepted issues
 - rejected or downgraded issues
 - per-issue disposition, such as:
-  - fix now
-  - document only
-  - defer
+    - fix now
+    - document only
+    - defer
 - the decision for each accepted issue
 - the reasoning behind each decision
 - the preferred fix direction
@@ -373,71 +373,71 @@ Read all findings files, compare them against the actual CSS, and write `work/ra
 - any naming changes, including whether `document.css` should be renamed or split
 - a clear statement that the review does not solve customization pain by moving styling out of `src/rac/`, introducing wrapper components, adding a utility layer, or broadening resets unless Step 1 showed the direct-RAC/plain-CSS approach cannot satisfy the benchmark tasks
 - a selector and markup contract summary that classifies non-RAC selectors and attributes as:
-  - RAC-emitted CSS custom properties or other style-surface contracts, labeled as documented contract, documented but explicitly unstable RAC API, or source-observed behavior
-  - RAC root selectors and state hooks, labeled as documented contract, documented but explicitly unstable RAC API, or source-observed behavior
-  - authored child DOM and render scaffolding, labeled as intended supported structure, gallery-only structure, or accidental contract
-  - intended public convention
-  - family-local anatomy helper
-  - gallery or host helper
-  - accidental contract
+    - RAC-emitted CSS custom properties or other style-surface contracts, labeled as documented contract, documented but explicitly unstable RAC API, or source-observed behavior
+    - RAC root selectors and state hooks, labeled as documented contract, documented but explicitly unstable RAC API, or source-observed behavior
+    - authored child DOM and render scaffolding, labeled as intended supported structure, gallery-only structure, or accidental contract
+    - intended public convention
+    - family-local anatomy helper
+    - gallery or host helper
+    - accidental contract
 - a normalized contract table for findings and conclusions, using consistent columns such as:
-  - artifact
-  - source
-  - stability
-  - support level
-  - scope or owner
-  - public override status
+    - artifact
+    - source
+    - stability
+    - support level
+    - scope or owner
+    - public override status
 - a benchmark-task summary using the fixed result template, so before/after comparisons are concrete rather than impressionistic
 - an explicit overlay contract decision for theme and density behavior across portal boundaries:
-  - survives default portals
-  - survives only custom portal containers
-  - does not survive portals
-  - and the supported consumer setup for each case
+    - survives default portals
+    - survives only custom portal containers
+    - does not survive portals
+    - and the supported consumer setup for each case
 - an explicit decision about whether default-portaled overlays retain base component styling under the accepted scope contract
 - an explicit baseline theme and density carrier decision for non-gallery consumers:
-  - `:root`
-  - required app wrapper
-  - explicit `data-*` attributes
+    - `:root`
+    - required app wrapper
+    - explicit `data-*` attributes
 - an explicit non-gallery import-contract decision:
-  - what a real consumer should import for RAC component styles
-  - what remains gallery or host-shell only
-  - who owns vendored font loading and other resource-backed typography prerequisites
-  - proof that the chosen component-style entrypoint does not leak host-shell or page styling
-  - whether any durable split comes from one source-of-truth manifest and avoids material CSS duplication; otherwise it should remain test-local only
+    - what a real consumer should import for RAC component styles
+    - what remains gallery or host-shell only
+    - who owns vendored font loading and other resource-backed typography prerequisites
+    - proof that the chosen component-style entrypoint does not leak host-shell or page styling
+    - whether any durable split comes from one source-of-truth manifest and avoids material CSS duplication; otherwise it should remain test-local only
 - an explicit style-scope decision:
-  - document-global when imported
-  - fenced behind a stable opt-in root or scope
+    - document-global when imported
+    - fenced behind a stable opt-in root or scope
 - an explicit cascade contract decision, including:
-  - whether consumer overrides are defined by post-import source order
-  - whether internal files are allowed to depend on import order
-  - whether `@layer` is intentionally out of scope
+    - whether consumer overrides are defined by post-import source order
+    - whether internal files are allowed to depend on import order
+    - whether `@layer` is intentionally out of scope
 - an explicit host-layer selector decision:
-  - whether global element selectors are allowed at all
-  - if allowed, where they must be fenced
+    - whether global element selectors are allowed at all
+    - if allowed, where they must be fenced
 - an explicit state-selector decision for browser pseudo-classes versus RAC-emitted state hooks
 - an explicit decision about whether any family-level public override surface is needed beyond semantic tokens, and if so what that surface is
 - for any approved public override path that affects a portaled component, an explicit statement of whether it survives default portals and what consumer setup is supported
 - an upgrade-risk summary for any dependency that remains justified only by documented but explicitly unstable RAC API or source-observed RAC behavior
 - for each retained dependency that remains justified only by documented but explicitly unstable RAC API or source-observed RAC behavior, an explicit disposition:
-  - replace with a documented hook
-  - fence behind a repo-local convention
-  - accept the risk, with justification
+    - replace with a documented hook
+    - fence behind a repo-local convention
+    - accept the risk, with justification
 - for each unstable family that is already styled as a family, an explicit family-level disposition:
-  - keep in durable guidance
-  - fence as experimental-only
-  - remove from the supported override contract
+    - keep in durable guidance
+    - fence as experimental-only
+    - remove from the supported override contract
 - a rule that documented but explicitly unstable RAC API or source-observed RAC behavior may justify local fencing or targeted tests, but cannot by itself justify new semantic tokens, selector conventions, or family-level public override surfaces
 - for any removed, renamed, or materially redefined public-facing knob, selector, attribute, file role, or override path, an explicit migration decision:
-  - keep compatibility
-  - stage a migration
-  - break immediately, with justification
+    - keep compatibility
+    - stage a migration
+    - break immediately, with justification
 - the net public-surface delta:
-  - semantic token count before and after
-  - whether the result stays in the target `24-32` range or, if not, why the lower or higher count is justified
-  - any new or removed public knobs
-  - any new or removed public selectors or conventions
-  - any file or filename changes authors would need to learn
-  - whether any review infrastructure created during Step 1 becomes a durable asset or is dropped because the outcome is `document only`
+    - semantic token count before and after
+    - whether the result stays in the target `24-32` range or, if not, why the lower or higher count is justified
+    - any new or removed public knobs
+    - any new or removed public selectors or conventions
+    - any file or filename changes authors would need to learn
+    - whether any review infrastructure created during Step 1 becomes a durable asset or is dropped because the outcome is `document only`
 
 This is the step where we answer questions like:
 
@@ -488,24 +488,24 @@ Implementation should verify that:
 - if any shared layer changed, including `alias.css`, `semantic.css`, `themes.css`, `density.css`, or shared selector conventions, a full-gallery smoke pass has been run across all visual-surface families
 - overlay theme and density behavior has been checked both inside gallery-local portal containers and across the real default portal boundary
 - a gallery verification matrix has been run for every affected component family, covering at least:
-  - comfortable and compact density where relevant
-  - light and dark theme where relevant
-  - key interaction states touched by the refactor
-  - compound state precedence where the same element can carry multiple states
-  - representative helpers or gallery-only classes when `document.css` or host-shell files changed
+    - comfortable and compact density where relevant
+    - light and dark theme where relevant
+    - key interaction states touched by the refactor
+    - compound state precedence where the same element can carry multiple states
+    - representative helpers or gallery-only classes when `document.css` or host-shell files changed
 - for any shared theme or state refactor, accessibility checks have been run for:
-  - focus visibility
-  - contrast and legibility for selected, disabled, and danger states
-  - light and dark parity for those checks
+    - focus visibility
+    - contrast and legibility for selected, disabled, and danger states
+    - light and dark parity for those checks
 - if motion remains in scope after Step 3, motion checks have been run for:
-  - cross-family duration and easing coherence where changes landed
-  - reduced-motion behavior where transitions or animations are part of the supported contract
+    - cross-family duration and easing coherence where changes landed
+    - reduced-motion behavior where transitions or animations are part of the supported contract
 - when density or shared control-sizing rules change, target-size and focus-geometry checks have been run, especially for compact mode
 - an override verification matrix has been run, covering at least:
-  - one global semantic retune
-  - one documented family-level public override, if `conclusions.md` explicitly approved such a surface
-  - one subtree theme or density override
-  - one example that is intentionally left literal, to confirm that the boundary still makes sense
+    - one global semantic retune
+    - one documented family-level public override, if `conclusions.md` explicitly approved such a surface
+    - one subtree theme or density override
+    - one example that is intentionally left literal, to confirm that the boundary still makes sense
 - each accepted override path has been exercised from outside the owning stylesheet without increasing selector weight, so the plan proves the surface is practically overrideable and not just theoretically present
 - if the accepted fixes establish or preserve a supported override surface, add at least one durable automated regression check that proves a representative global semantic override and a representative documented family-level override still work when such a family-level public override exists
 - if the conclusions accept a specific overlay portal contract, add at least one durable automated regression check for that accepted contract

@@ -40,12 +40,11 @@ npm run build
 
 - Built assets use a relative base path in [`vite.config.ts`](./vite.config.ts), so the app can be served from an arbitrary path prefix.
 - The current RAC experiment lives under [`src/rac/`](./src/rac/) and now renders a component gallery rather than a two-widget comparison.
-- RAC styles are organized locally under [`src/rac/styles/`](./src/rac/styles/) using:
-    - alias tokens
-    - semantic tokens
-    - selector-scoped themes
-    - density overrides
-    - component-family stylesheets
+- RAC styles are organized locally under [`src/rac/styles/`](./src/rac/styles/).
+- Use [`src/rac/styles/components.css`](./src/rac/styles/components.css) for component styles without gallery or host-shell scaffolding.
+- Use [`src/rac/styles/index.css`](./src/rac/styles/index.css) only for the full RAC gallery page; it imports the component bundle plus the gallery shell in [`src/rac/styles/gallery.css`](./src/rac/styles/gallery.css).
+- Light theme and comfortable density are the root defaults.
+- Subtree overrides use `data-theme` and `data-density="compact"`.
 - The experiment index page is [`src/index.html`](./src/index.html), which links to the current experiment host pages.
 
 ## License
