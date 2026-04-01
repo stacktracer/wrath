@@ -30,5 +30,6 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Other
+# Agents
+.codex
 .claude/scheduled_tasks.lock
