@@ -2,13 +2,17 @@
     --_button-bg: var(--control-bg);
     --_button-border: var(--control-border);
     --_button-color: var(--control-fg);
+    /* Press travel is a button-family motion detail until a wider motion surface is justified. */
+    --_button-press-transform: translateY(1px);
+    /* Accent button border contrast is local to button chrome until another family needs this exact treatment. */
+    --_button-accent-border: color-mix(in srgb, var(--accent-bg) 72%, black);
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--control-gap);
     min-inline-size: max-content;
-    min-block-size: 2.5rem;
+    min-block-size: var(--control-min-block-size);
     padding-block: var(--control-padding-block);
     padding-inline: var(--control-padding-inline);
     border: var(--border-1) solid var(--_button-border);
@@ -16,7 +20,7 @@
     background: var(--_button-bg);
     color: var(--_button-color);
     font: inherit;
-    font-weight: 600;
+    font-weight: var(--font-weight-emphasis);
     cursor: pointer;
     transition:
         background-color var(--duration-fast) var(--ease-standard),
@@ -33,7 +37,7 @@
 
 :is(.react-aria-Button, .react-aria-ToggleButton)[data-pressed] {
     background: var(--control-bg-pressed);
-    transform: translateY(1px);
+    transform: var(--_button-press-transform);
 }
 
 :is(.react-aria-Button, .react-aria-ToggleButton)[data-focus-visible] {
@@ -49,7 +53,7 @@
 
 :is(.react-aria-Button, .react-aria-ToggleButton)[data-tone='accent'] {
     --_button-bg: var(--accent-bg);
-    --_button-border: color-mix(in srgb, var(--accent-bg) 72%, black);
+    --_button-border: var(--_button-accent-border);
     --_button-color: var(--accent-fg);
 }
 
@@ -60,8 +64,8 @@
 }
 
 .react-aria-ToggleButton[data-selected] {
-    --_button-bg: color-mix(in srgb, var(--accent-bg) 16%, var(--control-bg));
-    --_button-border: color-mix(in srgb, var(--accent-bg) 42%, var(--control-border));
+    --_button-bg: var(--state-bg-selected-control);
+    --_button-border: var(--state-border-selected-control);
 }
 
 .react-aria-ToggleButtonGroup {

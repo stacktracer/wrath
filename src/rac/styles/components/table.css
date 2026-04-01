@@ -12,7 +12,10 @@
 }
 
 .react-aria-TableHeader {
-    background: color-mix(in srgb, var(--surface-raised) 86%, transparent);
+    /* Table header wash is local to dense column headers rather than a general raised surface token. */
+    --_table-header-bg: color-mix(in srgb, var(--surface-raised) 86%, transparent);
+
+    background: var(--_table-header-bg);
 }
 
 .react-aria-Column {
@@ -26,19 +29,19 @@
 }
 
 .react-aria-Column[data-hovered] {
-    background: color-mix(in srgb, var(--surface-page) 34%, transparent);
+    background: var(--surface-fill-hover);
 }
 
 .react-aria-Column[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: -2px;
+    outline-offset: var(--focus-ring-offset-inset-strong);
 }
 
 .react-aria-ColumnResizer {
     position: absolute;
     inset-block: var(--space-2);
     inset-inline-end: 0;
-    inline-size: 0.75rem;
+    inline-size: var(--size-0);
     cursor: col-resize;
 }
 
@@ -47,13 +50,13 @@
     position: absolute;
     inset-block: 0;
     inset-inline-start: 50%;
-    inline-size: 1px;
+    inline-size: var(--border-1);
     background: var(--border-strong);
 }
 
 .react-aria-ColumnResizer[data-resizing]::before,
 .react-aria-ColumnResizer[data-hovered]::before {
-    inline-size: 2px;
+    inline-size: var(--border-2);
     background: var(--accent-bg);
 }
 
@@ -62,16 +65,16 @@
 }
 
 .react-aria-Row[data-hovered] {
-    background: color-mix(in srgb, var(--surface-page) 32%, transparent);
+    background: var(--surface-fill-hover);
 }
 
 .react-aria-Row[data-selected] {
-    background: color-mix(in srgb, var(--accent-bg) 10%, transparent);
+    background: var(--state-bg-selected-soft);
 }
 
 .react-aria-Row[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: -2px;
+    outline-offset: var(--focus-ring-offset-inset-strong);
 }
 
 .react-aria-Cell {

@@ -20,7 +20,12 @@
 }
 
 .react-aria-TextArea {
-    min-block-size: 8rem;
+    /* Textarea baseline height is local to multiline editing and should not resize other controls. */
+    --_textarea-min-block-size: 8rem;
+    /* Stronger invalid border emphasis is specific to text inputs and does not yet justify a shared token. */
+    --_field-border-invalid: color-mix(in srgb, var(--danger-border) 75%, var(--control-border));
+
+    min-block-size: var(--_textarea-min-block-size);
     resize: vertical;
 }
 
@@ -43,7 +48,8 @@
 :is(.react-aria-SearchField, .react-aria-NumberField) .react-aria-Input {
     border: 0;
     background: transparent;
-    padding: calc(var(--control-padding-block) - 1px) calc(var(--control-padding-inline) - 1px);
+    padding: calc(var(--control-padding-block) - var(--border-1))
+        calc(var(--control-padding-inline) - var(--border-1));
 }
 
 :is(.react-aria-SearchField, .react-aria-NumberField) .react-aria-Input:focus {
@@ -52,7 +58,7 @@
 
 :is(.react-aria-TextField, .react-aria-SearchField, .react-aria-NumberField)[data-invalid]
     :is(.react-aria-Input, .react-aria-TextArea, .react-aria-Group) {
-    border-color: color-mix(in srgb, var(--danger-border) 75%, var(--control-border));
+    border-color: var(--_field-border-invalid);
 }
 
 :is(.react-aria-TextField, .react-aria-SearchField, .react-aria-NumberField)[data-disabled]

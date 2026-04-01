@@ -1,7 +1,14 @@
 .react-aria-Menu {
+    /* Menu min width is local to overlay menu readability, not a shared control width token. */
+    --_menu-min-inline-size: min(22rem, 100%);
+    /* Menu hover wash is specific to overlay menu rows. */
+    --_menu-item-hover-bg: color-mix(in srgb, var(--surface-page) 36%, var(--surface-overlay));
+    /* Selected menu fill is local to overlay menu surfaces. */
+    --_menu-item-bg-selected: color-mix(in srgb, var(--accent-bg) 15%, var(--surface-overlay));
+
     display: grid;
     gap: var(--space-1);
-    min-inline-size: min(22rem, 100%);
+    min-inline-size: var(--_menu-min-inline-size);
     padding: var(--space-2);
     border: var(--border-1) solid var(--border-subtle);
     border-radius: var(--radius-2);
@@ -19,22 +26,22 @@
     gap: var(--space-3);
     min-width: 0;
     padding: var(--space-2) var(--space-3);
-    border-radius: calc(var(--control-radius) + 2px);
+    border-radius: calc(var(--control-radius) + var(--border-2));
     cursor: pointer;
     transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
 .react-aria-MenuItem[data-hovered] {
-    background: color-mix(in srgb, var(--surface-page) 36%, var(--surface-overlay));
+    background: var(--_menu-item-hover-bg);
 }
 
 .react-aria-MenuItem[data-selected] {
-    background: color-mix(in srgb, var(--accent-bg) 15%, var(--surface-overlay));
+    background: var(--_menu-item-bg-selected);
 }
 
 .react-aria-MenuItem[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: -1px;
+    outline-offset: var(--focus-ring-offset-inset);
 }
 
 .react-aria-MenuItem[data-disabled] {

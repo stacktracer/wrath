@@ -82,11 +82,11 @@ Each family does not need the same answer. The important part is that each one g
 Produce these artifacts during execution:
 
 - `work/rac-css-structure/plan05/classification.md`
-  - the candidate value-family inventory and final bucket decisions
+    - the candidate value-family inventory and final bucket decisions
 - `work/rac-css-structure/plan05/exec.md`
-  - implementation log and checkpoint notes
+    - implementation log and checkpoint notes
 - `work/rac-css-structure/plan05/outcome.md`
-  - summary of actual code moves, final diagnoses, and any deferred follow-ups
+    - summary of actual code moves, final diagnoses, and any deferred follow-ups
 
 ## Step 1: Build The Classification Inventory Before Editing
 
@@ -98,10 +98,10 @@ For each candidate family, record:
 - current files
 - what design decision the values are expressing
 - whether the best home is:
-  - alias
-  - semantic
-  - family-local `--_...`
-  - literal
+    - alias
+    - semantic
+    - family-local `--_...`
+    - literal
 - if the answer is literal, why naming it would make the system worse rather than better
 
 Do not allow "seems fine as a literal" without a concrete reason.

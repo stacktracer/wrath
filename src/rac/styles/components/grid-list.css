@@ -12,7 +12,9 @@
     color: var(--text-muted);
     font-family: var(--font-data);
     font-size: var(--font-size-1);
-    letter-spacing: 0.06em;
+    /* This tracking is specific to compact uppercase section headers. */
+    --_grid-list-header-letter-spacing: 0.06em;
+    letter-spacing: var(--_grid-list-header-letter-spacing);
     text-transform: uppercase;
 }
 
@@ -22,10 +24,17 @@
 }
 
 .react-aria-GridListItem {
+    /* Grid-list cards use a family-local raised panel wash. */
+    --_grid-list-item-bg: color-mix(in srgb, var(--surface-raised) 88%, transparent);
+    /* Selected grid-list border contrast is local to these card-like rows. */
+    --_grid-list-item-border-selected: color-mix(in srgb, var(--accent-bg) 40%, transparent);
+    /* Selected grid-list fill is tuned to raised cards and stays local to this family. */
+    --_grid-list-item-bg-selected: color-mix(in srgb, var(--accent-bg) 12%, var(--surface-raised));
+
     padding: var(--space-3);
     border: var(--border-1) solid transparent;
     border-radius: var(--radius-2);
-    background: color-mix(in srgb, var(--surface-raised) 88%, transparent);
+    background: var(--_grid-list-item-bg);
 }
 
 .react-aria-GridListItem[data-hovered] {
@@ -33,13 +42,13 @@
 }
 
 .react-aria-GridListItem[data-selected] {
-    border-color: color-mix(in srgb, var(--accent-bg) 40%, transparent);
-    background: color-mix(in srgb, var(--accent-bg) 12%, var(--surface-raised));
+    border-color: var(--_grid-list-item-border-selected);
+    background: var(--_grid-list-item-bg-selected);
 }
 
 .react-aria-GridListItem[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: -1px;
+    outline-offset: var(--focus-ring-offset-inset);
 }
 
 .react-aria-GridListLoadMoreItem {

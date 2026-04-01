@@ -10,7 +10,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-1);
-    min-height: 2.75rem;
+    min-height: var(--field-min-block-size);
     padding: var(--space-1);
     border: var(--border-1) solid var(--control-border);
     border-radius: var(--control-radius);
@@ -24,11 +24,14 @@
         .react-aria-DateRangePicker
     )[data-invalid]
     :is(.react-aria-DateInput, .react-aria-Group) {
-    border-color: color-mix(in srgb, var(--danger-border) 72%, var(--control-border));
+    border-color: var(--state-border-invalid);
 }
 
 .react-aria-DateSegment {
-    padding: 0.3rem 0.45rem;
+    /* Segment padding is tuned to tabular date text and stays local to this family. */
+    --_date-segment-padding: 0.3rem 0.45rem;
+
+    padding: var(--_date-segment-padding);
     border-radius: var(--radius-1);
     color: var(--text-primary);
     font-family: var(--font-data);
@@ -41,10 +44,21 @@
 
 .react-aria-DateSegment[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 1px;
+    outline-offset: var(--focus-ring-offset-tight);
 }
 
 :is(.react-aria-Calendar, .react-aria-RangeCalendar) {
+    /* Calendar cell size is local to date picking and does not define the global control size model. */
+    --_calendar-cell-size: 2.3rem;
+    /* Calendar grid spacing is tuned to day-cell readability within this family. */
+    --_calendar-grid-gap: 0.25rem;
+    /* Selected range ring is specific to calendar geometry. */
+    --_calendar-selection-ring: inset 0 0 0 var(--border-2)
+        color-mix(in srgb, var(--accent-bg) 52%, transparent);
+    /* Today's ring is local to calendar cells and not reused by other families. */
+    --_calendar-current-ring: inset 0 0 0 var(--border-1)
+        color-mix(in srgb, var(--accent-bg) 55%, transparent);
+
     display: grid;
     gap: var(--space-layout-1);
     padding: var(--space-layout-1);
@@ -56,29 +70,31 @@
 .react-aria-CalendarGrid {
     inline-size: 100%;
     border-collapse: separate;
-    border-spacing: 0.25rem;
+    border-spacing: var(--_calendar-grid-gap);
 }
 
 .react-aria-CalendarGridHeader {
     color: var(--text-muted);
     font-family: var(--font-data);
     font-size: var(--font-size-0);
-    letter-spacing: 0.04em;
+    /* Calendar header tracking is specific to these abbreviated weekday labels. */
+    --_calendar-header-letter-spacing: 0.04em;
+    letter-spacing: var(--_calendar-header-letter-spacing);
     text-transform: uppercase;
 }
 
 .react-aria-CalendarHeaderCell {
     padding-block-end: var(--space-1);
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
     text-align: center;
 }
 
 .react-aria-CalendarCell {
     display: grid;
     place-items: center;
-    inline-size: 2.3rem;
-    block-size: 2.3rem;
-    border-radius: 999px;
+    inline-size: var(--_calendar-cell-size);
+    block-size: var(--_calendar-cell-size);
+    border-radius: var(--shape-full-radius);
     color: var(--text-primary);
 }
 
@@ -88,7 +104,7 @@
 }
 
 .react-aria-CalendarCell[data-hovered] {
-    background: color-mix(in srgb, var(--surface-page) 40%, transparent);
+    background: var(--surface-fill-hover);
 }
 
 .react-aria-CalendarCell[data-selected] {
@@ -98,11 +114,11 @@
 
 .react-aria-CalendarCell[data-selection-start],
 .react-aria-CalendarCell[data-selection-end] {
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent-bg) 52%, transparent);
+    box-shadow: var(--_calendar-selection-ring);
 }
 
 .react-aria-CalendarCell[data-today]:not([data-selected]) {
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-bg) 55%, transparent);
+    box-shadow: var(--_calendar-current-ring);
 }
 
 .react-aria-CalendarCell[data-unavailable] {
@@ -111,5 +127,5 @@
 
 .react-aria-CalendarCell[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline-offset: var(--focus-ring-offset);
 }

@@ -4,7 +4,10 @@
 }
 
 .react-aria-RadioGroup[data-orientation='horizontal'] {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* Radio column width is local to this family's wrapping behavior, not a shared layout token. */
+    --_radio-group-min-column-size: 180px;
+
+    grid-template-columns: repeat(auto-fit, minmax(var(--_radio-group-min-column-size), 1fr));
 }
 
 :is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch) {
@@ -19,12 +22,12 @@
 
 :is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch):hover,
 :is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch)[data-hovered] {
-    background: color-mix(in srgb, var(--surface-panel) 72%, var(--surface-page));
+    background: var(--surface-fill-subtle);
 }
 
 :is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch)[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline-offset: var(--focus-ring-offset);
 }
 
 :is(.react-aria-Checkbox, .react-aria-Radio, .react-aria-Switch)[data-disabled] {
@@ -33,10 +36,13 @@
 }
 
 .rac-choice-indicator {
+    /* Choice indicator size is local to checkbox/radio glyph fit. */
+    --_choice-indicator-size: 1.2rem;
+
     display: inline-grid;
     place-items: center;
-    inline-size: 1.2rem;
-    block-size: 1.2rem;
+    inline-size: var(--_choice-indicator-size);
+    block-size: var(--_choice-indicator-size);
     border: var(--border-1) solid var(--control-border);
     background: var(--control-bg);
     color: transparent;
@@ -48,11 +54,11 @@
 }
 
 .react-aria-Checkbox .rac-choice-indicator {
-    border-radius: calc(var(--control-radius) - 2px);
+    border-radius: calc(var(--control-radius) - var(--border-2));
 }
 
 .react-aria-Radio .rac-choice-indicator {
-    border-radius: 999px;
+    border-radius: var(--shape-full-radius);
 }
 
 :is(.react-aria-Checkbox, .react-aria-Radio)[data-selected] .rac-choice-indicator {
@@ -65,11 +71,11 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    inline-size: 2.75rem;
-    block-size: 1.6rem;
-    padding: 0.15rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--control-bg-disabled) 78%, var(--surface-page));
+    inline-size: var(--_switch-track-inline-size);
+    block-size: var(--_switch-track-block-size);
+    padding: var(--_switch-track-padding);
+    border-radius: var(--shape-full-radius);
+    background: var(--_switch-track-bg);
     border: var(--border-1) solid var(--control-border);
     flex: none;
     transition:
@@ -78,20 +84,35 @@
 }
 
 .rac-switch-thumb {
-    inline-size: 1.1rem;
-    block-size: 1.1rem;
-    border-radius: 999px;
+    inline-size: var(--_switch-thumb-size);
+    block-size: var(--_switch-thumb-size);
+    border-radius: var(--shape-full-radius);
     background: var(--surface-raised);
     box-shadow: var(--shadow-1);
     transition: transform var(--duration-fast) var(--ease-standard);
 }
 
+.react-aria-Switch {
+    /* Switch geometry is a local mini-system rather than a shared cross-family size surface. */
+    --_switch-track-inline-size: 2.75rem;
+    --_switch-track-block-size: 1.6rem;
+    --_switch-track-padding: 0.15rem;
+    --_switch-thumb-size: 1.1rem;
+    --_switch-thumb-translate: translateX(1.1rem);
+    /* Disabled switch fill is local to switch chrome rather than a cross-family state token. */
+    --_switch-track-bg: color-mix(in srgb, var(--control-bg-disabled) 78%, var(--surface-page));
+    /* Selected switch fill is a family-local accent treatment. */
+    --_switch-track-bg-selected: color-mix(in srgb, var(--accent-bg) 32%, var(--surface-page));
+    /* Selected switch border contrast is tuned to the switch track and stays local. */
+    --_switch-track-border-selected: color-mix(in srgb, var(--accent-bg) 48%, var(--control-border));
+}
+
 .react-aria-Switch[data-selected] .rac-switch-track {
-    background: color-mix(in srgb, var(--accent-bg) 32%, var(--surface-page));
-    border-color: color-mix(in srgb, var(--accent-bg) 48%, var(--control-border));
+    background: var(--_switch-track-bg-selected);
+    border-color: var(--_switch-track-border-selected);
 }
 
 .react-aria-Switch[data-selected] .rac-switch-thumb {
-    transform: translateX(1.1rem);
+    transform: var(--_switch-thumb-translate);
     background: var(--accent-bg);
 }

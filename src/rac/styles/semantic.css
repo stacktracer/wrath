@@ -1,11 +1,35 @@
 :root {
+    --font-weight-emphasis: var(--font-weight-semibold);
+    --font-weight-strong: var(--font-weight-bold);
+
     --focus-ring-width: var(--border-2);
+    --focus-ring-offset-tight: 1px;
     --focus-ring-offset: 2px;
+    --focus-ring-offset-loose: 3px;
+    --focus-ring-offset-inset: -1px;
+    --focus-ring-offset-inset-strong: -2px;
+
     --control-radius: var(--radius-2);
+    --shape-full-radius: var(--radius-full);
 
     --control-gap: var(--space-2);
     --control-padding-inline: var(--space-3);
-    --control-padding-block: calc(var(--space-2) + 1px);
+    --control-padding-block: calc(var(--space-2) + var(--border-1));
+    --control-min-block-size: var(--size-5);
+    --field-min-block-size: calc(var(--size-5) + var(--space-1));
+
+    --thumb-contrast-border: var(--border-2) solid #ffffff;
+    --thumb-contrast-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22);
+
+    --surface-fill-subtle: color-mix(in srgb, var(--surface-panel) 72%, var(--surface-page));
+    --surface-fill-hover: color-mix(in srgb, var(--surface-page) 36%, transparent);
+
+    --state-bg-selected-soft: color-mix(in srgb, var(--accent-bg) 12%, transparent);
+    --state-bg-selected-panel: color-mix(in srgb, var(--accent-bg) 12%, var(--surface-panel));
+    --state-bg-selected-control: color-mix(in srgb, var(--accent-bg) 16%, var(--control-bg));
+
+    --state-border-selected-control: color-mix(in srgb, var(--accent-bg) 42%, var(--control-border));
+    --state-border-invalid: color-mix(in srgb, var(--danger-border) 72%, var(--control-border));
 
     --space-layout-1: var(--space-3);
     --space-layout-2: var(--space-5);

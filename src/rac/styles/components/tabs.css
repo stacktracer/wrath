@@ -4,13 +4,16 @@
 }
 
 .react-aria-TabList {
+    /* Tab strip background is local to the tabs family rather than a reusable shared surface role. */
+    --_tab-list-bg: color-mix(in srgb, var(--surface-panel) 74%, var(--surface-page));
+
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
     padding: var(--space-1);
     border: var(--border-1) solid var(--border-subtle);
-    border-radius: calc(var(--control-radius) + 4px);
-    background: color-mix(in srgb, var(--surface-panel) 74%, var(--surface-page));
+    border-radius: calc(var(--control-radius) + var(--space-1));
+    background: var(--_tab-list-bg);
 }
 
 .react-aria-Tab {
@@ -28,7 +31,7 @@
 
 .react-aria-Tab[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline-offset: var(--focus-ring-offset);
 }
 
 .react-aria-TabPanels {

@@ -10,13 +10,16 @@
 }
 
 .react-aria-Tag {
+    /* Tag height is local to chip anatomy rather than the broader control height model. */
+    --_tag-min-block-size: 2.1rem;
+
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    min-height: 2.1rem;
+    min-height: var(--_tag-min-block-size);
     padding-inline: var(--space-3);
     border: var(--border-1) solid var(--control-border);
-    border-radius: 999px;
+    border-radius: var(--shape-full-radius);
     background: var(--control-bg);
     color: var(--control-fg);
 }
@@ -26,11 +29,11 @@
 }
 
 .react-aria-Tag[data-selected] {
-    border-color: color-mix(in srgb, var(--accent-bg) 42%, var(--control-border));
-    background: color-mix(in srgb, var(--accent-bg) 16%, var(--control-bg));
+    border-color: var(--state-border-selected-control);
+    background: var(--state-bg-selected-control);
 }
 
 .react-aria-Tag[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline-offset: var(--focus-ring-offset);
 }

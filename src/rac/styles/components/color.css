@@ -10,46 +10,66 @@
 }
 
 .react-aria-ColorArea {
-    min-block-size: 15rem;
+    /* Color area height stays local to the picker canvas instead of becoming a shared control size. */
+    --_color-area-min-block-size: 15rem;
+
+    min-block-size: var(--_color-area-min-block-size);
     border-radius: var(--radius-2);
     overflow: hidden;
     border: var(--border-1) solid var(--border-subtle);
 }
 
 .react-aria-ColorWheel {
-    inline-size: min(100%, 18rem);
+    /* Wheel max size is specific to the color family footprint. */
+    --_color-wheel-max-inline-size: 18rem;
+
+    inline-size: min(100%, var(--_color-wheel-max-inline-size));
     aspect-ratio: 1;
 }
 
 .react-aria-ColorWheelTrack {
+    /* The wheel track stays perfectly circular because it inherits a square wheel box. */
+    --_color-wheel-radius: 50%;
+
     inline-size: 100%;
     block-size: 100%;
-    border-radius: 50%;
+    border-radius: var(--_color-wheel-radius);
     border: var(--border-1) solid var(--border-subtle);
 }
 
 .react-aria-ColorSlider {
+    /* Color slider track thickness is local to the color family. */
+    --_color-slider-track-size: 1rem;
+
     display: grid;
     gap: var(--space-2);
 }
 
 .react-aria-ColorSlider .react-aria-SliderTrack {
-    min-block-size: 1rem;
-    border-radius: 999px;
+    min-block-size: var(--_color-slider-track-size);
+    border-radius: var(--shape-full-radius);
     border: var(--border-1) solid var(--border-subtle);
 }
 
 .react-aria-ColorSwatch {
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
+    /* Swatch size is tuned to the color picker grid and stays local to this family. */
+    --_color-swatch-size: 2.75rem;
+    /* Swatch inset highlight is local to glossy swatches rather than a broader shared role. */
+    --_color-swatch-inset-highlight: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+
+    inline-size: var(--_color-swatch-size);
+    block-size: var(--_color-swatch-size);
     border-radius: var(--radius-2);
     border: var(--border-1) solid var(--border-subtle);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    box-shadow: var(--_color-swatch-inset-highlight);
 }
 
 .react-aria-ColorSwatchPicker {
+    /* Picker tile size is local to the color swatch grid rather than a shared item size. */
+    --_color-swatch-size: 2.75rem;
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(2.75rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--_color-swatch-size), 1fr));
     gap: var(--space-2);
     padding: 0;
     border: 0;
@@ -65,19 +85,25 @@
 }
 
 .react-aria-ColorSwatchPickerItem[data-selected] {
-    border-color: color-mix(in srgb, var(--accent-bg) 46%, var(--control-border));
-    background: color-mix(in srgb, var(--accent-bg) 12%, transparent);
+    /* Swatch selection border stays local to color controls until another family needs this exact treatment. */
+    --_color-swatch-selected-border: color-mix(in srgb, var(--accent-bg) 46%, var(--control-border));
+
+    border-color: var(--_color-swatch-selected-border);
+    background: var(--state-bg-selected-soft);
 }
 
 .react-aria-ColorThumb {
-    inline-size: 1.1rem;
-    block-size: 1.1rem;
-    border: 2px solid #ffffff;
-    border-radius: 999px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.22);
+    /* Thumb size is specific to color pickers and not reused by other control families. */
+    --_color-thumb-size: 1.1rem;
+
+    inline-size: var(--_color-thumb-size);
+    block-size: var(--_color-thumb-size);
+    border: var(--thumb-contrast-border);
+    border-radius: var(--shape-full-radius);
+    box-shadow: var(--thumb-contrast-shadow);
 }
 
 .react-aria-ColorThumb[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 3px;
+    outline-offset: var(--focus-ring-offset-loose);
 }

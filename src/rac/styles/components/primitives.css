@@ -22,7 +22,7 @@
 
 .react-aria-Breadcrumb[data-current] {
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: var(--font-weight-emphasis);
 }
 
 .react-aria-Form {
@@ -41,7 +41,9 @@
     color: var(--text-muted);
     font-family: var(--font-data);
     font-size: var(--font-size-1);
-    letter-spacing: 0.06em;
+    /* This tracking is specific to compact uppercase section labels, not the broader type scale. */
+    --_section-header-letter-spacing: 0.06em;
+    letter-spacing: var(--_section-header-letter-spacing);
     text-transform: uppercase;
 }
 
@@ -55,13 +57,16 @@
 .react-aria-Label {
     color: var(--text-secondary);
     font-size: var(--font-size-2);
-    font-weight: 600;
+    font-weight: var(--font-weight-emphasis);
 }
 
 .react-aria-Link {
+    /* Link underline offset is typography-specific and not reused as a broader control token. */
+    --_link-underline-offset: 0.18em;
+
     color: var(--text-link);
     text-decoration: none;
-    text-underline-offset: 0.18em;
+    text-underline-offset: var(--_link-underline-offset);
 }
 
 .react-aria-Link:hover,
@@ -91,14 +96,21 @@
 }
 
 .react-aria-Keyboard {
+    /* Keycap width is local to keyboard annotations, not the shared control sizing system. */
+    --_keycap-min-inline-size: 1.75rem;
+    /* Keycap padding is tuned to monospaced legends and stays local to this family. */
+    --_keycap-padding: 0.18rem 0.45rem;
+    /* Keycap background is local to keyboard hints rather than a shared surface role. */
+    --_keycap-bg: color-mix(in srgb, var(--surface-panel) 84%, var(--surface-raised));
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-inline-size: 1.75rem;
-    padding: 0.18rem 0.45rem;
+    min-inline-size: var(--_keycap-min-inline-size);
+    padding: var(--_keycap-padding);
     border: var(--border-1) solid var(--border-subtle);
     border-radius: var(--radius-1);
-    background: color-mix(in srgb, var(--surface-panel) 84%, var(--surface-raised));
+    background: var(--_keycap-bg);
     color: var(--text-secondary);
     font-family: var(--font-data);
     font-size: var(--font-size-0);
@@ -111,7 +123,7 @@
     height: var(--size-1);
     color: currentColor;
     font-size: var(--font-size-0);
-    font-weight: 700;
+    font-weight: var(--font-weight-strong);
 }
 
 .react-aria-Separator {
@@ -120,8 +132,8 @@
 }
 
 .react-aria-Separator[aria-orientation='vertical'] {
-    inline-size: 1px;
-    block-size: 1.5rem;
+    inline-size: var(--border-1);
+    block-size: var(--size-3);
     border-block-start: 0;
     border-inline-start: var(--border-1) solid var(--border-subtle);
 }

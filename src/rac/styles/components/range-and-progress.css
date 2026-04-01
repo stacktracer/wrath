@@ -10,22 +10,30 @@
 }
 
 .react-aria-SliderTrack {
+    /* Slider track thickness is local to range controls and not reused as a generic control height. */
+    --_slider-track-size: 0.75rem;
+    /* Slider track fill is specific to range controls rather than a shared surface role. */
+    --_slider-track-bg: color-mix(in srgb, var(--surface-page) 48%, var(--surface-panel));
+
     position: relative;
-    min-block-size: 0.75rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--surface-page) 48%, var(--surface-panel));
+    min-block-size: var(--_slider-track-size);
+    border-radius: var(--shape-full-radius);
+    background: var(--_slider-track-bg);
 }
 
 .react-aria-SliderThumb {
-    inline-size: 1.15rem;
-    block-size: 1.15rem;
-    border: var(--border-2) solid #ffffff;
-    border-radius: 999px;
+    /* Slider thumb size is specific to range controls and should stay local to this family. */
+    --_slider-thumb-size: 1.15rem;
+
+    inline-size: var(--_slider-thumb-size);
+    block-size: var(--_slider-thumb-size);
+    border: var(--thumb-contrast-border);
+    border-radius: var(--shape-full-radius);
     background: var(--accent-bg);
-    box-shadow: var(--shadow-1);
+    box-shadow: var(--thumb-contrast-shadow), var(--shadow-1);
 }
 
 .react-aria-SliderThumb[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 3px;
+    outline-offset: var(--focus-ring-offset-loose);
 }

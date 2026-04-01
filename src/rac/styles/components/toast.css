@@ -14,12 +14,15 @@
 }
 
 .react-aria-Toast {
+    /* Toast width cap is local to the region layout and not part of the general control sizing model. */
+    --_toast-min-inline-size: min(24rem, 100%);
+
     pointer-events: auto;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-3);
     align-items: start;
-    min-inline-size: min(24rem, 100%);
+    min-inline-size: var(--_toast-min-inline-size);
     padding: var(--space-3);
     border: var(--border-1) solid var(--border-subtle);
     border-radius: var(--radius-2);
@@ -29,17 +32,20 @@
 
 .react-aria-Toast[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline-offset: var(--focus-ring-offset);
 }
 
 .react-aria-ToastContent {
+    /* Toast title/description spacing is local to this stacked content treatment. */
+    --_toast-content-gap: 0.125rem;
+
     display: grid;
-    gap: 0.125rem;
+    gap: var(--_toast-content-gap);
 }
 
 .react-aria-ToastContent .react-aria-Text[slot='title'] {
     color: var(--text-primary);
-    font-weight: 700;
+    font-weight: var(--font-weight-strong);
 }
 
 .react-aria-ToastContent .react-aria-Text[slot='description'] {

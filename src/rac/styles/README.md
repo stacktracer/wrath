@@ -9,7 +9,7 @@
 ## Layer Ownership
 
 - [`alias.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/alias.css): raw primitives such as palette values, scales, radii, shadows, fonts, and motion tokens
-- [`semantic.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/semantic.css): baseline shared UI roles and baseline control/layout geometry
+- [`semantic.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/semantic.css): baseline shared UI roles and baseline control/layout geometry, including shared computed expressions such as state fills, state borders, and contrast treatments
 - [`themes.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/themes.css): theme mapping
 - [`density.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/density.css): compact-only density override
 - component-family files under [`components/`](/home/mike/Documents/projects/wrath/code/src/rac/styles/components): direct RAC component styling
@@ -41,6 +41,13 @@ Internal-only hooks:
 
 ## Literal Policy
 
+Classify suspicious values into one of four buckets:
+
+- alias primitive
+- shared semantic role
+- family-local `--_...` token
+- intentional literal
+
 Literals are allowed when they are:
 
 - alias-layer primitives
@@ -51,6 +58,10 @@ Literals are allowed when they are:
 Do not tokenize a value only because it is repeated once or twice.
 
 Use a private `--_...` token only when a value is a real family-local tuning knob. Private names stay private.
+
+When a function expression such as `color-mix(...)`, a gradient, a shadow formula, or a transform is the reusable design decision, factor the whole expression into a semantic token or family-local `--_...` token. Do not only factor the numeric arguments and leave the expression inline everywhere.
+
+If a literal survives in a component stylesheet, add a short comment explaining why it stays local instead of moving to alias, semantic, or a broader family-local mini-system. The comment should be terse and decision-focused.
 
 ## Override Contract
 

@@ -3,7 +3,10 @@
 .react-aria-Tooltip,
 .react-aria-Modal,
 .react-aria-Dialog {
-    max-inline-size: min(30rem, calc(100vw - 2rem));
+    /* Overlay width clamping is local to viewport-constrained overlay anatomy. */
+    --_overlay-max-inline-size: min(30rem, calc(100vw - 2rem));
+
+    max-inline-size: var(--_overlay-max-inline-size);
 }
 
 .react-aria-Popover,
@@ -16,6 +19,12 @@
 .react-aria-Popover,
 .react-aria-Tooltip,
 .react-aria-Modal {
+    /* Overlay enter transforms stay local until a broader motion surface is justified. */
+    --_overlay-enter-transform-from: translateY(0.35rem) scale(0.98);
+    --_overlay-enter-transform-to: translateY(0) scale(1);
+    /* Tooltip wash is local to overlay chrome rather than a cross-family surface role. */
+    --_tooltip-bg: color-mix(in srgb, var(--surface-overlay) 88%, var(--gray-12));
+
     border-radius: var(--radius-3);
 }
 
@@ -36,22 +45,28 @@
 }
 
 .react-aria-OverlayArrow {
-    inline-size: 0.875rem;
-    block-size: 0.875rem;
+    /* Arrow square size is specific to the overlay arrow SVG treatment. */
+    --_overlay-arrow-size: 0.875rem;
+
+    inline-size: var(--_overlay-arrow-size);
+    block-size: var(--_overlay-arrow-size);
 }
 
 .react-aria-OverlayArrow svg {
+    /* The arrow diamond rotation is local to this SVG-based overlay arrow. */
+    --_overlay-arrow-rotation: rotate(45deg);
+
     inline-size: 100%;
     block-size: 100%;
     display: block;
     fill: var(--surface-overlay);
     stroke: var(--border-subtle);
-    transform: rotate(45deg);
+    transform: var(--_overlay-arrow-rotation);
 }
 
 .react-aria-Tooltip {
     padding: var(--space-2) var(--space-3);
-    background: color-mix(in srgb, var(--surface-overlay) 88%, var(--gray-12));
+    background: var(--_tooltip-bg);
     border: var(--border-1) solid var(--border-strong);
     box-shadow: var(--shadow-1);
     color: var(--text-primary);
@@ -69,7 +84,10 @@
 }
 
 .react-aria-Modal {
-    inline-size: min(36rem, 100%);
+    /* Modal width cap is local to overlay layout rather than a shared control width. */
+    --_modal-inline-size: min(36rem, 100%);
+
+    inline-size: var(--_modal-inline-size);
     padding: var(--space-layout-2);
     background: var(--surface-overlay);
     border: var(--border-1) solid var(--border-subtle);
@@ -77,32 +95,39 @@
 }
 
 .react-aria-DropZone {
+    /* Drop zone height is local to drag-and-drop scaffolding and should not resize other surfaces. */
+    --_dropzone-min-block-size: 8.5rem;
+
     display: grid;
     gap: var(--space-2);
     place-items: center;
-    min-block-size: 8.5rem;
+    min-block-size: var(--_dropzone-min-block-size);
     padding: var(--space-layout-1);
-    border: 1px dashed var(--border-strong);
+    border: var(--border-1) dashed var(--border-strong);
     border-radius: var(--radius-2);
-    background: color-mix(in srgb, var(--surface-panel) 72%, var(--surface-page));
+    background: var(--surface-fill-subtle);
     text-align: center;
 }
 
 .react-aria-DropZone[data-drop-target] {
     border-color: var(--accent-bg);
-    background: color-mix(in srgb, var(--accent-bg) 12%, var(--surface-panel));
+    background: var(--state-bg-selected-panel);
 }
 
 .react-aria-DropZone[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: 2px;
+    outline-offset: var(--focus-ring-offset);
 }
 
 .react-aria-DropIndicator {
+    /* Dashed insertion chrome is specific to drag/drop affordances and stays local to this family. */
+    --_drop-indicator-border: var(--border-1) dashed
+        color-mix(in srgb, var(--accent-bg) 55%, var(--control-border));
+
     padding: var(--space-2) var(--space-3);
-    border: var(--border-1) dashed color-mix(in srgb, var(--accent-bg) 55%, var(--control-border));
+    border: var(--_drop-indicator-border);
     border-radius: var(--radius-2);
-    background: color-mix(in srgb, var(--accent-bg) 10%, transparent);
+    background: var(--state-bg-selected-soft);
     color: var(--text-link);
     font-family: var(--font-data);
     font-size: var(--font-size-1);
@@ -115,11 +140,11 @@
 @keyframes rac-pop-in {
     from {
         opacity: 0;
-        transform: translateY(0.35rem) scale(0.98);
+        transform: var(--_overlay-enter-transform-from);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: var(--_overlay-enter-transform-to);
     }
 }

@@ -7,7 +7,7 @@
 .react-aria-ComboBox > .react-aria-Group {
     inline-size: 100%;
     justify-content: space-between;
-    min-height: 2.75rem;
+    min-height: var(--field-min-block-size);
 }
 
 .react-aria-ComboBox > .react-aria-Group {
@@ -20,7 +20,8 @@
 .react-aria-ComboBox .react-aria-Input {
     border: 0;
     background: transparent;
-    padding: calc(var(--control-padding-block) - 1px) calc(var(--control-padding-inline) - 1px);
+    padding: calc(var(--control-padding-block) - var(--border-1))
+        calc(var(--control-padding-inline) - var(--border-1));
 }
 
 .react-aria-SelectValue,
@@ -35,7 +36,11 @@
 }
 
 .react-aria-ListBox {
-    --_list-item-bg-selected: color-mix(in srgb, var(--accent-bg) 16%, var(--surface-panel));
+    /* List item hover wash is local to the list-box surface treatment. */
+    --_list-item-hover-bg: color-mix(in srgb, var(--surface-panel) 52%, var(--surface-page));
+    /* Selected list item ring is specific to list-box row chrome. */
+    --_list-item-selected-ring: inset 0 0 0 var(--border-1)
+        color-mix(in srgb, var(--accent-bg) 28%, transparent);
 
     display: grid;
     gap: var(--space-1);
@@ -57,7 +62,7 @@
     justify-content: space-between;
     min-width: 0;
     padding: var(--space-2) var(--space-3);
-    border-radius: calc(var(--control-radius) + 2px);
+    border-radius: calc(var(--control-radius) + var(--border-2));
     color: var(--text-primary);
     cursor: pointer;
     transition:
@@ -66,17 +71,17 @@
 }
 
 .react-aria-ListBoxItem[data-hovered] {
-    background: color-mix(in srgb, var(--surface-panel) 52%, var(--surface-page));
+    background: var(--_list-item-hover-bg);
 }
 
 .react-aria-ListBoxItem[data-selected] {
-    background: var(--_list-item-bg-selected);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-bg) 28%, transparent);
+    background: var(--state-bg-selected-panel);
+    box-shadow: var(--_list-item-selected-ring);
 }
 
 .react-aria-ListBoxItem[data-focus-visible] {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: -1px;
+    outline-offset: var(--focus-ring-offset-inset);
 }
 
 .react-aria-ListBoxItem[data-disabled] {
