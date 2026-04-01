@@ -63,8 +63,8 @@ Result:
 - the `999px` complaint is resolved through `--radius-full` and `--shape-full-radius`
 - the hard-coded thumb border complaint is resolved through shared thumb-contrast roles
 - the `color-mix(...)` complaint is addressed in both ways:
-  - shared state formulas moved into `semantic.css`
-  - local formulas moved into commented family-local `--_...` tokens instead of staying inline
+    - shared state formulas moved into `semantic.css`
+    - local formulas moved into commented family-local `--_...` tokens instead of staying inline
 
 ## Verification
 

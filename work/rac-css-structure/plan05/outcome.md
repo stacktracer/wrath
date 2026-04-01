@@ -57,23 +57,23 @@ The remaining function expressions are now named in one of two ways:
 Notable family-local upgrades:
 
 - [`src/rac/styles/components/choice-controls.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/components/choice-controls.css)
-  - switch track/thumb/travel system
-  - radio group column width
-  - choice indicator size
+    - switch track/thumb/travel system
+    - radio group column width
+    - choice indicator size
 - [`src/rac/styles/components/color.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/components/color.css)
-  - area, wheel, swatch, and thumb sizing
-  - swatch highlight and selected-border treatment
+    - area, wheel, swatch, and thumb sizing
+    - swatch highlight and selected-border treatment
 - [`src/rac/styles/components/date-time.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/components/date-time.css)
-  - segment padding
-  - calendar cell size and grid spacing
-  - calendar-specific selection rings
+    - segment padding
+    - calendar cell size and grid spacing
+    - calendar-specific selection rings
 - [`src/rac/styles/components/primitives.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/components/primitives.css)
-  - keycap sizing and keycap surface treatment
+    - keycap sizing and keycap surface treatment
 - [`src/rac/styles/components/overlays.css`](/home/mike/Documents/projects/wrath/code/src/rac/styles/components/overlays.css)
-  - overlay size clamps
-  - tooltip surface
-  - drag/drop insertion chrome
-  - local pop-in transforms
+    - overlay size clamps
+    - tooltip surface
+    - drag/drop insertion chrome
+    - local pop-in transforms
 
 This is the missing middle layer that `plan04` identified.
 
