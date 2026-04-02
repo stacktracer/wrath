@@ -389,13 +389,14 @@ function renderShipmentTextCell(params: GridRenderCellParams<ShipmentRow>) {
         <Box
             component="span"
             sx={{
-                alignItems: 'end',
+                alignItems: 'center',
                 display: 'flex',
                 height: '100%',
                 lineHeight: 1.15,
                 minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                transform: 'translateY(2px)',
                 whiteSpace: 'nowrap',
                 width: '100%',
             }}
@@ -410,13 +411,14 @@ function renderShipmentHeader(params: GridColumnHeaderParams<ShipmentRow>) {
         <Box
             component="span"
             sx={{
-                alignItems: 'end',
+                alignItems: 'center',
                 display: 'flex',
                 height: '100%',
                 lineHeight: 1.15,
                 minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                transform: 'translateY(2px)',
                 whiteSpace: 'nowrap',
                 width: '100%',
             }}
@@ -1756,7 +1758,7 @@ export function App() {
                                                     Row height: {densityControls.dataGridRowHeight}px
                                                 </Typography>
                                                 <Slider
-                                                    max={52}
+                                                    max={56}
                                                     min={24}
                                                     onChange={(_event, value) => {
                                                         updateDensityControl(

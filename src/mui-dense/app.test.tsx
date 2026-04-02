@@ -219,8 +219,10 @@ describe('mui-dense page', () => {
         expect(Number(layoutScaleSlider.value)).toBe(0.2);
         expect(imageTileSliders).toHaveLength(1);
         expect(Number(imageTileSliders[0].value)).toBe(4);
+        expect(Number(dataGridRowHeightSlider.max)).toBe(56);
         expect(Number(dataGridRowHeightSlider.value)).toBe(24);
         expect(Number(dataGridColumnHeaderHeightSlider.min)).toBe(24);
+        expect(Number(dataGridColumnHeaderHeightSlider.max)).toBe(56);
         expect(Number(dataGridColumnHeaderHeightSlider.value)).toBe(24);
         expect(Number(dataGridHeaderFilterHeightSlider.value)).toBe(52);
         expect(dataGridHeaderFilterHeightSlider.disabled).toBe(true);
@@ -262,12 +264,18 @@ describe('mui-dense page', () => {
         );
         expect(laneGridCellContent).toBeInstanceOf(HTMLElement);
         expect(window.getComputedStyle(laneGridCellContent as HTMLElement).display).toBe('flex');
-        expect(window.getComputedStyle(laneGridCellContent as HTMLElement).alignItems).toBe('end');
+        expect(window.getComputedStyle(laneGridCellContent as HTMLElement).alignItems).toBe('center');
+        expect(
+            new DOMMatrix(window.getComputedStyle(laneGridCellContent as HTMLElement).transform).m42,
+        ).toBeCloseTo(2);
         expect(laneGridHeaderTitleContainer).toBeInstanceOf(HTMLElement);
         expect(laneGridHeaderTitleContainerContent).toBeInstanceOf(HTMLElement);
         expect(laneGridHeaderContent).toBeInstanceOf(HTMLElement);
         expect(window.getComputedStyle(laneGridHeaderContent as HTMLElement).display).toBe('flex');
-        expect(window.getComputedStyle(laneGridHeaderContent as HTMLElement).alignItems).toBe('end');
+        expect(window.getComputedStyle(laneGridHeaderContent as HTMLElement).alignItems).toBe('center');
+        expect(
+            new DOMMatrix(window.getComputedStyle(laneGridHeaderContent as HTMLElement).transform).m42,
+        ).toBeCloseTo(2);
         expect(
             Math.round((laneGridHeaderTitleContainerContent as HTMLElement).getBoundingClientRect().height),
         ).toBe(Math.round((laneGridHeaderTitleContainer as HTMLElement).getBoundingClientRect().height));
