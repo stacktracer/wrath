@@ -1218,7 +1218,13 @@ export function GalleryWorkspace({
                             </div>
                         </DemoCard>
 
-                        <DemoCard components="Collapse, Fade, Grow, Slide" title="Transitions">
+                        <DemoCard
+                            components="Collapse, Fade, Grow, Slide"
+                            fixedWidth={COMPACT_DEMO_MAX_WIDTH}
+                            maxWidth={COMPACT_DEMO_MAX_WIDTH}
+                            minWidth={COMPACT_DEMO_MAX_WIDTH}
+                            title="Transitions"
+                        >
                             <Stack spacing={scaleSpacing(2)}>
                                 <Stack direction="row" spacing={scaleSpacing(1.5)} useFlexGap flexWrap="wrap">
                                     <Button

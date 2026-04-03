@@ -307,6 +307,7 @@ describe('mui-dense page', () => {
         const simpleTreeCard = requireDemoCard('SimpleTreeView');
         const richTreeCard = requireDemoCard('RichTreeView');
         const richTreeProCard = requireDemoCard('RichTreeViewPro');
+        const transitionsCard = requireDemoCard('Transitions');
         const speedDialCard = requireDemoCard('Speed dial');
         const utilityHelpersCard = requireDemoCard('Utility helpers');
         const zoomCard = requireDemoCard('Zoom transition');
@@ -341,6 +342,7 @@ describe('mui-dense page', () => {
         const overlaysCardTitles = Array.from(
             overlaysSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
         ).map(candidate => candidate.textContent?.trim());
+        const drawersCard = requireDemoCard('Drawers');
         const tablesSection = requireElement('#tables');
         const tableSectionCardTitles = Array.from(
             tablesSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
@@ -373,6 +375,11 @@ describe('mui-dense page', () => {
             Math.abs(
                 speedDialCard.getBoundingClientRect().width -
                     cardsAndPapersCard.getBoundingClientRect().width,
+            ),
+        ).toBeLessThanOrEqual(1);
+        expect(
+            Math.abs(
+                transitionsCard.getBoundingClientRect().width - drawersCard.getBoundingClientRect().width,
             ),
         ).toBeLessThanOrEqual(1);
         expect(inputsCardTitles).toEqual([
