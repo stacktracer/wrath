@@ -16,6 +16,22 @@
     - Write messages that will make it easy later for other devs to identify commits relevant to what they're working on.
     - Use imperative mood for the subject line.
 
+## Writing Plans
+
+- Start from the real decision the reader needs to make, not from a full inventory of everything you know.
+- Keep the plan short enough that a busy reviewer can read it carefully in one pass.
+- Prefer a few strong paragraphs over a long outline with many headings and subheadings.
+- Describe the problem in terms of the current codebase, not generic engineering advice.
+- Call out the couplings, fragilities, and constraints that are most likely to drive the implementation shape.
+- Separate what must be decided now from details that can safely wait until execution.
+- Write at a high enough level that the executor still has room to make good local decisions.
+- Be explicit about the desired end state so the team can evaluate tradeoffs against a concrete target.
+- Distinguish stable reusable policy from local experiments, workarounds, or implementation-shaped glue.
+- Recommend the smallest abstractions that seem justified now; do not smuggle a framework rewrite into a plan.
+- Include specific examples when they sharpen the argument, but stop before the plan turns into pseudocode.
+- Use structure only where it helps comprehension; if extra headings do not add signal, leave them out.
+- Write so the plan is easy to revise after review, because the first draft is usually not the final shape.
+
 ## Verification
 
 - After modifying source code or project config files, run `npm run format` and `npm run lint` before considering the task complete.
