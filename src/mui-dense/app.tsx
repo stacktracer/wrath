@@ -137,7 +137,7 @@ import {
     Unstable_TrapFocus,
     Zoom,
 } from '@mui/material';
-import { ThemeProvider, createTheme, type Theme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, keyframes, type Theme } from '@mui/material/styles';
 import {
     DataGridPro,
     gridClasses,
@@ -256,6 +256,33 @@ const DENSE_ADVANCED_DENSITY_CONTROLS: AdvancedDensityControls = {
     compactTableCells: true,
     compactTreeItems: true,
 };
+
+const circularRotateKeyframe = keyframes`
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+`;
+
+const circularDashKeyframe = keyframes`
+    0% {
+        stroke-dasharray: 1px, 200px;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 100px, 200px;
+        stroke-dashoffset: -15px;
+    }
+
+    100% {
+        stroke-dasharray: 1px, 200px;
+        stroke-dashoffset: -126px;
+    }
+`;
 
 const THEME_OVERRIDE_CONTROLS: AdvancedControlDefinition[] = [
     {
@@ -817,7 +844,19 @@ function createFallbackAutoDataGridMetrics(
     };
 }
 
-function createDensityTheme(controls: DensityControls, colorMode: GalleryColorMode) {
+function getPreferredColorMode(): GalleryColorMode {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+        return 'light';
+    }
+
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function createDensityTheme(
+    controls: DensityControls,
+    colorMode: GalleryColorMode,
+    animationsDisabled: boolean,
+) {
     return createTheme({
         palette: {
             mode: colorMode,
@@ -826,6 +865,27 @@ function createDensityTheme(controls: DensityControls, colorMode: GalleryColorMo
         typography: {
             fontSize: Math.round(14 * controls.typographyScale),
         },
+        transitions: animationsDisabled
+            ? {
+                  create: () => 'none',
+                  duration: {
+                      complex: 0,
+                      enteringScreen: 0,
+                      leavingScreen: 0,
+                      short: 0,
+                      shorter: 0,
+                      shortest: 0,
+                      standard: 0,
+                  },
+                  easing: {
+                      easeIn: 'linear',
+                      easeInOut: 'linear',
+                      easeOut: 'linear',
+                      sharp: 'linear',
+                  },
+                  getAutoHeightDuration: () => 0,
+              }
+            : undefined,
         components: {
             MuiAccordion: {
                 defaultProps: {
@@ -835,6 +895,11 @@ function createDensityTheme(controls: DensityControls, colorMode: GalleryColorMo
             MuiAutocomplete: {
                 defaultProps: {
                     size: controls.componentSize,
+                },
+            },
+            MuiButtonBase: {
+                defaultProps: {
+                    disableRipple: animationsDisabled,
                 },
             },
             MuiButton: {
@@ -852,6 +917,33 @@ function createDensityTheme(controls: DensityControls, colorMode: GalleryColorMo
                     size: controls.componentSize,
                 },
             },
+            ...(animationsDisabled
+                ? {
+                      MuiCircularProgress: {
+                          styleOverrides: {
+                              indeterminate: {
+                                  animation: `${circularRotateKeyframe} 1.4s linear infinite !important`,
+                              },
+                              circleIndeterminate: {
+                                  animation: `${circularDashKeyframe} 1.4s ease-in-out infinite !important`,
+                              },
+                          },
+                      },
+                  }
+                : {}),
+            ...(animationsDisabled
+                ? {
+                      MuiCssBaseline: {
+                          styleOverrides: {
+                              '*, *::before, *::after': {
+                                  animation: 'none !important',
+                                  scrollBehavior: 'auto !important',
+                                  transition: 'none !important',
+                              },
+                          },
+                      },
+                  }
+                : {}),
             MuiContainer: {
                 defaultProps: {
                     disableGutters: controls.disableGlobalGutters,
@@ -1286,11 +1378,12 @@ function AdvancedControlTile({
 
 export function App() {
     const proTreeApiRef = useRichTreeViewProApiRef<TreeDemoItem>();
-    const [densityControls, setDensityControls] = useState<DensityControls>(DENSITY_PRESETS.default);
-    const [densityPreset, setDensityPreset] = useState<DensityPresetSelection>('default');
-    const [colorMode, setColorMode] = useState<GalleryColorMode>('light');
+    const [densityControls, setDensityControls] = useState<DensityControls>(DENSITY_PRESETS.dense);
+    const [densityPreset, setDensityPreset] = useState<DensityPresetSelection>('dense');
+    const [colorMode, setColorMode] = useState<GalleryColorMode>(() => getPreferredColorMode());
+    const [animationsDisabled, setAnimationsDisabled] = useState(true);
     const [advancedDensityControls, setAdvancedDensityControls] = useState<AdvancedDensityControls>(
-        DEFAULT_ADVANCED_DENSITY_CONTROLS,
+        DENSE_ADVANCED_DENSITY_CONTROLS,
     );
     const [routeValue, setRouteValue] = useState<RouteOption | null>(ROUTE_OPTIONS[2]);
     const [densityChoice, setDensityChoice] = useState('comfortable');
@@ -1336,14 +1429,15 @@ export function App() {
     const popoverOpen = Boolean(popoverAnchorEl);
     const popperOpen = Boolean(popperAnchorEl);
     const baseDensityTheme = useMemo(
-        () => createDensityTheme(densityControls, colorMode),
-        [colorMode, densityControls],
+        () => createDensityTheme(densityControls, colorMode, animationsDisabled),
+        [animationsDisabled, colorMode, densityControls],
     );
     const densityTheme = useMemo(
         () => createTheme(baseDensityTheme, createAdvancedDensityThemeOptions(advancedDensityControls)),
         [advancedDensityControls, baseDensityTheme],
     );
     const currentColorModeLabel = colorMode === 'dark' ? 'Dark' : 'Light';
+    const currentAnimationModeLabel = animationsDisabled ? 'Off' : 'On';
     const activeAdvancedControls = ALL_ADVANCED_CONTROLS.filter(
         definition => advancedDensityControls[definition.key],
     );
@@ -1523,7 +1617,7 @@ export function App() {
                                         <div className="mui-dense-density-panel__header">
                                             <div>
                                                 <Typography component="h2" variant="h5">
-                                                    UI Controls
+                                                    Gallery Controls
                                                 </Typography>
                                                 <Typography color="textSecondary" variant="body2">
                                                     Gallery-wide public controls: palette mode, theme spacing
@@ -1535,7 +1629,8 @@ export function App() {
                                             <Button
                                                 onClick={() => {
                                                     applyDensityPreset('default');
-                                                    setColorMode('light');
+                                                    setAnimationsDisabled(false);
+                                                    setColorMode(getPreferredColorMode());
                                                 }}
                                                 variant="outlined"
                                             >
@@ -1545,8 +1640,8 @@ export function App() {
 
                                         <div className="mui-dense-density-primary">
                                             <DensityControlCard
-                                                description="Switches the gallery between MUI light and dark palette modes while preserving the current density controls."
-                                                title="Color Mode"
+                                                description="Gallery-wide appearance toggles for palette mode and motion. Disabling animations zeroes MUI transition durations, removes ripples, and suppresses CSS animations."
+                                                title="Appearance"
                                             >
                                                 <Stack spacing={1}>
                                                     <Typography variant="body2">
@@ -1566,6 +1661,22 @@ export function App() {
                                                             />
                                                         }
                                                         label="Dark mode"
+                                                    />
+                                                    <Typography variant="body2">
+                                                        Animations: {currentAnimationModeLabel}
+                                                    </Typography>
+                                                    <FormControlLabel
+                                                        control={
+                                                            <Switch
+                                                                checked={animationsDisabled}
+                                                                onChange={event => {
+                                                                    setAnimationsDisabled(
+                                                                        event.target.checked,
+                                                                    );
+                                                                }}
+                                                            />
+                                                        }
+                                                        label="Disable animations"
                                                     />
                                                 </Stack>
                                             </DensityControlCard>
@@ -2711,6 +2822,17 @@ export function App() {
                                                     showToolbar
                                                     slotProps={dataGridSlotProps}
                                                     sx={{
+                                                        backgroundColor: 'background.paper',
+                                                        [`& .${gridClasses.columnHeaders}`]: {
+                                                            backgroundColor: 'background.paper',
+                                                        },
+                                                        [`& .${gridClasses.columnHeader}`]: {
+                                                            backgroundColor: 'background.paper',
+                                                        },
+                                                        [`& .${gridClasses.columnHeader} .${gridClasses.sortButton}`]:
+                                                            {
+                                                                backgroundColor: 'background.paper',
+                                                            },
                                                         [`& .${gridClasses.columnHeaderTitleContainerContent}`]:
                                                             {
                                                                 height: '100%',

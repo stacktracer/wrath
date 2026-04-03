@@ -165,12 +165,45 @@ describe('mui-dense page', () => {
         await page.viewport(1600, 900);
         document.body.innerHTML = '<div id="app"></div>';
 
+        const originalMatchMedia = window.matchMedia?.bind(window);
+        window.matchMedia = (query: string) => {
+            if (query === '(prefers-color-scheme: dark)') {
+                return {
+                    addEventListener: () => {},
+                    addListener: () => {},
+                    dispatchEvent: () => false,
+                    matches: true,
+                    media: query,
+                    onchange: null,
+                    removeEventListener: () => {},
+                    removeListener: () => {},
+                };
+            }
+
+            if (originalMatchMedia) {
+                return originalMatchMedia(query);
+            }
+
+            return {
+                addEventListener: () => {},
+                addListener: () => {},
+                dispatchEvent: () => false,
+                matches: false,
+                media: query,
+                onchange: null,
+                removeEventListener: () => {},
+                removeListener: () => {},
+            };
+        };
+
         await import('./main');
 
         await expect
             .element(page.getByRole('heading', { level: 1, name: 'MUI Dense Gallery' }))
             .toBeVisible();
-        await expect.element(page.getByRole('heading', { level: 2, name: /^UI Controls$/ })).toBeVisible();
+        await expect
+            .element(page.getByRole('heading', { level: 2, name: /^Gallery Controls$/ }))
+            .toBeVisible();
         await expect
             .element(page.getByRole('heading', { level: 2, name: /^Advanced Density Controls$/ }))
             .toBeVisible();
@@ -178,33 +211,36 @@ describe('mui-dense page', () => {
         await expect.element(page.getByRole('main')).toBeVisible();
         await expect.element(page.getByText('MUI X Pro license')).toBeVisible();
         await expect.element(page.getByRole('heading', { level: 3, name: 'Tree views' })).toBeVisible();
-        await expect.element(page.getByText('No advanced overrides are active.')).toBeVisible();
+        await expect.element(page.getByText('7 advanced overrides active.')).toBeVisible();
 
         const appRoot = requireElement('.mui-dense-app');
-        const colorModeCard = requireDensityCard('Color Mode');
+        const appearanceCard = requireDensityCard('Appearance');
         const densityPresetCard = requireDensityCard('Density Preset');
         const spacingBaseCard = requireDensityCard('Spacing Base');
         const darkModeInput = requireLabeledControlInput('Dark mode');
+        const disableAnimationsInput = requireLabeledControlInput('Disable animations');
 
         expect(document.body.textContent).not.toContain('Preset:');
-        expect(colorModeCard.getBoundingClientRect().top).toBeLessThan(
+        expect(appearanceCard.getBoundingClientRect().top).toBeLessThan(
             spacingBaseCard.getBoundingClientRect().top,
         );
         expect(densityPresetCard.getBoundingClientRect().top).toBeLessThan(
             spacingBaseCard.getBoundingClientRect().top,
         );
-        expect(darkModeInput.checked).toBe(false);
+        expect(darkModeInput.checked).toBe(true);
+        expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
+        expect(disableAnimationsInput.checked).toBe(true);
+        darkModeInput.click();
+        await nextFrame();
+        expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('light');
         darkModeInput.click();
         await nextFrame();
         expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
-
-        await page.getByRole('button', { exact: true, name: 'Dense' }).click();
+        disableAnimationsInput.click();
         await nextFrame();
-        await new Promise<void>(resolve => {
-            window.setTimeout(() => {
-                resolve();
-            }, 250);
-        });
+        expect(appearanceCard.textContent).toContain('Animations: On');
+        disableAnimationsInput.click();
+        await nextFrame();
 
         const showHeaderFiltersInput = requireLabeledControlInput('Show header filters');
         const [layoutScaleSlider] = requireSliderInputsInDensityCard('Layout Scale');
@@ -245,6 +281,14 @@ describe('mui-dense page', () => {
         );
         const speedDialShell = requireDemoCard('Speed dial').querySelector('.mui-dense-speed-dial-shell');
         const densityPresetLabel = requireElement('#mui-dense-select-label');
+        const statusCardSpinner = requireDemoCard('Status and feedback visuals').querySelector(
+            '[role="progressbar"]',
+        );
+        const statusCardSpinnerCircle = statusCardSpinner?.querySelector('.MuiCircularProgress-circle');
+        const tablesCard = requireDemoCard('Tables and DataGrid Pro');
+        const tableContainer = tablesCard.querySelector('.MuiTableContainer-root');
+        const dataGridRoot = tablesCard.querySelector('.MuiDataGrid-root');
+        const dataGridHeaders = tablesCard.querySelector('.MuiDataGrid-columnHeaders');
 
         expect(showHeaderFiltersInput.checked).toBe(false);
         expect(Number(layoutScaleSlider.value)).toBe(0.2);
@@ -259,7 +303,8 @@ describe('mui-dense page', () => {
         expect(window.getComputedStyle(choiceInputsCard).backgroundColor).toBe('rgb(0, 0, 0)');
         expect(window.getComputedStyle(choiceInputsCard).borderTopLeftRadius).toBe('4px');
         expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
-        expect(colorModeCard.textContent).toContain('Mode: Dark');
+        expect(appearanceCard.textContent).toContain('Mode: Dark');
+        expect(appearanceCard.textContent).toContain('Animations: Off');
         await expect.element(page.getByText('Row height: 30px (auto)')).toBeVisible();
         await expect.element(page.getByText('Column header height: 30px (auto)')).toBeVisible();
         expect(dashboardTitleLabel).toBeInstanceOf(HTMLLabelElement);
@@ -270,6 +315,25 @@ describe('mui-dense page', () => {
         expect(routeClusterLabel).toBeInstanceOf(HTMLLabelElement);
         expect(filledInputRoot).toBeInstanceOf(HTMLElement);
         expect(denseOutlinedInputRoot).toBeInstanceOf(HTMLElement);
+        expect(statusCardSpinner).toBeInstanceOf(HTMLElement);
+        expect(statusCardSpinnerCircle).toBeInstanceOf(SVGCircleElement);
+        expect(tableContainer).toBeInstanceOf(HTMLElement);
+        expect(dataGridRoot).toBeInstanceOf(HTMLElement);
+        expect(dataGridHeaders).toBeInstanceOf(HTMLElement);
+        expect(window.getComputedStyle(filledLabel).transitionDuration).toBe('0s');
+        expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationDuration).toBe('1.4s');
+        expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationIterationCount).toBe(
+            'infinite',
+        );
+        expect(window.getComputedStyle(statusCardSpinnerCircle as SVGCircleElement).animationDuration).toBe(
+            '1.4s',
+        );
+        expect(window.getComputedStyle(dataGridRoot as HTMLElement).backgroundColor).toBe(
+            window.getComputedStyle(tableContainer as HTMLElement).backgroundColor,
+        );
+        expect(window.getComputedStyle(dataGridHeaders as HTMLElement).backgroundColor).toBe(
+            window.getComputedStyle(tableContainer as HTMLElement).backgroundColor,
+        );
         expect(filledLabel.className).toContain('MuiInputLabel-sizeSmall');
         expect(standardLabel.className).toContain('MuiInputLabel-sizeSmall');
         expect(denseOutlinedLabel.className).toContain('MuiInputLabel-sizeSmall');
@@ -322,7 +386,6 @@ describe('mui-dense page', () => {
         expect(requireLabeledControlInput('Tighten icon button box size').checked).toBe(true);
         expect(requireLabeledControlInput('Tighten button and chip padding').checked).toBe(true);
         expect(requireTextButton('Dense').className).toContain('MuiButton-contained');
-        await expect.element(page.getByText('7 advanced overrides active.')).toBeVisible();
 
         await page.getByRole('button', { name: 'Dense+' }).click();
         await nextFrame();
@@ -387,6 +450,10 @@ describe('mui-dense page', () => {
         const main = mainPane as HTMLElement;
 
         expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight + 1);
+        expect(Math.abs(sidebar.getBoundingClientRect().top - main.getBoundingClientRect().top)).toBeLessThan(
+            2,
+        );
+        expect(sidebar.getBoundingClientRect().left).toBeGreaterThan(main.getBoundingClientRect().left);
         expect(window.getComputedStyle(sidebar).overflowY).toBe('auto');
         expect(window.getComputedStyle(main).overflowY).toBe('auto');
         expect(sidebar.scrollHeight).toBeGreaterThanOrEqual(sidebar.clientHeight);
@@ -408,5 +475,21 @@ describe('mui-dense page', () => {
             expect(main.scrollTop).toBe(0);
         }
         expect(document.documentElement.scrollTop).toBe(0);
+
+        await page.getByRole('button', { name: 'Show backdrop' }).click();
+        await nextFrame();
+
+        const backdropSpinner = document.body.querySelector('.MuiBackdrop-root [role="progressbar"]');
+        const backdropSpinnerCircle = backdropSpinner?.querySelector('.MuiCircularProgress-circle');
+
+        expect(backdropSpinner).toBeInstanceOf(HTMLElement);
+        expect(backdropSpinnerCircle).toBeInstanceOf(SVGCircleElement);
+        expect(window.getComputedStyle(backdropSpinner as HTMLElement).animationDuration).toBe('1.4s');
+        expect(window.getComputedStyle(backdropSpinnerCircle as SVGCircleElement).animationDuration).toBe(
+            '1.4s',
+        );
+
+        (document.body.querySelector('.MuiBackdrop-root') as HTMLElement | null)?.click();
+        await nextFrame();
     });
 });
