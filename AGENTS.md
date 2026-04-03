@@ -31,6 +31,17 @@
 - Include specific examples when they sharpen the argument, but stop before the plan turns into pseudocode.
 - Use structure only where it helps comprehension; if extra headings do not add signal, leave them out.
 - Write so the plan is easy to revise after review, because the first draft is usually not the final shape.
+- When creating a new comment thread:
+    - Put it immediately below the specific paragraph it is about, not in a separate review section.
+    - Add a line containing only `<!-- prettier-ignore -->`.
+    - On the next line, add the opening tags on one line: `<blockquote><details><summary>Comments</summary>`.
+    - Leave a blank line, then write the thread as ordinary Markdown list items like `- CDX: ...`, with blank lines between list items.
+    - After the last list item, leave a blank line, add another line containing only `<!-- prettier-ignore -->`, and then add the closing tags on one line: `</details></blockquote><br>`.
+- A thread is resolved if and only if its final comment ends with the complete sentence `Resolved.`.
+- When addressing a comment, if you decide the plan should be changed, update the plan text and reply in the thread. If you decide the plan shouldn't be changed, reply in the thread and explain your reasoning.
+- Keep thread replies short and concrete so the raw markdown stays readable.
+- Prefer addressing review comments by clarifying the plan text, not by building a long side conversation around unchanged plan text.
+- Unless explicitly directed otherwise, don't mark a thread resolved yourself; leave resolution to the reviewer.
 
 ## Verification
 

@@ -21,9 +21,7 @@ The reusable end state should not be "a replacement design system." A better tar
 
 - MAH: Is the state model in there to support dynamic modification of density settings? I think dynamic modification of density settings is a gallery-specific goal -- important during exploration, but I think not important for real apps that will use our "MUI densification" utilities. I would expect a real application to choose a density preset up front, and not require a density state model.
 
-- CDX: Agreed. I changed the paragraph to stop assuming that the reusable layer needs to export a live density state model. The gallery still needs local state for exploration, but the reusable layer should default to presets plus theme/override builders, with runtime state left to the consuming app if it actually needs it.
-
-- CDX: Resolved.
+- CDX: Agreed. I changed the paragraph to stop assuming that the reusable layer needs to export a live density state model. The gallery still needs local state for exploration, but the reusable layer should default to presets plus theme/override builders, with runtime state left to the consuming app if it actually needs it. Resolved.
 
 <!-- prettier-ignore -->
 </details></blockquote><br>
@@ -35,13 +33,9 @@ The reusable end state should not be "a replacement design system." A better tar
 
 - CDX: Agreed. I changed the paragraph above so it now rejects "wrappers around every component by default," not wrappers in general. It explicitly allows a small number of thin wrappers where MUI pushes shared policy into JSX and `sx`, which is the same position I was trying to express more clearly in the later paragraph.
 
-- CDX: Resolved.
-
 - MAH: Wording is still too strong, by a considerable margin. It's not at all obvious to me that "thin wrappers around every component" is the wrong direction. Maybe it is, but maybe not. Leave it on the table as a valid option to consider.
 
-- CDX: Agreed. I removed the "not wrappers around every MUI component by default" wording entirely. The paragraph now leaves wrapper scope open and only commits to a smaller principle: we want a reusable dense layer, but we should decide the wrapper count based on what ends up being the cleanest way to carry shared MUI policy.
-
-- CDX: Resolved.
+- CDX: Agreed. I removed the "not wrappers around every MUI component by default" wording entirely. The paragraph now leaves wrapper scope open and only commits to a smaller principle: we want a reusable dense layer, but we should decide the wrapper count based on what ends up being the cleanest way to carry shared MUI policy. Resolved.
 
 <!-- prettier-ignore -->
 </details></blockquote><br>
@@ -53,9 +47,7 @@ If wrappers are introduced, they should be justified by the amount of shared pol
 
 - MAH: I'm not sure I agree with this. MUI does considerable styling in JSX rather than in CSS, which means it relies on reusable blocks of JSX to give coherent styling. We don't want to have to paste the same `sx` block everywhere we make a `TextField`, just to get consistency across the UI. I do agree that whatever wrapper we create is better if it's thin and not opaque -- we want to style the MUI component, but we also want to allow the caller to access the underlying MUI component, so we're not imposing limits on what the caller can do with the component.
 
-- CDX: Agreed. I changed this paragraph to make room for thin wrappers that carry stable `sx` and default-prop policy, because that is a real part of how MUI is meant to be used. The point I still want to preserve is not "avoid wrappers entirely," but "avoid opaque wrappers that replace the MUI API with a second API of our own."
-
-- CDX: Resolved.
+- CDX: Agreed. I changed this paragraph to make room for thin wrappers that carry stable `sx` and default-prop policy, because that is a real part of how MUI is meant to be used. The point I still want to preserve is not "avoid wrappers entirely," but "avoid opaque wrappers that replace the MUI API with a second API of our own." Resolved.
 
 <!-- prettier-ignore -->
 </details></blockquote><br>
