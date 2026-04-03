@@ -20,12 +20,17 @@
 
 - Start from the real decision the reader needs to make, not from a full inventory of everything you know.
 - Keep the plan short enough that a busy reviewer can read it carefully in one pass.
+- After drafting, do at least one tightening pass focused only on cutting length without losing decision-useful information.
+- Then do a second tightening pass that removes details a competent executor will infer during implementation once the plan shape is clear.
 - Prefer a few strong paragraphs over a long outline with many headings and subheadings.
+- Combine adjacent paragraphs that are really making the same point; do not spend three paragraphs saying what one can say clearly.
 - Describe the problem in terms of the current codebase, not generic engineering advice.
 - Call out the couplings, fragilities, and constraints that are most likely to drive the implementation shape.
 - Separate what must be decided now from details that can safely wait until execution.
+- Ask of each sentence whether it changes the decision, clarifies a real constraint, or prevents a likely mistake; if not, cut it.
 - Write at a high enough level that the executor still has room to make good local decisions.
 - Be explicit about the desired end state so the team can evaluate tradeoffs against a concrete target.
+- Prefer one strong example or proof point over multiple restatements of the same idea.
 - Distinguish stable reusable policy from local experiments, workarounds, or implementation-shaped glue.
 - Recommend the smallest abstractions that seem justified now; do not smuggle a framework rewrite into a plan.
 - Include specific examples when they sharpen the argument, but stop before the plan turns into pseudocode.
