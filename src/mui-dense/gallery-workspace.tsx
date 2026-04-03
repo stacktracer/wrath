@@ -7,6 +7,7 @@ import {
     Alert,
     AlertTitle,
     Autocomplete,
+    AppBar,
     Avatar,
     AvatarGroup,
     Backdrop,
@@ -35,7 +36,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Divider,
     Drawer,
     Fab,
     Fade,
@@ -120,6 +120,7 @@ import {
     TextareaAutosize,
     ToggleButton,
     ToggleButtonGroup,
+    Toolbar,
     Tooltip,
     Typography,
     Unstable_TrapFocus,
@@ -130,7 +131,7 @@ import { DataGridPro, gridClasses } from '@mui/x-data-grid-pro';
 import { RichTreeView, SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { RichTreeViewPro, useRichTreeViewProApiRef } from '@mui/x-tree-view-pro';
 
-import { createDenseDataGridSlotProps, type DenseDataGridMetricsState } from './dense-data-grid';
+import { type DenseDataGridMetricsState } from './dense-data-grid';
 import type { AdvancedDensityControls, DensityControls } from './density-controls';
 import {
     BeaconIcon,
@@ -157,6 +158,12 @@ type GalleryWorkspaceProps = {
     densityControls: DensityControls;
     densityTheme: Theme;
 };
+
+const COMPACT_DEMO_MAX_WIDTH = 395;
+const UTILITY_DEMO_MAX_WIDTH = COMPACT_DEMO_MAX_WIDTH;
+const TABLE_DEMO_MAX_WIDTH = 667;
+const DATA_GRID_DEMO_MAX_WIDTH = 1111;
+const NAVIGATION_CHROME_MAX_WIDTH = 1000;
 
 export function GalleryWorkspace({
     advancedDensityControls,
@@ -189,6 +196,8 @@ export function GalleryWorkspace({
     const [speedDialOpen, setSpeedDialOpen] = useState(false);
     const [clickedAway, setClickedAway] = useState(false);
     const [trapFocusOpen, setTrapFocusOpen] = useState(false);
+    const [transitionsVisible, setTransitionsVisible] = useState(true);
+    const [zoomVisible, setZoomVisible] = useState(true);
     const [portalTarget, setPortalTarget] = useState<HTMLDivElement | null>(null);
     const [proTreeItems, setProTreeItems] = useState<TreeDemoItem[]>(PRO_TREE_ITEMS);
     const [treeMoveSummary, setTreeMoveSummary] = useState('Drag items in the Pro tree to reorder them.');
@@ -196,7 +205,6 @@ export function GalleryWorkspace({
     const menuOpen = Boolean(menuAnchorEl);
     const popoverOpen = Boolean(popoverAnchorEl);
     const popperOpen = Boolean(popperAnchorEl);
-    const dataGridSlotProps = createDenseDataGridSlotProps(advancedDensityControls.compactDataGridToolbar);
     const scaleSpacing = (value: number) =>
         Math.max(0.5, Number((value * densityControls.layoutScale).toFixed(2)));
 
@@ -218,11 +226,10 @@ export function GalleryWorkspace({
                 <div className="mui-dense-intro">
                     <div>
                         <Typography component="h1" gutterBottom variant="h3">
-                            MUI Dense Gallery
+                            MUI Dense
                         </Typography>
                         <Typography variant="body1">
-                            This page now serves both as a baseline gallery and as a public-knob density lab
-                            for `@mui/material`, DataGrid Pro, and MUI X Tree View.
+                            Gallery of MUI components for experimenting with look-and-feel controls.
                         </Typography>
                     </div>
 
@@ -232,32 +239,6 @@ export function GalleryWorkspace({
                             ? 'Loaded from VITE_MUI_X_LICENSE_KEY for this session.'
                             : 'Set VITE_MUI_X_LICENSE_KEY in your shell or .env.local to supply a local license key for DataGrid Pro and Tree View Pro without committing it.'}
                     </Alert>
-
-                    <Paper variant="outlined">
-                        <div className="mui-dense-toc">
-                            <Typography variant="subtitle2">Jump to a section</Typography>
-                            <div className="mui-dense-toc-links">
-                                <Link href="#inputs" underline="hover">
-                                    Inputs
-                                </Link>
-                                <Link href="#data-display" underline="hover">
-                                    Data display
-                                </Link>
-                                <Link href="#navigation" underline="hover">
-                                    Navigation
-                                </Link>
-                                <Link href="#layout" underline="hover">
-                                    Layout and surfaces
-                                </Link>
-                                <Link href="#overlays" underline="hover">
-                                    Overlays and feedback
-                                </Link>
-                                <Link href="#utilities" underline="hover">
-                                    Utilities
-                                </Link>
-                            </div>
-                        </div>
-                    </Paper>
                 </div>
 
                 <div className="mui-dense-sections">
@@ -266,138 +247,6 @@ export function GalleryWorkspace({
                         id="inputs"
                         title="Inputs"
                     >
-                        <DemoCard
-                            components="TextField, Input, FilledInput, OutlinedInput, InputAdornment, InputBase, TextareaAutosize"
-                            title="Text entry"
-                        >
-                            <Stack spacing={scaleSpacing(2.5)}>
-                                <TextField
-                                    defaultValue="Consolidated freight monitor"
-                                    helperText="Standard TextField"
-                                    label="Dashboard title"
-                                />
-
-                                <FormControl size={densityControls.componentSize} variant="standard">
-                                    <InputLabel htmlFor="mui-dense-standard-input">Standard input</InputLabel>
-                                    <Input defaultValue="route-group-alpha" id="mui-dense-standard-input" />
-                                </FormControl>
-
-                                <FormControl size={densityControls.componentSize} variant="filled">
-                                    <InputLabel htmlFor="mui-dense-filled-input">Filled input</InputLabel>
-                                    <FilledInput
-                                        defaultValue="inbound exception queue"
-                                        id="mui-dense-filled-input"
-                                    />
-                                </FormControl>
-
-                                <Box sx={advancedDensityControls.compactInputs ? { pt: 1 } : undefined}>
-                                    <FormControl size={densityControls.componentSize} variant="outlined">
-                                        <InputLabel htmlFor="mui-dense-outlined-input">
-                                            Outlined input
-                                        </InputLabel>
-                                        <OutlinedInput
-                                            defaultValue="42 pallets"
-                                            endAdornment={
-                                                <InputAdornment position="end">units</InputAdornment>
-                                            }
-                                            id="mui-dense-outlined-input"
-                                            label="Outlined input"
-                                        />
-                                    </FormControl>
-                                </Box>
-
-                                <Paper variant="outlined">
-                                    <InputBase
-                                        defaultValue="sku: pending export review"
-                                        fullWidth
-                                        placeholder="InputBase search surface"
-                                    />
-                                </Paper>
-
-                                <TextareaAutosize
-                                    aria-label="Notes"
-                                    defaultValue="TextareaAutosize keeps the native textarea feel while auto-expanding."
-                                    minRows={3}
-                                    placeholder="Paste notes"
-                                />
-                            </Stack>
-                        </DemoCard>
-
-                        <DemoCard
-                            components="Autocomplete, Select, NativeSelect, FormControl, InputLabel, FormHelperText"
-                            title="Choice inputs"
-                        >
-                            <Stack spacing={scaleSpacing(2.5)}>
-                                <Autocomplete
-                                    getOptionLabel={option => option.label}
-                                    onChange={(_event, value) => {
-                                        setRouteValue(value);
-                                    }}
-                                    options={ROUTE_OPTIONS}
-                                    renderInput={params => (
-                                        <TextField
-                                            {...params}
-                                            helperText="Autocomplete with a standard TextField renderer"
-                                            label="Route cluster"
-                                        />
-                                    )}
-                                    slotProps={{
-                                        paper: {
-                                            sx: {
-                                                '& .MuiAutocomplete-listbox': {
-                                                    py: 0.5,
-                                                },
-                                                '& .MuiAutocomplete-option': {
-                                                    minHeight: 36,
-                                                    py: 0.5,
-                                                },
-                                            },
-                                        },
-                                    }}
-                                    value={routeValue}
-                                />
-
-                                <FormControl size={densityControls.componentSize}>
-                                    <InputLabel id="mui-dense-select-label">Density preset</InputLabel>
-                                    <Select
-                                        label="Density preset"
-                                        labelId="mui-dense-select-label"
-                                        onChange={event => {
-                                            setDensityChoice(event.target.value);
-                                        }}
-                                        value={densityChoice}
-                                    >
-                                        <MenuItem dense value="comfortable">
-                                            Comfortable
-                                        </MenuItem>
-                                        <MenuItem dense value="balanced">
-                                            Balanced
-                                        </MenuItem>
-                                        <MenuItem dense value="compact">
-                                            Compact candidate
-                                        </MenuItem>
-                                    </Select>
-                                    <FormHelperText>Standard MUI select menu</FormHelperText>
-                                </FormControl>
-
-                                <FormControl size={densityControls.componentSize} variant="standard">
-                                    <InputLabel htmlFor="mui-dense-native-select">Native select</InputLabel>
-                                    <NativeSelect
-                                        id="mui-dense-native-select"
-                                        onChange={event => {
-                                            setNativeDensityChoice(event.target.value);
-                                        }}
-                                        value={nativeDensityChoice}
-                                    >
-                                        <option value="comfortable">Comfortable</option>
-                                        <option value="balanced">Balanced</option>
-                                        <option value="compact">Compact candidate</option>
-                                    </NativeSelect>
-                                    <FormHelperText>Browser-native select element</FormHelperText>
-                                </FormControl>
-                            </Stack>
-                        </DemoCard>
-
                         <DemoCard
                             components="Checkbox, FormGroup, FormControlLabel, Radio, RadioGroup, Switch, Slider, Rating, ToggleButton, ToggleButtonGroup"
                             title="Selection controls"
@@ -499,6 +348,144 @@ export function GalleryWorkspace({
                         </DemoCard>
 
                         <DemoCard
+                            components="TextField, Input, FilledInput, OutlinedInput, InputAdornment, InputBase, TextareaAutosize"
+                            title="Text entry"
+                        >
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <TextField
+                                    defaultValue="Consolidated freight monitor"
+                                    helperText="Standard TextField"
+                                    label="Dashboard title"
+                                />
+
+                                <FormControl size={densityControls.componentSize} variant="standard">
+                                    <InputLabel htmlFor="mui-dense-standard-input">Standard input</InputLabel>
+                                    <Input defaultValue="route-group-alpha" id="mui-dense-standard-input" />
+                                </FormControl>
+
+                                <FormControl size={densityControls.componentSize} variant="filled">
+                                    <InputLabel htmlFor="mui-dense-filled-input">Filled input</InputLabel>
+                                    <FilledInput
+                                        defaultValue="inbound exception queue"
+                                        id="mui-dense-filled-input"
+                                    />
+                                </FormControl>
+
+                                <Box sx={advancedDensityControls.compactInputs ? { pt: 1 } : undefined}>
+                                    <FormControl size={densityControls.componentSize} variant="outlined">
+                                        <InputLabel htmlFor="mui-dense-outlined-input">
+                                            Outlined input
+                                        </InputLabel>
+                                        <OutlinedInput
+                                            defaultValue="42 pallets"
+                                            endAdornment={
+                                                <InputAdornment position="end">units</InputAdornment>
+                                            }
+                                            id="mui-dense-outlined-input"
+                                            label="Outlined input"
+                                        />
+                                    </FormControl>
+                                </Box>
+
+                                <Paper variant="outlined">
+                                    <InputBase
+                                        defaultValue="sku: pending export review"
+                                        fullWidth
+                                        placeholder="InputBase search surface"
+                                    />
+                                </Paper>
+
+                                <TextareaAutosize
+                                    aria-label="Notes"
+                                    defaultValue="TextareaAutosize keeps the native textarea feel while auto-expanding."
+                                    minRows={3}
+                                    placeholder="Paste notes"
+                                    style={{
+                                        boxSizing: 'border-box',
+                                        maxWidth: '100%',
+                                        resize: 'vertical',
+                                        width: '100%',
+                                    }}
+                                />
+                            </Stack>
+                        </DemoCard>
+
+                        <DemoCard
+                            components="Autocomplete, Select, NativeSelect, FormControl, InputLabel, FormHelperText"
+                            title="Choice inputs"
+                        >
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <Autocomplete
+                                    getOptionLabel={option => option.label}
+                                    onChange={(_event, value) => {
+                                        setRouteValue(value);
+                                    }}
+                                    options={ROUTE_OPTIONS}
+                                    renderInput={params => (
+                                        <TextField
+                                            {...params}
+                                            helperText="Autocomplete with a standard TextField renderer"
+                                            label="Route cluster"
+                                        />
+                                    )}
+                                    slotProps={{
+                                        paper: {
+                                            sx: {
+                                                '& .MuiAutocomplete-listbox': {
+                                                    py: 0.5,
+                                                },
+                                                '& .MuiAutocomplete-option': {
+                                                    minHeight: 36,
+                                                    py: 0.5,
+                                                },
+                                            },
+                                        },
+                                    }}
+                                    value={routeValue}
+                                />
+
+                                <FormControl size={densityControls.componentSize}>
+                                    <InputLabel id="mui-dense-select-label">Density preset</InputLabel>
+                                    <Select
+                                        label="Density preset"
+                                        labelId="mui-dense-select-label"
+                                        onChange={event => {
+                                            setDensityChoice(event.target.value);
+                                        }}
+                                        value={densityChoice}
+                                    >
+                                        <MenuItem dense value="comfortable">
+                                            Comfortable
+                                        </MenuItem>
+                                        <MenuItem dense value="balanced">
+                                            Balanced
+                                        </MenuItem>
+                                        <MenuItem dense value="compact">
+                                            Compact candidate
+                                        </MenuItem>
+                                    </Select>
+                                    <FormHelperText>Standard MUI select menu</FormHelperText>
+                                </FormControl>
+
+                                <FormControl size={densityControls.componentSize} variant="standard">
+                                    <InputLabel htmlFor="mui-dense-native-select">Native select</InputLabel>
+                                    <NativeSelect
+                                        id="mui-dense-native-select"
+                                        onChange={event => {
+                                            setNativeDensityChoice(event.target.value);
+                                        }}
+                                        value={nativeDensityChoice}
+                                    >
+                                        <option value="comfortable">Comfortable</option>
+                                        <option value="balanced">Balanced</option>
+                                        <option value="compact">Compact candidate</option>
+                                    </NativeSelect>
+                                    <FormHelperText>Browser-native select element</FormHelperText>
+                                </FormControl>
+                            </Stack>
+                        </DemoCard>
+
+                        <DemoCard
                             components="Button, ButtonGroup, ButtonBase, IconButton, Fab, Icon, SvgIcon"
                             title="Action surfaces"
                         >
@@ -553,52 +540,43 @@ export function GalleryWorkspace({
                     </Section>
 
                     <Section
-                        description="Lists, tables, imagery, status indicators, and the Pro data grid."
+                        description="Lists, imagery, status indicators, and other compact display components."
                         id="data-display"
                         title="Data Display"
                     >
                         <DemoCard
-                            components="Avatar, AvatarGroup, Badge, Chip, Tooltip, Typography, Divider, Link"
-                            title="Identity and inline display"
+                            components="ImageList, ImageListItem, ImageListItemBar, CardMedia"
+                            title="Images"
                         >
                             <Stack spacing={scaleSpacing(2.5)}>
-                                <Stack alignItems="center" direction="row" spacing={scaleSpacing(2)}>
-                                    <Badge badgeContent={7} color="primary">
-                                        <Avatar>WK</Avatar>
-                                    </Badge>
-                                    <AvatarGroup max={4}>
-                                        <Avatar>AL</Avatar>
-                                        <Avatar>BN</Avatar>
-                                        <Avatar>CR</Avatar>
-                                        <Avatar>DS</Avatar>
-                                        <Avatar>ET</Avatar>
-                                    </AvatarGroup>
-                                </Stack>
+                                <ImageList
+                                    cols={2}
+                                    gap={densityControls.imageGap}
+                                    sx={{
+                                        overflowY: 'visible',
+                                    }}
+                                >
+                                    {IMAGE_TILES.map(tile => (
+                                        <ImageListItem
+                                            key={tile.title}
+                                            sx={{
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            <img alt={tile.title} loading="lazy" src={tile.src} />
+                                            <ImageListItemBar subtitle={tile.subtitle} title={tile.title} />
+                                        </ImageListItem>
+                                    ))}
+                                </ImageList>
 
-                                <Stack direction="row" spacing={scaleSpacing(1)} useFlexGap flexWrap="wrap">
-                                    <Chip color="primary" label="Live" />
-                                    <Chip
-                                        data-testid="mui-dense-compact-chip"
-                                        label="Pending audit"
-                                        variant="outlined"
+                                <Card variant="outlined">
+                                    <CardMedia
+                                        alt="Gradient preview tile"
+                                        component="img"
+                                        height="160"
+                                        image={IMAGE_TILES[0].src}
                                     />
-                                    <Chip color="warning" label="Exception" variant="outlined" />
-                                </Stack>
-
-                                <Tooltip title="Tooltips remain interactive rather than always-open in the gallery">
-                                    <Button variant="outlined">Hover for tooltip</Button>
-                                </Tooltip>
-
-                                <Divider />
-
-                                <Typography variant="subtitle1">Density baseline copy</Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    Material typography is intentionally roomy and calm. This baseline page is
-                                    meant to make that feel tangible before trying to compress it.
-                                </Typography>
-                                <Link href="#layout" underline="hover">
-                                    Jump to layout components
-                                </Link>
+                                </Card>
                             </Stack>
                         </DemoCard>
 
@@ -640,42 +618,6 @@ export function GalleryWorkspace({
                         </DemoCard>
 
                         <DemoCard
-                            components="ImageList, ImageListItem, ImageListItemBar, CardMedia"
-                            title="Images"
-                        >
-                            <Stack spacing={scaleSpacing(2.5)}>
-                                <ImageList
-                                    cols={2}
-                                    gap={densityControls.imageGap}
-                                    sx={{
-                                        overflowY: 'visible',
-                                    }}
-                                >
-                                    {IMAGE_TILES.map(tile => (
-                                        <ImageListItem
-                                            key={tile.title}
-                                            sx={{
-                                                overflow: 'hidden',
-                                            }}
-                                        >
-                                            <img alt={tile.title} loading="lazy" src={tile.src} />
-                                            <ImageListItemBar subtitle={tile.subtitle} title={tile.title} />
-                                        </ImageListItem>
-                                    ))}
-                                </ImageList>
-
-                                <Card variant="outlined">
-                                    <CardMedia
-                                        alt="Gradient preview tile"
-                                        component="img"
-                                        height="160"
-                                        image={IMAGE_TILES[0].src}
-                                    />
-                                </Card>
-                            </Stack>
-                        </DemoCard>
-
-                        <DemoCard
                             components="Alert, AlertTitle, CircularProgress, LinearProgress, Skeleton, SnackbarContent"
                             title="Status and feedback visuals"
                         >
@@ -703,265 +645,282 @@ export function GalleryWorkspace({
                         </DemoCard>
 
                         <DemoCard
-                            components="Table, TableContainer, TableHead, TableBody, TableFooter, TableRow, TableCell, TableSortLabel, TablePagination, TablePaginationActions, DataGridPro"
-                            title="Tables and DataGrid Pro"
-                            wide
+                            components="Avatar, AvatarGroup, Badge, Chip, Tooltip"
+                            title="Identity, badges, and chips"
                         >
-                            <Stack spacing={scaleSpacing(3)}>
-                                <TableContainer component={Paper} variant="outlined">
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>
-                                                    <TableSortLabel active direction="asc">
-                                                        Lane
-                                                    </TableSortLabel>
-                                                </TableCell>
-                                                <TableCell>Status</TableCell>
-                                                <TableCell align="right">Units</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            <TableRow hover>
-                                                <TableCell>JFK to AMS</TableCell>
-                                                <TableCell>Queued</TableCell>
-                                                <TableCell align="right">48</TableCell>
-                                            </TableRow>
-                                            <TableRow hover>
-                                                <TableCell>ATL to LHR</TableCell>
-                                                <TableCell>Released</TableCell>
-                                                <TableCell align="right">32</TableCell>
-                                            </TableRow>
-                                            <TableRow hover>
-                                                <TableCell>SFO to NRT</TableCell>
-                                                <TableCell>Booked</TableCell>
-                                                <TableCell align="right">19</TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                        <TableFooter>
-                                            <TableRow>
-                                                <TablePagination
-                                                    ActionsComponent={TablePaginationActions}
-                                                    count={128}
-                                                    onPageChange={(_event, nextPage) => {
-                                                        setPage(nextPage);
-                                                    }}
-                                                    onRowsPerPageChange={event => {
-                                                        setRowsPerPage(
-                                                            Number.parseInt(event.target.value, 10),
-                                                        );
-                                                        setPage(0);
-                                                    }}
-                                                    page={page}
-                                                    rowsPerPage={rowsPerPage}
-                                                    rowsPerPageOptions={[5, 10, 25]}
-                                                    showFirstButton
-                                                    showLastButton
-                                                />
-                                            </TableRow>
-                                        </TableFooter>
-                                    </Table>
-                                </TableContainer>
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <Stack alignItems="center" direction="row" spacing={scaleSpacing(2)}>
+                                    <Badge badgeContent={7} color="primary">
+                                        <Avatar>WK</Avatar>
+                                    </Badge>
+                                    <AvatarGroup max={4}>
+                                        <Avatar>AL</Avatar>
+                                        <Avatar>BN</Avatar>
+                                        <Avatar>CR</Avatar>
+                                        <Avatar>DS</Avatar>
+                                        <Avatar>ET</Avatar>
+                                    </AvatarGroup>
+                                </Stack>
 
-                                <div className="mui-dense-data-grid" ref={dataGridMetrics.rootRef}>
-                                    <DataGridPro
-                                        columnHeaderHeight={dataGridMetrics.metrics.columnHeaderHeight}
-                                        checkboxSelection
-                                        columns={SHIPMENT_COLUMNS}
-                                        disableRowSelectionOnClick
-                                        density={densityControls.dataGridDensity}
-                                        headerFilterHeight={densityControls.dataGridHeaderFilterHeight}
-                                        headerFilters={densityControls.dataGridHeaderFilters}
-                                        label="Shipment lanes"
-                                        pagination
-                                        rowHeight={dataGridMetrics.metrics.rowHeight}
-                                        rows={SHIPMENT_ROWS}
-                                        showToolbar
-                                        slotProps={dataGridSlotProps}
-                                        sx={{
-                                            backgroundColor: 'background.paper',
-                                            [`& .${gridClasses.columnHeaders}`]: {
-                                                backgroundColor: 'background.paper',
-                                            },
-                                            [`& .${gridClasses.columnHeader}`]: {
-                                                backgroundColor: 'background.paper',
-                                            },
-                                            [`& .${gridClasses.columnHeader} .${gridClasses.sortButton}`]: {
-                                                backgroundColor: 'background.paper',
-                                            },
-                                            [`& .${gridClasses.columnHeaderTitleContainerContent}`]: {
-                                                height: '100%',
-                                            },
-                                        }}
+                                <Stack direction="row" spacing={scaleSpacing(1)} useFlexGap flexWrap="wrap">
+                                    <Chip color="primary" label="Live" />
+                                    <Chip
+                                        data-testid="mui-dense-compact-chip"
+                                        label="Pending audit"
+                                        variant="outlined"
                                     />
-                                </div>
+                                    <Chip color="warning" label="Exception" variant="outlined" />
+                                </Stack>
+
+                                <Tooltip title="Tooltips remain interactive rather than always-open in the gallery">
+                                    <Button variant="outlined">Hover for tooltip</Button>
+                                </Tooltip>
                             </Stack>
                         </DemoCard>
                     </Section>
 
                     <Section
-                        description="Tabs, tree views, stepper flows, navigation bars, paging, and breadcrumb structures."
-                        id="navigation"
-                        title="Navigation"
+                        description="Vanilla table primitives and DataGridPro, separated so each can use a more realistic width."
+                        id="tables"
+                        title="Tables"
                     >
-                        <DemoCard components="Breadcrumbs, Tabs, Tab" title="Tabs and breadcrumb trails">
-                            <Stack spacing={scaleSpacing(2.5)}>
-                                <Breadcrumbs aria-label="breadcrumb">
-                                    <Link href="#inputs" underline="hover">
-                                        Experiments
-                                    </Link>
-                                    <Link href="#data-display" underline="hover">
-                                        MUI dense
-                                    </Link>
-                                    <Typography color="textPrimary">Baseline gallery</Typography>
-                                </Breadcrumbs>
-
-                                <Tabs
-                                    allowScrollButtonsMobile
-                                    onChange={(_event, value) => {
-                                        setTabValue(value);
+                        <DemoCard
+                            components="DataGridPro"
+                            maxWidth={DATA_GRID_DEMO_MAX_WIDTH}
+                            title="DataGridPro"
+                        >
+                            <div className="mui-dense-data-grid" ref={dataGridMetrics.rootRef}>
+                                <DataGridPro
+                                    columnHeaderHeight={dataGridMetrics.metrics.columnHeaderHeight}
+                                    checkboxSelection
+                                    columns={SHIPMENT_COLUMNS}
+                                    disableRowSelectionOnClick
+                                    density={densityControls.dataGridDensity}
+                                    headerFilterHeight={densityControls.dataGridHeaderFilterHeight}
+                                    headerFilters={densityControls.dataGridHeaderFilters}
+                                    label="Shipment lanes"
+                                    pagination
+                                    rowHeight={dataGridMetrics.metrics.rowHeight}
+                                    rows={SHIPMENT_ROWS}
+                                    showToolbar
+                                    sx={{
+                                        backgroundColor: 'background.paper',
+                                        [`& .${gridClasses.columnHeaders}`]: {
+                                            backgroundColor: 'background.paper',
+                                        },
+                                        [`& .${gridClasses.columnHeader}`]: {
+                                            backgroundColor: 'background.paper',
+                                        },
+                                        [`& .${gridClasses.columnHeader} .${gridClasses.sortButton}`]: {
+                                            backgroundColor: 'background.paper',
+                                        },
+                                        [`& .${gridClasses.columnHeaderTitleContainerContent}`]: {
+                                            height: '100%',
+                                        },
                                     }}
-                                    scrollButtons
-                                    sx={{ minHeight: COMPACT_TAB_SX.minHeight }}
-                                    value={tabValue}
-                                    variant="scrollable"
-                                >
-                                    <Tab label="Overview" sx={COMPACT_TAB_SX} />
-                                    <Tab label="Queue detail" sx={COMPACT_TAB_SX} />
-                                    <Tab label="Exceptions" sx={COMPACT_TAB_SX} />
-                                    <Tab label="Audit trail" sx={COMPACT_TAB_SX} />
-                                </Tabs>
+                                />
+                            </div>
+                        </DemoCard>
+
+                        <DemoCard
+                            components="Table, TableContainer, TableHead, TableBody, TableFooter, TableRow, TableCell, TableSortLabel, TablePagination, TablePaginationActions"
+                            maxWidth={TABLE_DEMO_MAX_WIDTH}
+                            title="Table"
+                        >
+                            <TableContainer component={Paper} variant="outlined">
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>
+                                                <TableSortLabel active direction="asc">
+                                                    Lane
+                                                </TableSortLabel>
+                                            </TableCell>
+                                            <TableCell>Status</TableCell>
+                                            <TableCell align="right">Units</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow hover>
+                                            <TableCell>JFK to AMS</TableCell>
+                                            <TableCell>Queued</TableCell>
+                                            <TableCell align="right">48</TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>ATL to LHR</TableCell>
+                                            <TableCell>Released</TableCell>
+                                            <TableCell align="right">32</TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>SFO to NRT</TableCell>
+                                            <TableCell>Booked</TableCell>
+                                            <TableCell align="right">19</TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                    <TableFooter>
+                                        <TableRow>
+                                            <TablePagination
+                                                ActionsComponent={TablePaginationActions}
+                                                count={128}
+                                                onPageChange={(_event, nextPage) => {
+                                                    setPage(nextPage);
+                                                }}
+                                                onRowsPerPageChange={event => {
+                                                    setRowsPerPage(Number.parseInt(event.target.value, 10));
+                                                    setPage(0);
+                                                }}
+                                                page={page}
+                                                rowsPerPage={rowsPerPage}
+                                                rowsPerPageOptions={[5, 10, 25]}
+                                                showFirstButton
+                                                showLastButton
+                                            />
+                                        </TableRow>
+                                    </TableFooter>
+                                </Table>
+                            </TableContainer>
+                        </DemoCard>
+                    </Section>
+
+                    <Section
+                        description="Community and Pro tree view variants, separated so the three tree demos stay directly comparable."
+                        id="trees"
+                        title="Trees"
+                    >
+                        <DemoCard
+                            components="@mui/x-tree-view-pro: RichTreeViewPro"
+                            maxWidth={COMPACT_DEMO_MAX_WIDTH}
+                            title="RichTreeViewPro"
+                        >
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <Typography variant="body2" color="textSecondary">
+                                    Pro tree using the same license path as DataGridPro, with item reordering
+                                    enabled.
+                                </Typography>
+
+                                <RichTreeViewPro
+                                    apiRef={proTreeApiRef}
+                                    aria-label="Pro control-room tree"
+                                    defaultExpandedItems={['pro-control-room', 'pro-floor']}
+                                    itemChildrenIndentation={densityControls.treeIndentation}
+                                    items={proTreeItems}
+                                    itemsReordering
+                                    onItemPositionChange={({ itemId, oldPosition, newPosition }) => {
+                                        const nextItems = proTreeApiRef.current?.getItemTree?.();
+
+                                        if (nextItems) {
+                                            setProTreeItems(nextItems);
+                                        }
+
+                                        setTreeMoveSummary(
+                                            `${itemId}: ${oldPosition.parentId ?? 'root'}[${oldPosition.index}] -> ${newPosition.parentId ?? 'root'}[${newPosition.index}]`,
+                                        );
+                                    }}
+                                />
+
+                                <Typography variant="caption" color="textSecondary">
+                                    {muiXLicenseConfigured
+                                        ? treeMoveSummary
+                                        : 'No local license key is configured, so MUI X will show its normal Pro warning until one is supplied.'}
+                                </Typography>
                             </Stack>
                         </DemoCard>
 
                         <DemoCard
-                            components="@mui/x-tree-view: SimpleTreeView, RichTreeView, TreeItem; @mui/x-tree-view-pro: RichTreeViewPro"
-                            title="Tree views"
-                            wide
+                            components="@mui/x-tree-view: RichTreeView"
+                            maxWidth={COMPACT_DEMO_MAX_WIDTH}
+                            title="RichTreeView"
                         >
                             <Stack spacing={scaleSpacing(2.5)}>
                                 <Typography variant="body2" color="textSecondary">
-                                    The community package covers the basic and item-driven trees. The Pro
-                                    sample below uses the same license key path as DataGrid Pro and enables
-                                    item reordering.
+                                    Community item-driven tree using the `items` prop.
                                 </Typography>
 
-                                <div className="mui-dense-tree-gallery">
-                                    <Paper className="mui-dense-tree-panel" variant="outlined">
-                                        <Box p={2}>
-                                            <Stack spacing={scaleSpacing(1.5)}>
-                                                <div>
-                                                    <Typography variant="subtitle2">
-                                                        SimpleTreeView
-                                                    </Typography>
-                                                    <Typography variant="body2" color="textSecondary">
-                                                        Hard-coded JSX tree.
-                                                    </Typography>
-                                                </div>
+                                <RichTreeView
+                                    aria-label="Rich workstation tree"
+                                    defaultExpandedItems={['rich-workstation', 'rich-overview']}
+                                    itemChildrenIndentation={densityControls.treeIndentation}
+                                    items={COMMUNITY_RICH_TREE_ITEMS}
+                                />
+                            </Stack>
+                        </DemoCard>
 
-                                                <SimpleTreeView
-                                                    aria-label="Simple control-room tree"
-                                                    defaultExpandedItems={[
-                                                        'simple-control-room',
-                                                        'simple-floor-ops',
-                                                    ]}
-                                                    itemChildrenIndentation={densityControls.treeIndentation}
-                                                >
-                                                    <TreeItem
-                                                        itemId="simple-control-room"
-                                                        label="Control room"
-                                                    >
-                                                        <TreeItem
-                                                            itemId="simple-wallboard"
-                                                            label="Wallboard"
-                                                        />
-                                                        <TreeItem
-                                                            itemId="simple-alert-desk"
-                                                            label="Alert desk"
-                                                        />
-                                                    </TreeItem>
-                                                    <TreeItem
-                                                        itemId="simple-floor-ops"
-                                                        label="Floor operations"
-                                                    >
-                                                        <TreeItem itemId="simple-intake" label="Intake" />
-                                                        <TreeItem itemId="simple-sort" label="Sort" />
-                                                        <TreeItem itemId="simple-release" label="Release" />
-                                                    </TreeItem>
-                                                </SimpleTreeView>
-                                            </Stack>
-                                        </Box>
-                                    </Paper>
+                        <DemoCard
+                            components="@mui/x-tree-view: SimpleTreeView, TreeItem"
+                            maxWidth={COMPACT_DEMO_MAX_WIDTH}
+                            title="SimpleTreeView"
+                        >
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <Typography variant="body2" color="textSecondary">
+                                    Hard-coded JSX tree from the community package.
+                                </Typography>
 
-                                    <Paper className="mui-dense-tree-panel" variant="outlined">
-                                        <Box p={2}>
-                                            <Stack spacing={scaleSpacing(1.5)}>
-                                                <div>
-                                                    <Typography variant="subtitle2">RichTreeView</Typography>
-                                                    <Typography variant="body2" color="textSecondary">
-                                                        Community item-driven tree using the `items` prop.
-                                                    </Typography>
-                                                </div>
+                                <SimpleTreeView
+                                    aria-label="Simple control-room tree"
+                                    defaultExpandedItems={['simple-control-room', 'simple-floor-ops']}
+                                    itemChildrenIndentation={densityControls.treeIndentation}
+                                >
+                                    <TreeItem itemId="simple-control-room" label="Control room">
+                                        <TreeItem itemId="simple-wallboard" label="Wallboard" />
+                                        <TreeItem itemId="simple-alert-desk" label="Alert desk" />
+                                    </TreeItem>
+                                    <TreeItem itemId="simple-floor-ops" label="Floor operations">
+                                        <TreeItem itemId="simple-intake" label="Intake" />
+                                        <TreeItem itemId="simple-sort" label="Sort" />
+                                        <TreeItem itemId="simple-release" label="Release" />
+                                    </TreeItem>
+                                </SimpleTreeView>
+                            </Stack>
+                        </DemoCard>
+                    </Section>
 
-                                                <RichTreeView
-                                                    aria-label="Rich workstation tree"
-                                                    defaultExpandedItems={[
-                                                        'rich-workstation',
-                                                        'rich-overview',
-                                                    ]}
-                                                    itemChildrenIndentation={densityControls.treeIndentation}
-                                                    items={COMMUNITY_RICH_TREE_ITEMS}
-                                                />
-                                            </Stack>
-                                        </Box>
-                                    </Paper>
+                    <Section
+                        description="Tabs, stepper flows, navigation bars, paging, and breadcrumb structures."
+                        id="navigation"
+                        title="Navigation"
+                    >
+                        <DemoCard
+                            components="Stepper, Step, StepButton, StepLabel, StepIcon, StepConnector, StepContent"
+                            title="Steppers"
+                        >
+                            <Stack spacing={scaleSpacing(3)}>
+                                <Stepper
+                                    activeStep={stepValue}
+                                    alternativeLabel
+                                    connector={<StepConnector />}
+                                >
+                                    {['Intake', 'Validation', 'Dispatch'].map((label, index) => (
+                                        <Step key={label}>
+                                            <StepButton
+                                                onClick={() => {
+                                                    setStepValue(index);
+                                                }}
+                                            >
+                                                <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
+                                            </StepButton>
+                                        </Step>
+                                    ))}
+                                </Stepper>
 
-                                    <Paper className="mui-dense-tree-panel" variant="outlined">
-                                        <Box p={2}>
-                                            <Stack spacing={scaleSpacing(1.5)}>
-                                                <div>
-                                                    <Typography variant="subtitle2">
-                                                        RichTreeViewPro
-                                                    </Typography>
-                                                    <Typography variant="body2" color="textSecondary">
-                                                        Pro tree with item reordering enabled.
-                                                    </Typography>
-                                                </div>
-
-                                                <RichTreeViewPro
-                                                    apiRef={proTreeApiRef}
-                                                    aria-label="Pro control-room tree"
-                                                    defaultExpandedItems={['pro-control-room', 'pro-floor']}
-                                                    itemChildrenIndentation={densityControls.treeIndentation}
-                                                    items={proTreeItems}
-                                                    itemsReordering
-                                                    onItemPositionChange={({
-                                                        itemId,
-                                                        oldPosition,
-                                                        newPosition,
-                                                    }) => {
-                                                        const nextItems =
-                                                            proTreeApiRef.current?.getItemTree?.();
-
-                                                        if (nextItems) {
-                                                            setProTreeItems(nextItems);
-                                                        }
-
-                                                        setTreeMoveSummary(
-                                                            `${itemId}: ${oldPosition.parentId ?? 'root'}[${oldPosition.index}] -> ${newPosition.parentId ?? 'root'}[${newPosition.index}]`,
-                                                        );
-                                                    }}
-                                                />
-
-                                                <Typography variant="caption" color="textSecondary">
-                                                    {muiXLicenseConfigured
-                                                        ? treeMoveSummary
-                                                        : 'No local license key is configured, so MUI X will show its normal Pro warning until one is supplied.'}
-                                                </Typography>
-                                            </Stack>
-                                        </Box>
-                                    </Paper>
-                                </div>
+                                <Stepper activeStep={1} orientation="vertical">
+                                    <Step expanded>
+                                        <StepLabel>Manifest ingest</StepLabel>
+                                        <StepContent>
+                                            <Typography variant="body2" color="textSecondary">
+                                                Parse inbound files and reconcile them against the booking
+                                                list.
+                                            </Typography>
+                                        </StepContent>
+                                    </Step>
+                                    <Step expanded>
+                                        <StepLabel>Exception pass</StepLabel>
+                                        <StepContent>
+                                            <Typography variant="body2" color="textSecondary">
+                                                Capture blocked records for operator review.
+                                            </Typography>
+                                        </StepContent>
+                                    </Step>
+                                </Stepper>
                             </Stack>
                         </DemoCard>
 
@@ -1005,55 +964,72 @@ export function GalleryWorkspace({
                         </DemoCard>
 
                         <DemoCard
-                            components="Stepper, Step, StepButton, StepLabel, StepIcon, StepConnector, StepContent, MobileStepper"
-                            title="Steppers"
+                            components="AppBar, Toolbar, MobileStepper"
+                            maxWidth={NAVIGATION_CHROME_MAX_WIDTH}
+                            title="App bar and mobile stepper"
                         >
-                            <Stack spacing={scaleSpacing(3)}>
-                                <Stepper
-                                    activeStep={stepValue}
-                                    alternativeLabel
-                                    connector={<StepConnector />}
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <Paper variant="outlined" sx={{ overflow: 'hidden' }}>
+                                    <AppBar position="static">
+                                        <Toolbar>
+                                            <div className="mui-dense-toolbar-layout">
+                                                <div>
+                                                    <Typography variant="h6">Ops workstation</Typography>
+                                                    <Typography variant="body2">
+                                                        Representative app-level toolbar chrome.
+                                                    </Typography>
+                                                </div>
+
+                                                <div className="mui-dense-toolbar-links">
+                                                    <Button color="inherit">Overview</Button>
+                                                    <Button color="inherit">Exceptions</Button>
+                                                    <Button color="inherit">Settings</Button>
+                                                </div>
+                                            </div>
+                                        </Toolbar>
+                                    </AppBar>
+                                </Paper>
+
+                                <Paper variant="outlined">
+                                    <MobileStepper
+                                        activeStep={1}
+                                        backButton={<Button>Back</Button>}
+                                        nextButton={<Button>Next</Button>}
+                                        position="static"
+                                        steps={4}
+                                        variant="text"
+                                    />
+                                </Paper>
+                            </Stack>
+                        </DemoCard>
+
+                        <DemoCard components="Breadcrumbs, Tabs, Tab" title="Tabs and breadcrumb trails">
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <Breadcrumbs aria-label="breadcrumb">
+                                    <Link href="#inputs" underline="hover">
+                                        Experiments
+                                    </Link>
+                                    <Link href="#data-display" underline="hover">
+                                        MUI dense
+                                    </Link>
+                                    <Typography color="textPrimary">Baseline gallery</Typography>
+                                </Breadcrumbs>
+
+                                <Tabs
+                                    allowScrollButtonsMobile
+                                    onChange={(_event, value) => {
+                                        setTabValue(value);
+                                    }}
+                                    scrollButtons
+                                    sx={{ minHeight: COMPACT_TAB_SX.minHeight }}
+                                    value={tabValue}
+                                    variant="scrollable"
                                 >
-                                    {['Intake', 'Validation', 'Dispatch'].map((label, index) => (
-                                        <Step key={label}>
-                                            <StepButton
-                                                onClick={() => {
-                                                    setStepValue(index);
-                                                }}
-                                            >
-                                                <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
-                                            </StepButton>
-                                        </Step>
-                                    ))}
-                                </Stepper>
-
-                                <Stepper activeStep={1} orientation="vertical">
-                                    <Step expanded>
-                                        <StepLabel>Manifest ingest</StepLabel>
-                                        <StepContent>
-                                            <Typography variant="body2" color="textSecondary">
-                                                Parse inbound files and reconcile them against the booking
-                                                list.
-                                            </Typography>
-                                        </StepContent>
-                                    </Step>
-                                    <Step expanded>
-                                        <StepLabel>Exception pass</StepLabel>
-                                        <StepContent>
-                                            <Typography variant="body2" color="textSecondary">
-                                                Capture blocked records for operator review.
-                                            </Typography>
-                                        </StepContent>
-                                    </Step>
-                                </Stepper>
-
-                                <MobileStepper
-                                    activeStep={1}
-                                    backButton={<Button>Back</Button>}
-                                    nextButton={<Button>Next</Button>}
-                                    steps={4}
-                                    variant="text"
-                                />
+                                    <Tab label="Overview" sx={COMPACT_TAB_SX} />
+                                    <Tab label="Queue detail" sx={COMPACT_TAB_SX} />
+                                    <Tab label="Exceptions" sx={COMPACT_TAB_SX} />
+                                    <Tab label="Audit trail" sx={COMPACT_TAB_SX} />
+                                </Tabs>
                             </Stack>
                         </DemoCard>
                     </Section>
@@ -1064,28 +1040,10 @@ export function GalleryWorkspace({
                         title="Layout and Surfaces"
                     >
                         <DemoCard
-                            components="Accordion, AccordionSummary, AccordionDetails, AccordionActions"
-                            title="Accordion"
-                        >
-                            <Accordion defaultExpanded>
-                                <AccordionSummary expandIcon={<ChevronIcon />}>
-                                    <Typography>Inbound exception queue</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Typography variant="body2" color="textSecondary">
-                                        Default accordion spacing leaves plenty of breathing room around a
-                                        fairly small amount of information.
-                                    </Typography>
-                                </AccordionDetails>
-                                <AccordionActions>
-                                    <Button>Ignore</Button>
-                                    <Button>Review</Button>
-                                </AccordionActions>
-                            </Accordion>
-                        </DemoCard>
-
-                        <DemoCard
                             components="Card, CardHeader, CardContent, CardActions, CardActionArea, CardMedia, Paper"
+                            fixedWidth={COMPACT_DEMO_MAX_WIDTH}
+                            maxWidth={COMPACT_DEMO_MAX_WIDTH}
+                            minWidth={COMPACT_DEMO_MAX_WIDTH}
                             title="Cards and papers"
                         >
                             <Stack spacing={scaleSpacing(2.5)}>
@@ -1193,6 +1151,27 @@ export function GalleryWorkspace({
                             </Stack>
                         </DemoCard>
 
+                        <DemoCard
+                            components="Accordion, AccordionSummary, AccordionDetails, AccordionActions"
+                            title="Accordion"
+                        >
+                            <Accordion defaultExpanded>
+                                <AccordionSummary expandIcon={<ChevronIcon />}>
+                                    <Typography>Inbound exception queue</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Typography variant="body2" color="textSecondary">
+                                        Default accordion spacing leaves plenty of breathing room around a
+                                        fairly small amount of information.
+                                    </Typography>
+                                </AccordionDetails>
+                                <AccordionActions>
+                                    <Button>Ignore</Button>
+                                    <Button>Review</Button>
+                                </AccordionActions>
+                            </Accordion>
+                        </DemoCard>
+
                         <DemoCard components="ScopedCssBaseline" title="Scoped baseline">
                             <ScopedCssBaseline>
                                 <Paper variant="outlined">
@@ -1214,6 +1193,115 @@ export function GalleryWorkspace({
                         title="Overlays and Feedback"
                     >
                         <DemoCard
+                            components="SpeedDial, SpeedDialAction, SpeedDialIcon"
+                            fixedWidth={COMPACT_DEMO_MAX_WIDTH}
+                            maxWidth={COMPACT_DEMO_MAX_WIDTH}
+                            minWidth={COMPACT_DEMO_MAX_WIDTH}
+                            title="Speed dial"
+                        >
+                            <div className="mui-dense-speed-dial-shell">
+                                <SpeedDial
+                                    ariaLabel="Dense gallery speed dial"
+                                    icon={<SpeedDialIcon />}
+                                    onClose={() => {
+                                        setSpeedDialOpen(false);
+                                    }}
+                                    onOpen={() => {
+                                        setSpeedDialOpen(true);
+                                    }}
+                                    open={speedDialOpen}
+                                >
+                                    <SpeedDialAction icon={<RouteIcon />} tooltipTitle="Assign" />
+                                    <SpeedDialAction icon={<GridCellsIcon />} tooltipTitle="Split" />
+                                    <SpeedDialAction icon={<SparkIcon />} tooltipTitle="Flag" />
+                                </SpeedDial>
+                            </div>
+                        </DemoCard>
+
+                        <DemoCard components="Collapse, Fade, Grow, Slide" title="Transitions">
+                            <Stack spacing={scaleSpacing(2)}>
+                                <Stack direction="row" spacing={scaleSpacing(1.5)} useFlexGap flexWrap="wrap">
+                                    <Button
+                                        onClick={() => {
+                                            setTransitionsVisible(current => !current);
+                                        }}
+                                        variant="outlined"
+                                    >
+                                        {transitionsVisible ? 'Hide elements' : 'Show elements'}
+                                    </Button>
+                                    <Typography color="textSecondary" variant="body2">
+                                        These components animate only on enter and exit.
+                                    </Typography>
+                                </Stack>
+
+                                <div className="mui-dense-transition-grid">
+                                    <div className="mui-dense-transition-cell">
+                                        <Collapse in={transitionsVisible}>
+                                            <Paper variant="outlined">
+                                                <Box p={2}>
+                                                    <Typography variant="body2">Collapse</Typography>
+                                                </Box>
+                                            </Paper>
+                                        </Collapse>
+                                    </div>
+                                    <div className="mui-dense-transition-cell">
+                                        <Fade in={transitionsVisible}>
+                                            <Paper variant="outlined">
+                                                <Box p={2}>
+                                                    <Typography variant="body2">Fade</Typography>
+                                                </Box>
+                                            </Paper>
+                                        </Fade>
+                                    </div>
+                                    <div className="mui-dense-transition-cell">
+                                        <Grow in={transitionsVisible}>
+                                            <Paper variant="outlined">
+                                                <Box p={2}>
+                                                    <Typography variant="body2">Grow</Typography>
+                                                </Box>
+                                            </Paper>
+                                        </Grow>
+                                    </div>
+                                    <div className="mui-dense-transition-cell">
+                                        <Slide direction="up" in={transitionsVisible}>
+                                            <Paper variant="outlined">
+                                                <Box p={2}>
+                                                    <Typography variant="body2">Slide</Typography>
+                                                </Box>
+                                            </Paper>
+                                        </Slide>
+                                    </div>
+                                </div>
+                            </Stack>
+                        </DemoCard>
+
+                        <DemoCard maxWidth={COMPACT_DEMO_MAX_WIDTH} title="Zoom transition">
+                            <Stack spacing={scaleSpacing(2)}>
+                                <Typography color="textSecondary" variant="body2">
+                                    Zoom is shown separately so it does not fight the other transitions for
+                                    layout space.
+                                </Typography>
+                                <Stack direction="row" spacing={scaleSpacing(1.5)} useFlexGap flexWrap="wrap">
+                                    <Button
+                                        onClick={() => {
+                                            setZoomVisible(current => !current);
+                                        }}
+                                        variant="outlined"
+                                    >
+                                        {zoomVisible ? 'Hide element' : 'Show element'}
+                                    </Button>
+                                </Stack>
+                                <Zoom in={zoomVisible}>
+                                    <Paper variant="outlined">
+                                        <Box p={2}>
+                                            <Typography variant="body2">Zoom</Typography>
+                                        </Box>
+                                    </Paper>
+                                </Zoom>
+                            </Stack>
+                        </DemoCard>
+
+                        <DemoCard
                             components="Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions"
                             title="Dialog"
                         >
@@ -1228,6 +1316,38 @@ export function GalleryWorkspace({
                                     variant="outlined"
                                 >
                                     Open dialog
+                                </Button>
+                            </Stack>
+                        </DemoCard>
+
+                        <DemoCard
+                            components="Modal, Backdrop, Snackbar, SnackbarContent"
+                            title="Modal surfaces and transient feedback"
+                        >
+                            <Stack direction="row" spacing={scaleSpacing(1.5)} useFlexGap flexWrap="wrap">
+                                <Button
+                                    onClick={() => {
+                                        setModalOpen(true);
+                                    }}
+                                    variant="outlined"
+                                >
+                                    Open modal
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        setBackdropOpen(true);
+                                    }}
+                                    variant="outlined"
+                                >
+                                    Show backdrop
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        setSnackbarOpen(true);
+                                    }}
+                                    variant="outlined"
+                                >
+                                    Reopen snackbar
                                 </Button>
                             </Stack>
                         </DemoCard>
@@ -1266,99 +1386,6 @@ export function GalleryWorkspace({
                                 </Button>
                             </Stack>
                         </DemoCard>
-
-                        <DemoCard
-                            components="Modal, Backdrop, Snackbar, SnackbarContent"
-                            title="Modal surfaces and transient feedback"
-                        >
-                            <Stack direction="row" spacing={scaleSpacing(1.5)} useFlexGap flexWrap="wrap">
-                                <Button
-                                    onClick={() => {
-                                        setModalOpen(true);
-                                    }}
-                                    variant="outlined"
-                                >
-                                    Open modal
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        setBackdropOpen(true);
-                                    }}
-                                    variant="outlined"
-                                >
-                                    Show backdrop
-                                </Button>
-                                <Button
-                                    onClick={() => {
-                                        setSnackbarOpen(true);
-                                    }}
-                                    variant="outlined"
-                                >
-                                    Reopen snackbar
-                                </Button>
-                            </Stack>
-                        </DemoCard>
-
-                        <DemoCard components="SpeedDial, SpeedDialAction, SpeedDialIcon" title="Speed dial">
-                            <div className="mui-dense-speed-dial-shell">
-                                <SpeedDial
-                                    ariaLabel="Dense gallery speed dial"
-                                    icon={<SpeedDialIcon />}
-                                    onClose={() => {
-                                        setSpeedDialOpen(false);
-                                    }}
-                                    onOpen={() => {
-                                        setSpeedDialOpen(true);
-                                    }}
-                                    open={speedDialOpen}
-                                >
-                                    <SpeedDialAction icon={<RouteIcon />} tooltipTitle="Assign" />
-                                    <SpeedDialAction icon={<GridCellsIcon />} tooltipTitle="Split" />
-                                    <SpeedDialAction icon={<SparkIcon />} tooltipTitle="Flag" />
-                                </SpeedDial>
-                            </div>
-                        </DemoCard>
-
-                        <DemoCard components="Collapse, Fade, Grow, Slide" title="Transitions">
-                            <div className="mui-dense-transition-grid">
-                                <div className="mui-dense-transition-cell">
-                                    <Collapse in>
-                                        <Paper variant="outlined">
-                                            <Box p={2}>
-                                                <Typography variant="body2">Collapse</Typography>
-                                            </Box>
-                                        </Paper>
-                                    </Collapse>
-                                </div>
-                                <div className="mui-dense-transition-cell">
-                                    <Fade in>
-                                        <Paper variant="outlined">
-                                            <Box p={2}>
-                                                <Typography variant="body2">Fade</Typography>
-                                            </Box>
-                                        </Paper>
-                                    </Fade>
-                                </div>
-                                <div className="mui-dense-transition-cell">
-                                    <Grow in>
-                                        <Paper variant="outlined">
-                                            <Box p={2}>
-                                                <Typography variant="body2">Grow</Typography>
-                                            </Box>
-                                        </Paper>
-                                    </Grow>
-                                </div>
-                                <div className="mui-dense-transition-cell">
-                                    <Slide direction="up" in>
-                                        <Paper variant="outlined">
-                                            <Box p={2}>
-                                                <Typography variant="body2">Slide</Typography>
-                                            </Box>
-                                        </Paper>
-                                    </Slide>
-                                </div>
-                            </div>
-                        </DemoCard>
                     </Section>
 
                     <Section
@@ -1368,6 +1395,7 @@ export function GalleryWorkspace({
                     >
                         <DemoCard
                             components="ClickAwayListener, Portal, NoSsr, Unstable_TrapFocus"
+                            maxWidth={UTILITY_DEMO_MAX_WIDTH}
                             title="Utility helpers"
                         >
                             <Stack spacing={scaleSpacing(2.5)}>
@@ -1391,6 +1419,11 @@ export function GalleryWorkspace({
                                     {clickedAway ? 'An outside click was detected.' : 'No outside click yet.'}
                                 </Typography>
 
+                                <Typography variant="body2" color="textSecondary">
+                                    Portal renders a child into a different DOM container. The chip below is
+                                    declared here but mounted inside the dashed target box.
+                                </Typography>
+
                                 <div
                                     className="mui-dense-portal-target"
                                     ref={node => {
@@ -1406,26 +1439,42 @@ export function GalleryWorkspace({
 
                                 {portalTarget ? (
                                     <Portal container={() => portalTarget}>
-                                        <Chip color="primary" label="Rendered through Portal" />
+                                        <Chip color="primary" label="Mounted through Portal" />
                                     </Portal>
                                 ) : null}
 
-                                <NoSsr>
-                                    <Chip
-                                        label={`NoSsr mounted in browser at ${new Date().toLocaleTimeString()}`}
-                                        variant="outlined"
-                                    />
-                                </NoSsr>
+                                <Stack spacing={scaleSpacing(1)}>
+                                    <Typography variant="body2" color="textSecondary">
+                                        NoSsr skips server-side rendering and only mounts its children in the
+                                        browser.
+                                    </Typography>
 
-                                <Stack direction="row" spacing={scaleSpacing(1.5)}>
-                                    <Button
-                                        onClick={() => {
-                                            setTrapFocusOpen(current => !current);
-                                        }}
-                                        variant="outlined"
-                                    >
-                                        Toggle trap focus
-                                    </Button>
+                                    <NoSsr>
+                                        <Chip
+                                            label={`Browser-only child mounted at ${new Date().toLocaleTimeString()}`}
+                                            variant="outlined"
+                                        />
+                                    </NoSsr>
+                                </Stack>
+
+                                <Stack spacing={scaleSpacing(1)}>
+                                    <Typography variant="body2" color="textSecondary">
+                                        TrapFocus keeps keyboard focus inside the small region below while it
+                                        is open.
+                                    </Typography>
+
+                                    <Stack direction="row" spacing={scaleSpacing(1.5)}>
+                                        <Button
+                                            onClick={() => {
+                                                setTrapFocusOpen(current => !current);
+                                            }}
+                                            variant="outlined"
+                                        >
+                                            {trapFocusOpen
+                                                ? 'Close trapped-focus region'
+                                                : 'Open trapped-focus region'}
+                                        </Button>
+                                    </Stack>
                                 </Stack>
 
                                 {trapFocusOpen ? (
@@ -1446,19 +1495,6 @@ export function GalleryWorkspace({
                                     </Unstable_TrapFocus>
                                 ) : null}
                             </Stack>
-                        </DemoCard>
-
-                        <DemoCard components="Zoom" title="Zoom">
-                            <Zoom in>
-                                <Paper variant="outlined">
-                                    <Box p={2}>
-                                        <Typography variant="body2">
-                                            Zoom is shown separately so it does not fight the other
-                                            transitions for layout space.
-                                        </Typography>
-                                    </Box>
-                                </Paper>
-                            </Zoom>
                         </DemoCard>
                     </Section>
                 </div>

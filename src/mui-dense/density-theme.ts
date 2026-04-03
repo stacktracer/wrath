@@ -1,4 +1,3 @@
-import { gridClasses } from '@mui/x-data-grid-pro';
 import { treeItemClasses } from '@mui/x-tree-view';
 import { createTheme, keyframes, type Theme } from '@mui/material/styles';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
@@ -541,22 +540,6 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                               root: {
                                   paddingBlock: 6,
                                   paddingInline: 10,
-                              },
-                          },
-                      },
-                  }
-                : {}),
-            ...(controls.compactDataGridCells
-                ? {
-                      MuiDataGrid: {
-                          styleOverrides: {
-                              root: {
-                                  [`& .${gridClasses.cell}`]: {
-                                      paddingInline: 10,
-                                  },
-                                  [`& .${gridClasses.columnHeader}`]: {
-                                      paddingInline: 10,
-                                  },
                               },
                           },
                       },

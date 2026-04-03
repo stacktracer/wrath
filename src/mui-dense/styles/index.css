@@ -38,8 +38,6 @@ body {
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
-    padding-top: 2rem;
-    padding-bottom: 4rem;
 }
 
 .mui-dense-toolbar-layout {
@@ -79,9 +77,14 @@ body {
 }
 
 .mui-dense-main {
+    box-sizing: border-box;
     display: grid;
     gap: 1.5rem;
     min-width: 0;
+    padding-left: 1.125rem;
+    padding-right: 1.125rem;
+    padding-top: 3.375rem;
+    padding-bottom: 1.125rem;
 }
 
 .mui-dense-density-panel {
@@ -136,12 +139,6 @@ body {
     flex-wrap: wrap;
 }
 
-.mui-dense-advanced-summary {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
 .mui-dense-advanced-groups {
     display: grid;
     gap: 1rem;
@@ -167,17 +164,6 @@ body {
     padding: 0.85rem;
 }
 
-.mui-dense-toc {
-    padding: 1rem 1.25rem;
-}
-
-.mui-dense-toc-links {
-    display: flex;
-    gap: 0.75rem 1rem;
-    flex-wrap: wrap;
-    margin-top: 0.75rem;
-}
-
 .mui-dense-sections {
     display: grid;
     gap: 3rem;
@@ -195,15 +181,21 @@ body {
 }
 
 .mui-dense-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
     align-items: start;
+    justify-content: flex-start;
 }
 
 .mui-dense-demo {
+    box-sizing: border-box;
     display: grid;
+    flex: 1 1 320px;
     gap: 0.5rem;
+    inline-size: 100%;
+    max-inline-size: var(--mui-dense-demo-max-width, 395px);
+    min-inline-size: min(100%, var(--mui-dense-demo-min-width, 320px));
     min-width: 0;
     border: 1px solid var(--mui-dense-demo-border);
     border-radius: 4px;
@@ -211,8 +203,16 @@ body {
     background: var(--mui-dense-demo-background);
 }
 
+.mui-dense-demo--fixed {
+    flex: 0 1 var(--mui-dense-demo-fixed-width);
+    inline-size: min(100%, var(--mui-dense-demo-fixed-width));
+    max-inline-size: var(--mui-dense-demo-fixed-width);
+    min-inline-size: min(100%, var(--mui-dense-demo-fixed-width));
+}
+
 .mui-dense-demo--wide {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
+    max-inline-size: none;
 }
 
 .mui-dense-demo__header {
@@ -226,16 +226,6 @@ body {
 
 .mui-dense-data-grid {
     height: 360px;
-    min-width: 0;
-}
-
-.mui-dense-tree-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1rem;
-}
-
-.mui-dense-tree-panel {
     min-width: 0;
 }
 
@@ -253,6 +243,8 @@ body {
     padding: 0.75rem;
     display: flex;
     align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     background: var(--mui-dense-portal-background);
 }
 
@@ -313,11 +305,11 @@ body {
     }
 
     .mui-dense-shell {
-        padding-bottom: 2rem;
         overflow: hidden;
     }
 
     .mui-dense-workspace {
+        column-gap: 0;
         grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
         align-items: stretch;
         height: 100%;
@@ -351,7 +343,7 @@ body {
         height: 100%;
         overflow-y: auto;
         overscroll-behavior: contain;
-        padding-right: 0.35rem;
+        padding-right: 0;
     }
 }
 
@@ -364,18 +356,9 @@ body {
         padding-left: clamp(1.5rem, 1vw + 0.75rem, 3rem);
         padding-right: clamp(1.5rem, 1vw + 0.75rem, 3rem);
     }
-
-    .mui-dense-gallery {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
 }
 
 @media (max-width: 720px) {
-    .mui-dense-shell {
-        padding-top: 1rem;
-        padding-bottom: 2rem;
-    }
-
     .mui-dense-demo {
         padding: 0.85rem;
     }

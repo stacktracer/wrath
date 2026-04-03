@@ -2,7 +2,6 @@ import {
     Alert,
     Button,
     ButtonGroup,
-    Chip,
     FormControl,
     FormControlLabel,
     InputLabel,
@@ -17,7 +16,6 @@ import {
 
 import { formatPixelValue } from './dense-data-grid';
 import {
-    ALL_ADVANCED_CONTROLS,
     type AdvancedDensityControls,
     DENSITY_PRESET_LABELS,
     type DensityControls,
@@ -25,7 +23,7 @@ import {
     type DensityPresetSelection,
     type GalleryColorMode,
     THEME_OVERRIDE_CONTROLS,
-    UTILITY_AND_SLOT_CONTROLS,
+    TREE_VIEW_CONTROLS,
 } from './density-controls';
 import { AdvancedControlTile, DensityControlCard } from './gallery-shell';
 
@@ -70,9 +68,6 @@ export function GallerySidebar({
     onUpdateDensityControl,
     rowMetrics,
 }: GallerySidebarProps) {
-    const activeAdvancedControls = ALL_ADVANCED_CONTROLS.filter(
-        definition => advancedDensityControls[definition.key],
-    );
     const currentAnimationModeLabel = animationsDisabled ? 'Off' : 'On';
     const currentColorModeLabel = colorMode === 'dark' ? 'Dark' : 'Light';
 
@@ -490,9 +485,8 @@ export function GallerySidebar({
                                     Advanced Density Controls
                                 </Typography>
                                 <Typography color="textSecondary" variant="body2">
-                                    Set 3 controls that layer on top of the current Set 1 density state
-                                    through slot-aware theme overrides, exported utility classes, and
-                                    documented slot props.
+                                    Controls that go beyond the prop-based density layer above and use theme
+                                    overrides plus documented component hooks.
                                 </Typography>
                             </div>
 
@@ -502,38 +496,17 @@ export function GallerySidebar({
                         </div>
 
                         <Alert severity="warning" variant="outlined">
-                            These controls are more fragile than the plain prop-based layer above. Resetting
-                            here clears only Set 3 overrides and leaves the current Set 1 preset or custom
-                            state intact.
+                            These controls are more fragile than the baseline controls above. Resetting here
+                            clears only these implementation-level overrides and leaves the current preset or
+                            custom prop state intact.
                         </Alert>
-
-                        <Stack spacing={1}>
-                            <Typography variant="subtitle2">Active advanced overrides</Typography>
-                            <Typography color="textSecondary" variant="body2">
-                                {activeAdvancedControls.length > 0
-                                    ? `${activeAdvancedControls.length} advanced override${activeAdvancedControls.length === 1 ? '' : 's'} active.`
-                                    : 'No advanced overrides are active.'}
-                            </Typography>
-                            {activeAdvancedControls.length > 0 ? (
-                                <div className="mui-dense-advanced-summary">
-                                    {activeAdvancedControls.map(definition => (
-                                        <Chip
-                                            key={definition.key}
-                                            label={definition.label}
-                                            size="small"
-                                            variant="outlined"
-                                        />
-                                    ))}
-                                </div>
-                            ) : null}
-                        </Stack>
 
                         <div className="mui-dense-advanced-groups">
                             <section className="mui-dense-advanced-group">
                                 <div className="mui-dense-advanced-group__heading">
                                     <Typography variant="subtitle1">Theme Override Controls</Typography>
                                     <Typography color="textSecondary" variant="body2">
-                                        Representative Set 3 overrides driven through
+                                        Representative overrides driven through
                                         `theme.components.*.styleOverrides`.
                                     </Typography>
                                 </div>
@@ -554,17 +527,15 @@ export function GallerySidebar({
 
                             <section className="mui-dense-advanced-group">
                                 <div className="mui-dense-advanced-group__heading">
-                                    <Typography variant="subtitle1">
-                                        Utility-Class and Slot Controls
-                                    </Typography>
+                                    <Typography variant="subtitle1">Tree View Overrides</Typography>
                                     <Typography color="textSecondary" variant="body2">
-                                        These stay on exported class names, documented slot props, and Tree
-                                        state hooks.
+                                        Tree-specific layout tightening through documented classes and state
+                                        hooks.
                                     </Typography>
                                 </div>
 
                                 <div className="mui-dense-advanced-grid">
-                                    {UTILITY_AND_SLOT_CONTROLS.map(definition => (
+                                    {TREE_VIEW_CONTROLS.map(definition => (
                                         <AdvancedControlTile
                                             checked={advancedDensityControls[definition.key]}
                                             definition={definition}

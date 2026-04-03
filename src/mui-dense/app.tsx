@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { AppBar, Button, Container, CssBaseline, Toolbar, Typography } from '@mui/material';
+import { Container, CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { useDenseDataGridMetrics } from './dense-data-grid';
@@ -75,31 +75,6 @@ export function App() {
             <CssBaseline />
 
             <div className="mui-dense-app" data-mui-dense-color-mode={colorMode}>
-                <AppBar position="static">
-                    <Toolbar>
-                        <div className="mui-dense-toolbar-layout">
-                            <div>
-                                <Typography variant="h6">MUI Dense Gallery</Typography>
-                                <Typography variant="body2">
-                                    Public-knob MUI components for density evaluation.
-                                </Typography>
-                            </div>
-
-                            <div className="mui-dense-toolbar-links">
-                                <Button color="inherit" href="#inputs">
-                                    Inputs
-                                </Button>
-                                <Button color="inherit" href="#data-display">
-                                    Data display
-                                </Button>
-                                <Button color="inherit" href="#overlays">
-                                    Overlays
-                                </Button>
-                            </div>
-                        </div>
-                    </Toolbar>
-                </AppBar>
-
                 <Container className="mui-dense-shell" maxWidth="xl">
                     <div className="mui-dense-workspace">
                         <GallerySidebar

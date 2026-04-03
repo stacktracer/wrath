@@ -198,9 +198,7 @@ describe('mui-dense page', () => {
 
         await import('./main');
 
-        await expect
-            .element(page.getByRole('heading', { level: 1, name: 'MUI Dense Gallery' }))
-            .toBeVisible();
+        await expect.element(page.getByRole('heading', { level: 1, name: 'MUI Dense' })).toBeVisible();
         await expect
             .element(page.getByRole('heading', { level: 2, name: /^Gallery Controls$/ }))
             .toBeVisible();
@@ -210,17 +208,23 @@ describe('mui-dense page', () => {
         await expect.element(page.getByRole('complementary', { name: 'UI controls sidebar' })).toBeVisible();
         await expect.element(page.getByRole('main')).toBeVisible();
         await expect.element(page.getByText('MUI X Pro license')).toBeVisible();
-        await expect.element(page.getByRole('heading', { level: 3, name: 'Tree views' })).toBeVisible();
-        await expect.element(page.getByText('7 advanced overrides active.')).toBeVisible();
+        await expect.element(page.getByRole('heading', { level: 2, name: 'Tables' })).toBeVisible();
+        await expect.element(page.getByRole('heading', { level: 2, name: 'Trees' })).toBeVisible();
+        await expect.element(page.getByRole('heading', { level: 3, name: 'SimpleTreeView' })).toBeVisible();
 
         const appRoot = requireElement('.mui-dense-app');
+        const shell = requireElement('.mui-dense-shell');
         const appearanceCard = requireDensityCard('Appearance');
         const densityPresetCard = requireDensityCard('Density Preset');
         const spacingBaseCard = requireDensityCard('Spacing Base');
         const darkModeInput = requireLabeledControlInput('Dark mode');
         const disableAnimationsInput = requireLabeledControlInput('Disable animations');
+        const disableGlobalGuttersInput = requireLabeledControlInput('Disable global gutters');
 
         expect(document.body.textContent).not.toContain('Preset:');
+        expect(document.body.textContent).not.toContain('Active advanced overrides');
+        expect(document.body.textContent).not.toContain('Tighten Data Grid cells and headers');
+        expect(document.body.textContent).not.toContain('Compact Data Grid toolbar and quick filter');
         expect(appearanceCard.getBoundingClientRect().top).toBeLessThan(
             spacingBaseCard.getBoundingClientRect().top,
         );
@@ -230,6 +234,9 @@ describe('mui-dense page', () => {
         expect(darkModeInput.checked).toBe(true);
         expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
         expect(disableAnimationsInput.checked).toBe(true);
+        expect(disableGlobalGuttersInput.checked).toBe(true);
+        expect(window.getComputedStyle(shell).paddingTop).toBe('0px');
+        expect(window.getComputedStyle(shell).paddingBottom).toBe('0px');
         darkModeInput.click();
         await nextFrame();
         expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('light');
@@ -240,6 +247,16 @@ describe('mui-dense page', () => {
         await nextFrame();
         expect(appearanceCard.textContent).toContain('Animations: On');
         disableAnimationsInput.click();
+        await nextFrame();
+        disableGlobalGuttersInput.click();
+        await nextFrame();
+        expect(window.getComputedStyle(shell).paddingTop).toBe('0px');
+        expect(window.getComputedStyle(shell).paddingBottom).toBe('0px');
+        disableGlobalGuttersInput.click();
+        await nextFrame();
+        expect(window.getComputedStyle(shell).paddingTop).toBe('0px');
+        expect(window.getComputedStyle(shell).paddingBottom).toBe('0px');
+        requireTextButton('Dense').click();
         await nextFrame();
 
         const showHeaderFiltersInput = requireLabeledControlInput('Show header filters');
@@ -252,6 +269,7 @@ describe('mui-dense page', () => {
         const choiceInputsCard = requireDemoCard('Choice inputs');
         const filledInput = requireInput('mui-dense-filled-input');
         const filledInputRoot = filledInput.closest('.MuiInputBase-root');
+        const notesTextarea = document.querySelector('textarea[aria-label="Notes"]');
         const laneGridCell = requireGridCell('lane', 'ATL to LHR');
         const laneGridCellContent = laneGridCell.firstElementChild;
         const laneGridHeader = requireGridColumnHeader('lane');
@@ -267,6 +285,7 @@ describe('mui-dense page', () => {
             candidate => candidate.textContent?.trim() === 'Dashboard title',
         );
         const imagesCard = requireDemoCard('Images');
+        const cardsAndPapersCard = requireDemoCard('Cards and papers');
         const imageList = imagesCard.querySelector('.MuiImageList-root');
         const firstImageTile = imageList?.querySelector('.MuiImageListItem-root');
         const firstImage = firstImageTile?.querySelector('img');
@@ -285,10 +304,50 @@ describe('mui-dense page', () => {
             '[role="progressbar"]',
         );
         const statusCardSpinnerCircle = statusCardSpinner?.querySelector('.MuiCircularProgress-circle');
-        const tablesCard = requireDemoCard('Tables and DataGrid Pro');
-        const tableContainer = tablesCard.querySelector('.MuiTableContainer-root');
-        const dataGridRoot = tablesCard.querySelector('.MuiDataGrid-root');
-        const dataGridHeaders = tablesCard.querySelector('.MuiDataGrid-columnHeaders');
+        const simpleTreeCard = requireDemoCard('SimpleTreeView');
+        const richTreeCard = requireDemoCard('RichTreeView');
+        const richTreeProCard = requireDemoCard('RichTreeViewPro');
+        const speedDialCard = requireDemoCard('Speed dial');
+        const utilityHelpersCard = requireDemoCard('Utility helpers');
+        const zoomCard = requireDemoCard('Zoom transition');
+        const tableCard = requireDemoCard('Table');
+        const dataGridCard = requireDemoCard('DataGridPro');
+        const appChromeCard = requireDemoCard('App bar and mobile stepper');
+        const appChromeStepper = appChromeCard.querySelector('.MuiMobileStepper-root');
+        const portalTargetSurface = utilityHelpersCard.querySelector('.mui-dense-portal-target');
+        const transitionToggleButton = requireTextButton('Hide elements');
+        const zoomToggleButton = requireTextButton('Hide element');
+        const inputsSection = requireElement('#inputs');
+        const inputsCardTitles = Array.from(
+            inputsSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
+        ).map(candidate => candidate.textContent?.trim());
+        const dataDisplaySection = requireElement('#data-display');
+        const dataDisplayCardTitles = Array.from(
+            dataDisplaySection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
+        ).map(candidate => candidate.textContent?.trim());
+        const treesSection = requireElement('#trees');
+        const treesCardTitles = Array.from(
+            treesSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
+        ).map(candidate => candidate.textContent?.trim());
+        const navigationSection = requireElement('#navigation');
+        const navigationCardTitles = Array.from(
+            navigationSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
+        ).map(candidate => candidate.textContent?.trim());
+        const layoutSection = requireElement('#layout');
+        const layoutCardTitles = Array.from(
+            layoutSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
+        ).map(candidate => candidate.textContent?.trim());
+        const overlaysSection = requireElement('#overlays');
+        const overlaysCardTitles = Array.from(
+            overlaysSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
+        ).map(candidate => candidate.textContent?.trim());
+        const tablesSection = requireElement('#tables');
+        const tableSectionCardTitles = Array.from(
+            tablesSection.querySelectorAll<HTMLElement>('.mui-dense-demo__header h3'),
+        ).map(candidate => candidate.textContent?.trim());
+        const tableContainer = tableCard.querySelector('.MuiTableContainer-root');
+        const dataGridRoot = dataGridCard.querySelector('.MuiDataGrid-root');
+        const dataGridHeaders = dataGridCard.querySelector('.MuiDataGrid-columnHeaders');
 
         expect(showHeaderFiltersInput.checked).toBe(false);
         expect(Number(layoutScaleSlider.value)).toBe(0.2);
@@ -302,6 +361,55 @@ describe('mui-dense page', () => {
         expect(window.getComputedStyle(choiceInputsCard).rowGap).toBe('8px');
         expect(window.getComputedStyle(choiceInputsCard).backgroundColor).toBe('rgb(0, 0, 0)');
         expect(window.getComputedStyle(choiceInputsCard).borderTopLeftRadius).toBe('4px');
+        expect(readPx(simpleTreeCard, 'max-width')).toBe(395);
+        expect(readPx(richTreeCard, 'max-width')).toBe(395);
+        expect(readPx(richTreeProCard, 'max-width')).toBe(395);
+        expect(readPx(utilityHelpersCard, 'max-width')).toBe(395);
+        expect(readPx(zoomCard, 'max-width')).toBe(395);
+        expect(readPx(tableCard, 'max-width')).toBe(667);
+        expect(readPx(dataGridCard, 'max-width')).toBe(1111);
+        expect(readPx(appChromeCard, 'max-width')).toBe(1000);
+        expect(
+            Math.abs(
+                speedDialCard.getBoundingClientRect().width -
+                    cardsAndPapersCard.getBoundingClientRect().width,
+            ),
+        ).toBeLessThanOrEqual(1);
+        expect(inputsCardTitles).toEqual([
+            'Selection controls',
+            'Text entry',
+            'Choice inputs',
+            'Action surfaces',
+        ]);
+        expect(dataDisplayCardTitles).toEqual([
+            'Images',
+            'Lists and menu lists',
+            'Status and feedback visuals',
+            'Identity, badges, and chips',
+        ]);
+        expect(treesCardTitles).toEqual(['RichTreeViewPro', 'RichTreeView', 'SimpleTreeView']);
+        expect(navigationCardTitles).toEqual([
+            'Steppers',
+            'Paging and destination switching',
+            'App bar and mobile stepper',
+            'Tabs and breadcrumb trails',
+        ]);
+        expect(layoutCardTitles).toEqual([
+            'Cards and papers',
+            'Containers and grid systems',
+            'Accordion',
+            'Scoped baseline',
+        ]);
+        expect(overlaysCardTitles).toEqual([
+            'Speed dial',
+            'Transitions',
+            'Zoom transition',
+            'Dialog',
+            'Modal surfaces and transient feedback',
+            'Anchored overlays',
+            'Drawers',
+        ]);
+        expect(tableSectionCardTitles).toEqual(['DataGridPro', 'Table']);
         expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
         expect(appearanceCard.textContent).toContain('Mode: Dark');
         expect(appearanceCard.textContent).toContain('Animations: Off');
@@ -314,13 +422,21 @@ describe('mui-dense page', () => {
         expect(speedDialShell).toBeInstanceOf(HTMLElement);
         expect(routeClusterLabel).toBeInstanceOf(HTMLLabelElement);
         expect(filledInputRoot).toBeInstanceOf(HTMLElement);
+        expect(notesTextarea).toBeInstanceOf(HTMLTextAreaElement);
         expect(denseOutlinedInputRoot).toBeInstanceOf(HTMLElement);
         expect(statusCardSpinner).toBeInstanceOf(HTMLElement);
         expect(statusCardSpinnerCircle).toBeInstanceOf(SVGCircleElement);
         expect(tableContainer).toBeInstanceOf(HTMLElement);
         expect(dataGridRoot).toBeInstanceOf(HTMLElement);
         expect(dataGridHeaders).toBeInstanceOf(HTMLElement);
+        expect(appChromeStepper).toBeInstanceOf(HTMLElement);
+        expect(portalTargetSurface).toBeInstanceOf(HTMLElement);
         expect(window.getComputedStyle(filledLabel).transitionDuration).toBe('0s');
+        expect(window.getComputedStyle(appChromeStepper as HTMLElement).position).toBe('static');
+        expect(window.getComputedStyle(notesTextarea as HTMLTextAreaElement).resize).toBe('vertical');
+        expect(window.getComputedStyle(notesTextarea as HTMLTextAreaElement).maxWidth).toBe('100%');
+        expect(window.getComputedStyle(portalTargetSurface as HTMLElement).gap).toBe('8px');
+        expect(window.getComputedStyle(portalTargetSurface as HTMLElement).flexWrap).toBe('wrap');
         expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationDuration).toBe('1.4s');
         expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationIterationCount).toBe(
             'infinite',
@@ -354,6 +470,12 @@ describe('mui-dense page', () => {
             (denseOutlinedInputRoot as HTMLElement).getBoundingClientRect().top -
                 (filledInputRoot as HTMLElement).getBoundingClientRect().bottom,
         ).toBeGreaterThanOrEqual(4);
+        expect(
+            Math.abs(
+                (notesTextarea as HTMLTextAreaElement).getBoundingClientRect().width -
+                    (filledInputRoot as HTMLElement).getBoundingClientRect().width,
+            ),
+        ).toBeLessThanOrEqual(2);
         expect(window.getComputedStyle(imageList as HTMLElement).overflowY).toBe('visible');
         expect(window.getComputedStyle(firstImageTile as HTMLElement).overflow).toBe('hidden');
         expect(Math.round((firstImage as HTMLImageElement).getBoundingClientRect().height)).toBe(
@@ -386,11 +508,31 @@ describe('mui-dense page', () => {
         expect(requireLabeledControlInput('Tighten icon button box size').checked).toBe(true);
         expect(requireLabeledControlInput('Tighten button and chip padding').checked).toBe(true);
         expect(requireTextButton('Dense').className).toContain('MuiButton-contained');
+        expect(utilityHelpersCard.textContent).toContain(
+            'Portal renders a child into a different DOM container.',
+        );
+        expect(utilityHelpersCard.textContent).toContain(
+            'NoSsr skips server-side rendering and only mounts its children in the browser.',
+        );
+        expect(utilityHelpersCard.textContent).toContain(
+            'TrapFocus keeps keyboard focus inside the small region below while it is open.',
+        );
+        transitionToggleButton.click();
+        await nextFrame();
+        expect(requireTextButton('Show elements')).toBeInstanceOf(HTMLButtonElement);
+        requireTextButton('Show elements').click();
+        await nextFrame();
+        expect(requireTextButton('Hide elements')).toBeInstanceOf(HTMLButtonElement);
+        zoomToggleButton.click();
+        await nextFrame();
+        expect(requireTextButton('Show element')).toBeInstanceOf(HTMLButtonElement);
+        requireTextButton('Show element').click();
+        await nextFrame();
+        expect(requireTextButton('Hide element')).toBeInstanceOf(HTMLButtonElement);
+        expect(requireTextButton('Open trapped-focus region')).toBeInstanceOf(HTMLButtonElement);
 
         await page.getByRole('button', { name: 'Dense+' }).click();
         await nextFrame();
-
-        await expect.element(page.getByText('No advanced overrides are active.')).toBeVisible();
 
         const compactButton = requireElement('[data-testid="mui-dense-compact-button"]');
         const compactChipLabel = requireElement('[data-testid="mui-dense-compact-chip"] .MuiChip-label');
@@ -433,10 +575,7 @@ describe('mui-dense page', () => {
         expect(readPx(treeItemContent, 'padding-left')).toBeLessThan(treePaddingBefore);
         expect(readPx(treeItemContent, 'gap')).toBeLessThanOrEqual(treeGapBefore);
 
-        await page.getByText('Compact Data Grid toolbar and quick filter').click();
-
         expect(requireTextButton('Dense+').className).toContain('MuiButton-contained');
-        await expect.element(page.getByText('2 advanced overrides active.')).toBeVisible();
 
         await nextFrame();
 

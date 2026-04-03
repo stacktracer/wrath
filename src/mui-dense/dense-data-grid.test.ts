@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-    calculateDenseDataGridMetrics,
-    createDenseDataGridSlotProps,
-    createFallbackDenseDataGridMetrics,
-} from './dense-data-grid';
+import { calculateDenseDataGridMetrics, createFallbackDenseDataGridMetrics } from './dense-data-grid';
 
 describe('mui-dense Data Grid metrics', () => {
     it('computes fallback metrics from typography defaults', () => {
@@ -44,24 +40,5 @@ describe('mui-dense Data Grid metrics', () => {
         });
 
         expect(metrics.rowHeight).toBe(23);
-    });
-
-    it('builds compact toolbar slot props without changing the grid API surface', () => {
-        expect(createDenseDataGridSlotProps(false)).toBeUndefined();
-        expect(createDenseDataGridSlotProps(true)).toMatchObject({
-            baseButton: { size: 'small' },
-            baseIconButton: { size: 'small' },
-            baseTextField: { size: 'small' },
-            toolbar: {
-                quickFilterProps: {
-                    slotProps: {
-                        root: {
-                            size: 'small',
-                        },
-                    },
-                },
-                showQuickFilter: true,
-            },
-        });
     });
 });

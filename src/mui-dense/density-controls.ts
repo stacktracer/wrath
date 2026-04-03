@@ -5,8 +5,6 @@ export type AdvancedDensityControls = {
     compactListsAndMenus: boolean;
     compactAccordionSummary: boolean;
     compactTableCells: boolean;
-    compactDataGridCells: boolean;
-    compactDataGridToolbar: boolean;
     compactTreeItems: boolean;
 };
 
@@ -64,8 +62,6 @@ export const DEFAULT_ADVANCED_DENSITY_CONTROLS: AdvancedDensityControls = {
     compactListsAndMenus: false,
     compactAccordionSummary: false,
     compactTableCells: false,
-    compactDataGridCells: false,
-    compactDataGridToolbar: false,
     compactTreeItems: false,
 };
 
@@ -119,31 +115,13 @@ export const THEME_OVERRIDE_CONTROLS: AdvancedControlDefinition[] = [
     },
 ];
 
-export const UTILITY_AND_SLOT_CONTROLS: AdvancedControlDefinition[] = [
-    {
-        key: 'compactDataGridCells',
-        label: 'Tighten Data Grid cells and headers',
-        mechanism: 'Utility classes: MuiDataGrid root selectors using exported gridClasses',
-        description: 'Uses documented grid utility classes to trim header and cell padding.',
-    },
-    {
-        key: 'compactDataGridToolbar',
-        label: 'Compact Data Grid toolbar and quick filter',
-        mechanism: 'Slot props: toolbar, quickFilterProps, baseButton, baseIconButton, baseTextField',
-        description:
-            'Uses documented slot props to tighten the toolbar controls without swapping components.',
-    },
+export const TREE_VIEW_CONTROLS: AdvancedControlDefinition[] = [
     {
         key: 'compactTreeItems',
         label: 'Tighten tree item layout and states',
         mechanism: 'MuiTreeItem overrides, treeItemClasses, and Tree data-* state hooks',
         description: 'Shrinks tree-item content, icon, label, and stateful rows through documented hooks.',
     },
-];
-
-export const ALL_ADVANCED_CONTROLS: AdvancedControlDefinition[] = [
-    ...THEME_OVERRIDE_CONTROLS,
-    ...UTILITY_AND_SLOT_CONTROLS,
 ];
 
 export const DENSITY_PRESETS: Record<DensityPreset, DensityControls> = {

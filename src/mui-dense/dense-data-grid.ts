@@ -111,28 +111,6 @@ export function createFallbackDenseDataGridMetrics(
     });
 }
 
-export function createDenseDataGridSlotProps(compactToolbar: boolean) {
-    if (!compactToolbar) {
-        return undefined;
-    }
-
-    return {
-        baseButton: { size: 'small' as const },
-        baseIconButton: { size: 'small' as const },
-        baseTextField: { size: 'small' as const },
-        toolbar: {
-            quickFilterProps: {
-                slotProps: {
-                    root: {
-                        size: 'small' as const,
-                    },
-                },
-            },
-            showQuickFilter: true,
-        },
-    };
-}
-
 export function useDenseDataGridMetrics({
     dataGridDensity,
     typographyScale,
