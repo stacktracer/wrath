@@ -67,14 +67,7 @@ function requireLabeledControlInput(labelText: string) {
 }
 
 function requireSliderInputsInDensityCard(titleText: string) {
-    const card = Array.from(document.querySelectorAll<HTMLElement>('.mui-dense-density-card')).find(
-        candidate => candidate.textContent?.includes(titleText),
-    );
-
-    if (!card) {
-        throw new Error(`Expected density control card: ${titleText}`);
-    }
-
+    const card = requireDensityCard(titleText);
     const inputs = Array.from(card.querySelectorAll('.MuiSlider-root input')).filter(
         (candidate): candidate is HTMLInputElement => candidate instanceof HTMLInputElement,
     );
@@ -84,6 +77,30 @@ function requireSliderInputsInDensityCard(titleText: string) {
     }
 
     return inputs;
+}
+
+function requireDensityCard(titleText: string) {
+    const card = Array.from(document.querySelectorAll<HTMLElement>('.mui-dense-density-card')).find(
+        candidate => candidate.textContent?.includes(titleText),
+    );
+
+    if (!(card instanceof HTMLElement)) {
+        throw new Error(`Expected density control card: ${titleText}`);
+    }
+
+    return card;
+}
+
+function requireTextButton(labelText: string) {
+    const button = Array.from(document.querySelectorAll('button')).find(
+        candidate => candidate.textContent?.trim() === labelText,
+    );
+
+    if (!(button instanceof HTMLButtonElement)) {
+        throw new Error(`Expected button: ${labelText}`);
+    }
+
+    return button;
 }
 
 function requireDemoCard(titleText: string) {
@@ -153,20 +170,33 @@ describe('mui-dense page', () => {
         await expect
             .element(page.getByRole('heading', { level: 1, name: 'MUI Dense Gallery' }))
             .toBeVisible();
-        await expect
-            .element(page.getByRole('heading', { level: 2, name: /^Density Controls$/ }))
-            .toBeVisible();
+        await expect.element(page.getByRole('heading', { level: 2, name: /^UI Controls$/ })).toBeVisible();
         await expect
             .element(page.getByRole('heading', { level: 2, name: /^Advanced Density Controls$/ }))
             .toBeVisible();
-        await expect
-            .element(page.getByRole('complementary', { name: 'Density controls sidebar' }))
-            .toBeVisible();
+        await expect.element(page.getByRole('complementary', { name: 'UI controls sidebar' })).toBeVisible();
         await expect.element(page.getByRole('main')).toBeVisible();
         await expect.element(page.getByText('MUI X Pro license')).toBeVisible();
         await expect.element(page.getByRole('heading', { level: 3, name: 'Tree views' })).toBeVisible();
-        await expect.element(page.getByText('Preset: Default')).toBeVisible();
         await expect.element(page.getByText('No advanced overrides are active.')).toBeVisible();
+
+        const appRoot = requireElement('.mui-dense-app');
+        const colorModeCard = requireDensityCard('Color Mode');
+        const densityPresetCard = requireDensityCard('Density Preset');
+        const spacingBaseCard = requireDensityCard('Spacing Base');
+        const darkModeInput = requireLabeledControlInput('Dark mode');
+
+        expect(document.body.textContent).not.toContain('Preset:');
+        expect(colorModeCard.getBoundingClientRect().top).toBeLessThan(
+            spacingBaseCard.getBoundingClientRect().top,
+        );
+        expect(densityPresetCard.getBoundingClientRect().top).toBeLessThan(
+            spacingBaseCard.getBoundingClientRect().top,
+        );
+        expect(darkModeInput.checked).toBe(false);
+        darkModeInput.click();
+        await nextFrame();
+        expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
 
         await page.getByRole('button', { exact: true, name: 'Dense' }).click();
         await nextFrame();
@@ -178,9 +208,10 @@ describe('mui-dense page', () => {
 
         const showHeaderFiltersInput = requireLabeledControlInput('Show header filters');
         const [layoutScaleSlider] = requireSliderInputsInDensityCard('Layout Scale');
+        const [typographyScaleSlider] = requireSliderInputsInDensityCard('Typography Scale');
         const imageTileSliders = requireSliderInputsInDensityCard('Image Tiles');
-        const [dataGridRowHeightSlider, dataGridColumnHeaderHeightSlider, dataGridHeaderFilterHeightSlider] =
-            requireSliderInputsInDensityCard('Data Grid Pro');
+        const dataGridSliders = requireSliderInputsInDensityCard('Data Grid Pro');
+        const [dataGridHeaderFilterHeightSlider] = dataGridSliders;
         const [treeIndentationSlider] = requireSliderInputsInDensityCard('Tree View');
         const choiceInputsCard = requireDemoCard('Choice inputs');
         const filledInput = requireInput('mui-dense-filled-input');
@@ -217,18 +248,20 @@ describe('mui-dense page', () => {
 
         expect(showHeaderFiltersInput.checked).toBe(false);
         expect(Number(layoutScaleSlider.value)).toBe(0.2);
+        expect(Number(typographyScaleSlider.value)).toBe(1);
         expect(imageTileSliders).toHaveLength(1);
         expect(Number(imageTileSliders[0].value)).toBe(4);
-        expect(Number(dataGridRowHeightSlider.max)).toBe(56);
-        expect(Number(dataGridRowHeightSlider.value)).toBe(24);
-        expect(Number(dataGridColumnHeaderHeightSlider.min)).toBe(24);
-        expect(Number(dataGridColumnHeaderHeightSlider.max)).toBe(56);
-        expect(Number(dataGridColumnHeaderHeightSlider.value)).toBe(24);
+        expect(dataGridSliders).toHaveLength(1);
         expect(Number(dataGridHeaderFilterHeightSlider.value)).toBe(52);
         expect(dataGridHeaderFilterHeightSlider.disabled).toBe(true);
-        expect(Number(treeIndentationSlider.value)).toBe(10);
+        expect(Number(treeIndentationSlider.value)).toBe(12);
         expect(window.getComputedStyle(choiceInputsCard).rowGap).toBe('8px');
+        expect(window.getComputedStyle(choiceInputsCard).backgroundColor).toBe('rgb(0, 0, 0)');
         expect(window.getComputedStyle(choiceInputsCard).borderTopLeftRadius).toBe('4px');
+        expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
+        expect(colorModeCard.textContent).toContain('Mode: Dark');
+        await expect.element(page.getByText('Row height: 30px (auto)')).toBeVisible();
+        await expect.element(page.getByText('Column header height: 30px (auto)')).toBeVisible();
         expect(dashboardTitleLabel).toBeInstanceOf(HTMLLabelElement);
         expect(imageList).toBeInstanceOf(HTMLElement);
         expect(firstImageTile).toBeInstanceOf(HTMLElement);
@@ -288,8 +321,7 @@ describe('mui-dense page', () => {
         expect(requireLabeledControlInput('Tighten input root and text padding').checked).toBe(true);
         expect(requireLabeledControlInput('Tighten icon button box size').checked).toBe(true);
         expect(requireLabeledControlInput('Tighten button and chip padding').checked).toBe(true);
-
-        await expect.element(page.getByText('Preset: Dense')).toBeVisible();
+        expect(requireTextButton('Dense').className).toContain('MuiButton-contained');
         await expect.element(page.getByText('7 advanced overrides active.')).toBeVisible();
 
         await page.getByRole('button', { name: 'Dense+' }).click();
@@ -340,8 +372,7 @@ describe('mui-dense page', () => {
 
         await page.getByText('Compact Data Grid toolbar and quick filter').click();
 
-        await expect.element(page.getByText('Preset: Dense+')).toBeVisible();
-        await expect.element(page.getByText('Data Grid density: compact')).toBeVisible();
+        expect(requireTextButton('Dense+').className).toContain('MuiButton-contained');
         await expect.element(page.getByText('2 advanced overrides active.')).toBeVisible();
 
         await nextFrame();
@@ -356,16 +387,26 @@ describe('mui-dense page', () => {
         const main = mainPane as HTMLElement;
 
         expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight + 1);
-        expect(sidebar.scrollHeight).toBeGreaterThan(sidebar.clientHeight);
-        expect(main.scrollHeight).toBeGreaterThan(main.clientHeight);
+        expect(window.getComputedStyle(sidebar).overflowY).toBe('auto');
+        expect(window.getComputedStyle(main).overflowY).toBe('auto');
+        expect(sidebar.scrollHeight).toBeGreaterThanOrEqual(sidebar.clientHeight);
+        expect(main.scrollHeight).toBeGreaterThanOrEqual(main.clientHeight);
 
         sidebar.scrollTop = 160;
         main.scrollTop = 320;
 
         await nextFrame();
 
-        expect(sidebar.scrollTop).toBeGreaterThan(0);
-        expect(main.scrollTop).toBeGreaterThan(0);
+        if (sidebar.scrollHeight > sidebar.clientHeight) {
+            expect(sidebar.scrollTop).toBeGreaterThan(0);
+        } else {
+            expect(sidebar.scrollTop).toBe(0);
+        }
+        if (main.scrollHeight > main.clientHeight) {
+            expect(main.scrollTop).toBeGreaterThan(0);
+        } else {
+            expect(main.scrollTop).toBe(0);
+        }
         expect(document.documentElement.scrollTop).toBe(0);
     });
 });

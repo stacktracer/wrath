@@ -1,7 +1,3 @@
-:root {
-    color-scheme: light;
-}
-
 body {
     margin: 0;
 }
@@ -10,6 +6,30 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+.mui-dense-app {
+    --mui-dense-demo-background: rgba(248, 250, 252, 0.9);
+    --mui-dense-demo-border: rgba(15, 23, 42, 0.12);
+    --mui-dense-portal-background: rgba(255, 255, 255, 0.24);
+    --mui-dense-portal-border: rgba(15, 23, 42, 0.2);
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+}
+
+.mui-dense-app[data-mui-dense-color-mode='light'] {
+    color-scheme: light;
+}
+
+.mui-dense-app[data-mui-dense-color-mode='dark'] {
+    color-scheme: dark;
+    --mui-dense-demo-background: #000;
+    --mui-dense-demo-border: rgba(255, 255, 255, 0.12);
+    --mui-dense-portal-background: rgba(255, 255, 255, 0.04);
+    --mui-dense-portal-border: rgba(255, 255, 255, 0.18);
 }
 
 .mui-dense-shell {
@@ -78,16 +98,15 @@ body {
 
 .mui-dense-density-panel__preset-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: stretch;
     gap: 0.75rem;
-    flex-wrap: wrap;
+    min-width: 0;
 }
 
-.mui-dense-density-summary {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+.mui-dense-density-primary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.75rem;
 }
 
 .mui-dense-density-grid {
@@ -186,10 +205,10 @@ body {
     display: grid;
     gap: 0.5rem;
     min-width: 0;
-    border: 1px solid rgba(15, 23, 42, 0.12);
+    border: 1px solid var(--mui-dense-demo-border);
     border-radius: 4px;
     padding: 1rem;
-    background: rgba(248, 250, 252, 0.9);
+    background: var(--mui-dense-demo-background);
 }
 
 .mui-dense-demo--wide {
@@ -229,11 +248,12 @@ body {
 
 .mui-dense-portal-target {
     min-height: 84px;
-    border: 1px dashed rgba(15, 23, 42, 0.2);
+    border: 1px dashed var(--mui-dense-portal-border);
     border-radius: 12px;
     padding: 0.75rem;
     display: flex;
     align-items: flex-start;
+    background: var(--mui-dense-portal-background);
 }
 
 .mui-dense-overlay-content {
@@ -273,6 +293,17 @@ body {
 
 .mui-dense-trap-surface {
     padding: 1rem;
+}
+
+.mui-dense-metrics {
+    position: fixed;
+    top: 0;
+    left: -10000px;
+    visibility: hidden;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    overflow: hidden;
 }
 
 @media (min-width: 1200px) {
