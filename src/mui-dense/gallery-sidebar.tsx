@@ -14,59 +14,57 @@ import {
     Typography,
 } from '@mui/material';
 
-import { formatPixelValue } from './dense-data-grid';
 import {
-    type AdvancedDensityControls,
-    DENSITY_PRESET_LABELS,
-    type DensityControls,
-    type DensityPreset,
-    type DensityPresetSelection,
-    type GalleryColorMode,
-    THEME_OVERRIDE_CONTROLS,
-    TREE_VIEW_CONTROLS,
-} from './density-controls';
+    formatPixelValue,
+    type DenseColorMode,
+    type DenseDataGridMetrics,
+    type DenseThemeFeatures,
+} from './dense';
+import {
+    GALLERY_DENSITY_PRESET_LABELS,
+    GALLERY_THEME_OVERRIDE_CONTROLS,
+    GALLERY_TREE_VIEW_CONTROLS,
+    type GalleryDensityControls,
+    type GalleryPresetSelection,
+} from './gallery-density';
 import { AdvancedControlTile, DensityControlCard } from './gallery-shell';
 
 type GallerySidebarProps = {
-    advancedDensityControls: AdvancedDensityControls;
     animationsDisabled: boolean;
-    colorMode: GalleryColorMode;
-    densityControls: DensityControls;
-    densityPreset: DensityPresetSelection;
-    onApplyDensityPreset: (preset: DensityPreset) => void;
-    onColorModeChange: (mode: GalleryColorMode) => void;
-    onResetAdvancedControls: () => void;
+    colorMode: DenseColorMode;
+    densityControls: GalleryDensityControls;
+    densityPreset: GalleryPresetSelection;
+    onApplyDensityPreset: (preset: Exclude<GalleryPresetSelection, 'custom'>) => void;
+    onColorModeChange: (mode: DenseColorMode) => void;
+    onResetThemeFeatures: () => void;
     onResetToDefault: () => void;
     onSetAnimationsDisabled: (disabled: boolean) => void;
-    onUpdateAdvancedDensityControl: <Key extends keyof AdvancedDensityControls>(
+    onUpdateDensityControl: <Key extends keyof GalleryDensityControls>(
         key: Key,
-        value: AdvancedDensityControls[Key],
+        value: GalleryDensityControls[Key],
     ) => void;
-    onUpdateDensityControl: <Key extends keyof DensityControls>(
+    onUpdateThemeFeature: <Key extends keyof DenseThemeFeatures>(
         key: Key,
-        value: DensityControls[Key],
+        value: DenseThemeFeatures[Key],
     ) => void;
-    rowMetrics: {
-        columnHeaderHeight: number;
-        devicePixelRatio: number;
-        rowHeight: number;
-    };
+    rowMetrics: Pick<DenseDataGridMetrics, 'columnHeaderHeight' | 'devicePixelRatio' | 'rowHeight'>;
+    themeFeatures: DenseThemeFeatures;
 };
 
 export function GallerySidebar({
-    advancedDensityControls,
     animationsDisabled,
     colorMode,
     densityControls,
     densityPreset,
     onApplyDensityPreset,
     onColorModeChange,
-    onResetAdvancedControls,
+    onResetThemeFeatures,
     onResetToDefault,
     onSetAnimationsDisabled,
-    onUpdateAdvancedDensityControl,
     onUpdateDensityControl,
+    onUpdateThemeFeature,
     rowMetrics,
+    themeFeatures,
 }: GallerySidebarProps) {
     const currentAnimationModeLabel = animationsDisabled ? 'Off' : 'On';
     const currentColorModeLabel = colorMode === 'dark' ? 'Dark' : 'Light';
@@ -135,21 +133,22 @@ export function GallerySidebar({
                             >
                                 <div className="mui-dense-density-panel__preset-row">
                                     <ButtonGroup aria-label="Density presets" fullWidth variant="outlined">
-                                        {(['default', 'dense', 'densePlus'] as DensityPreset[]).map(
-                                            preset => (
-                                                <Button
-                                                    key={preset}
-                                                    onClick={() => {
-                                                        onApplyDensityPreset(preset);
-                                                    }}
-                                                    variant={
-                                                        densityPreset === preset ? 'contained' : 'outlined'
-                                                    }
-                                                >
-                                                    {DENSITY_PRESET_LABELS[preset]}
-                                                </Button>
-                                            ),
-                                        )}
+                                        {(
+                                            ['default', 'dense', 'densePlus'] as Exclude<
+                                                GalleryPresetSelection,
+                                                'custom'
+                                            >[]
+                                        ).map(preset => (
+                                            <Button
+                                                key={preset}
+                                                onClick={() => {
+                                                    onApplyDensityPreset(preset);
+                                                }}
+                                                variant={densityPreset === preset ? 'contained' : 'outlined'}
+                                            >
+                                                {GALLERY_DENSITY_PRESET_LABELS[preset]}
+                                            </Button>
+                                        ))}
                                     </ButtonGroup>
                                 </div>
                             </DensityControlCard>
@@ -378,7 +377,7 @@ export function GallerySidebar({
                             </DensityControlCard>
 
                             <DensityControlCard
-                                description="Supported DataGrid props for overall density, auto-sized row and header heights, and optional header filters."
+                                description="Supported DenseDataGrid and DataGrid props for overall density, auto-sized row and header heights, optional header filters, and measured block padding."
                                 title="Data Grid Pro"
                             >
                                 <Stack spacing={1}>
@@ -452,6 +451,52 @@ export function GallerySidebar({
                                         value={densityControls.dataGridHeaderFilterHeight}
                                         valueLabelDisplay="auto"
                                     />
+
+                                    <FormControl size="small">
+                                        <InputLabel id="mui-dense-grid-cell-padding-unit-label">
+                                            Cell padding unit
+                                        </InputLabel>
+                                        <Select
+                                            label="Cell padding unit"
+                                            labelId="mui-dense-grid-cell-padding-unit-label"
+                                            onChange={event => {
+                                                const nextUnit = event.target.value as 'px' | 'ex';
+                                                onUpdateDensityControl(
+                                                    'dataGridCellBlockPaddingUnit',
+                                                    nextUnit,
+                                                );
+                                                onUpdateDensityControl(
+                                                    'dataGridCellBlockPadding',
+                                                    nextUnit === 'px' ? 1 : 0.12,
+                                                );
+                                            }}
+                                            value={densityControls.dataGridCellBlockPaddingUnit}
+                                        >
+                                            <MenuItem value="px">px</MenuItem>
+                                            <MenuItem value="ex">ex</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
+                                    <Typography variant="body2">
+                                        Cell block padding:{' '}
+                                        {formatPixelValue(densityControls.dataGridCellBlockPadding)}
+                                        {densityControls.dataGridCellBlockPaddingUnit}
+                                    </Typography>
+                                    <Slider
+                                        max={densityControls.dataGridCellBlockPaddingUnit === 'px' ? 4 : 0.5}
+                                        min={0}
+                                        onChange={(_event, value) => {
+                                            onUpdateDensityControl(
+                                                'dataGridCellBlockPadding',
+                                                value as number,
+                                            );
+                                        }}
+                                        step={
+                                            densityControls.dataGridCellBlockPaddingUnit === 'px' ? 0.5 : 0.02
+                                        }
+                                        value={densityControls.dataGridCellBlockPadding}
+                                        valueLabelDisplay="auto"
+                                    />
                                 </Stack>
                             </DensityControlCard>
 
@@ -490,7 +535,7 @@ export function GallerySidebar({
                                 </Typography>
                             </div>
 
-                            <Button onClick={onResetAdvancedControls} variant="outlined">
+                            <Button onClick={onResetThemeFeatures} variant="outlined">
                                 Reset advanced controls
                             </Button>
                         </div>
@@ -512,13 +557,13 @@ export function GallerySidebar({
                                 </div>
 
                                 <div className="mui-dense-advanced-grid">
-                                    {THEME_OVERRIDE_CONTROLS.map(definition => (
+                                    {GALLERY_THEME_OVERRIDE_CONTROLS.map(definition => (
                                         <AdvancedControlTile
-                                            checked={advancedDensityControls[definition.key]}
+                                            checked={themeFeatures[definition.key]}
                                             definition={definition}
                                             key={definition.key}
                                             onChange={nextValue => {
-                                                onUpdateAdvancedDensityControl(definition.key, nextValue);
+                                                onUpdateThemeFeature(definition.key, nextValue);
                                             }}
                                         />
                                     ))}
@@ -535,13 +580,13 @@ export function GallerySidebar({
                                 </div>
 
                                 <div className="mui-dense-advanced-grid">
-                                    {TREE_VIEW_CONTROLS.map(definition => (
+                                    {GALLERY_TREE_VIEW_CONTROLS.map(definition => (
                                         <AdvancedControlTile
-                                            checked={advancedDensityControls[definition.key]}
+                                            checked={themeFeatures[definition.key]}
                                             definition={definition}
                                             key={definition.key}
                                             onChange={nextValue => {
-                                                onUpdateAdvancedDensityControl(definition.key, nextValue);
+                                                onUpdateThemeFeature(definition.key, nextValue);
                                             }}
                                         />
                                     ))}

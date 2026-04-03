@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { FormControlLabel, Paper, Stack, Switch, Typography } from '@mui/material';
 
-import type { AdvancedControlDefinition } from './density-controls';
+import type { GalleryAdvancedControlDefinition } from './gallery-density';
 
 export function Section({
     children,
@@ -110,7 +110,7 @@ export function AdvancedControlTile({
     onChange,
 }: {
     checked: boolean;
-    definition: AdvancedControlDefinition;
+    definition: GalleryAdvancedControlDefinition;
     onChange: (nextValue: boolean) => void;
 }) {
     return (

@@ -126,13 +126,10 @@ import {
     Unstable_TrapFocus,
     Zoom,
 } from '@mui/material';
-import { type Theme } from '@mui/material/styles';
-import { DataGridPro, gridClasses } from '@mui/x-data-grid-pro';
 import { RichTreeView, SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { RichTreeViewPro, useRichTreeViewProApiRef } from '@mui/x-tree-view-pro';
 
-import { type DenseDataGridMetricsState } from './dense-data-grid';
-import type { AdvancedDensityControls, DensityControls } from './density-controls';
+import { DenseDataGrid, type DenseDataGridMetrics } from './dense';
 import {
     BeaconIcon,
     ChevronIcon,
@@ -149,14 +146,14 @@ import {
     type RouteOption,
     type TreeDemoItem,
 } from './gallery-data';
+import { getGalleryDataGridCellBlockPadding, type GalleryDensityControls } from './gallery-density';
 import { DemoCard, Section } from './gallery-shell';
 import { muiXLicenseConfigured } from './license';
 
 type GalleryWorkspaceProps = {
-    advancedDensityControls: AdvancedDensityControls;
-    dataGridMetrics: DenseDataGridMetricsState;
-    densityControls: DensityControls;
-    densityTheme: Theme;
+    compactInputsEnabled: boolean;
+    densityControls: GalleryDensityControls;
+    onDataGridMetricsChange: (metrics: DenseDataGridMetrics) => void;
 };
 
 const COMPACT_DEMO_MAX_WIDTH = 395;
@@ -166,10 +163,9 @@ const DATA_GRID_DEMO_MAX_WIDTH = 1111;
 const NAVIGATION_CHROME_MAX_WIDTH = 1000;
 
 export function GalleryWorkspace({
-    advancedDensityControls,
-    dataGridMetrics,
+    compactInputsEnabled,
     densityControls,
-    densityTheme,
+    onDataGridMetricsChange,
 }: GalleryWorkspaceProps) {
     const proTreeApiRef = useRichTreeViewProApiRef<TreeDemoItem>();
     const [routeValue, setRouteValue] = useState<RouteOption | null>(ROUTE_OPTIONS[2]);
@@ -372,7 +368,7 @@ export function GalleryWorkspace({
                                     />
                                 </FormControl>
 
-                                <Box sx={advancedDensityControls.compactInputs ? { pt: 1 } : undefined}>
+                                <Box sx={compactInputsEnabled ? { pt: 1 } : undefined}>
                                     <FormControl size={densityControls.componentSize} variant="outlined">
                                         <InputLabel htmlFor="mui-dense-outlined-input">
                                             Outlined input
@@ -711,9 +707,9 @@ export function GalleryWorkspace({
                             maxWidth={DATA_GRID_DEMO_MAX_WIDTH}
                             title="DataGridPro"
                         >
-                            <div className="mui-dense-data-grid" ref={dataGridMetrics.rootRef}>
-                                <DataGridPro
-                                    columnHeaderHeight={dataGridMetrics.metrics.columnHeaderHeight}
+                            <div className="mui-dense-data-grid">
+                                <DenseDataGrid
+                                    cellBlockPadding={getGalleryDataGridCellBlockPadding(densityControls)}
                                     checkboxSelection
                                     columns={SHIPMENT_COLUMNS}
                                     disableRowSelectionOnClick
@@ -721,25 +717,10 @@ export function GalleryWorkspace({
                                     headerFilterHeight={densityControls.dataGridHeaderFilterHeight}
                                     headerFilters={densityControls.dataGridHeaderFilters}
                                     label="Shipment lanes"
+                                    onMetricsChange={onDataGridMetricsChange}
                                     pagination
-                                    rowHeight={dataGridMetrics.metrics.rowHeight}
                                     rows={SHIPMENT_ROWS}
                                     showToolbar
-                                    sx={{
-                                        backgroundColor: 'background.paper',
-                                        [`& .${gridClasses.columnHeaders}`]: {
-                                            backgroundColor: 'background.paper',
-                                        },
-                                        [`& .${gridClasses.columnHeader}`]: {
-                                            backgroundColor: 'background.paper',
-                                        },
-                                        [`& .${gridClasses.columnHeader} .${gridClasses.sortButton}`]: {
-                                            backgroundColor: 'background.paper',
-                                        },
-                                        [`& .${gridClasses.columnHeaderTitleContainerContent}`]: {
-                                            height: '100%',
-                                        },
-                                    }}
                                 />
                             </div>
                         </DemoCard>
@@ -1531,22 +1512,6 @@ export function GalleryWorkspace({
                     </Section>
                 </div>
             </main>
-
-            <div aria-hidden="true" className="mui-dense-metrics">
-                <Typography component="span" ref={dataGridMetrics.body2ProbeRef} variant="body2">
-                    Body2 probe
-                </Typography>
-                <Box
-                    component="span"
-                    ref={dataGridMetrics.exProbeRef}
-                    sx={{
-                        ...densityTheme.typography.body2,
-                        display: 'block',
-                        height: '1ex',
-                        width: 0,
-                    }}
-                />
-            </div>
 
             <Dialog
                 onClose={() => {

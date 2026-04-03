@@ -4,7 +4,8 @@ import type {} from '@mui/x-data-grid-pro/themeAugmentation';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 import type {} from '@mui/x-tree-view-pro/themeAugmentation';
 
-import type { AdvancedDensityControls, DensityControls, GalleryColorMode } from './density-controls';
+import { DEFAULT_DENSE_THEME_FEATURES } from './presets';
+import type { DenseColorMode, DenseThemeConfig, DenseThemeFeatures } from './types';
 
 const circularRotateKeyframe = keyframes`
     0% {
@@ -41,6 +42,13 @@ type CompactInputLabelOwnerState = {
     size?: 'small' | 'medium';
     shrink?: boolean;
     variant?: 'standard' | 'filled' | 'outlined';
+};
+
+type CreateDenseThemeOptions = {
+    animationsDisabled: boolean;
+    colorMode: DenseColorMode;
+    config: DenseThemeConfig;
+    features?: DenseThemeFeatures;
 };
 
 function getOpticallyBiasedButtonPadding(top: number, horizontal: number, bottom: number) {
@@ -118,26 +126,18 @@ function createCompactTreeSelectors(theme: Theme) {
     };
 }
 
-export function getPreferredColorMode(): GalleryColorMode {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-        return 'light';
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-export function createDensityTheme(
-    controls: DensityControls,
-    colorMode: GalleryColorMode,
+function createBaseDenseTheme(
+    config: DenseThemeConfig,
+    colorMode: DenseColorMode,
     animationsDisabled: boolean,
 ) {
     return createTheme({
         palette: {
             mode: colorMode,
         },
-        spacing: controls.spacingBase,
+        spacing: config.spacingBase,
         typography: {
-            fontSize: Math.round(14 * controls.typographyScale),
+            fontSize: Math.round(14 * config.typographyScale),
         },
         transitions: animationsDisabled
             ? {
@@ -163,12 +163,12 @@ export function createDensityTheme(
         components: {
             MuiAccordion: {
                 defaultProps: {
-                    disableGutters: controls.disableGlobalGutters,
+                    disableGutters: config.disableGlobalGutters,
                 },
             },
             MuiAutocomplete: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiButtonBase: {
@@ -178,17 +178,17 @@ export function createDensityTheme(
             },
             MuiButton: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiButtonGroup: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiChip: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             ...(animationsDisabled
@@ -220,134 +220,134 @@ export function createDensityTheme(
                 : {}),
             MuiContainer: {
                 defaultProps: {
-                    disableGutters: controls.disableGlobalGutters,
+                    disableGutters: config.disableGlobalGutters,
                 },
             },
             MuiFab: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiFilledInput: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiFormControl: {
-                defaultProps: controls.denseFormMargins ? { margin: 'dense' } : {},
+                defaultProps: config.denseFormMargins ? { margin: 'dense' } : {},
             },
             MuiIconButton: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiList: {
                 defaultProps: {
-                    dense: controls.denseLists,
-                    disablePadding: controls.listDisablePadding,
+                    dense: config.denseLists,
+                    disablePadding: config.listDisablePadding,
                 },
             },
             MuiListItem: {
                 defaultProps: {
-                    dense: controls.denseLists,
-                    disableGutters: controls.disableGlobalGutters,
-                    disablePadding: controls.listDisablePadding,
+                    dense: config.denseLists,
+                    disableGutters: config.disableGlobalGutters,
+                    disablePadding: config.listDisablePadding,
                 },
             },
             MuiListItemButton: {
                 defaultProps: {
-                    dense: controls.denseLists,
+                    dense: config.denseLists,
                 },
             },
             MuiListSubheader: {
                 defaultProps: {
-                    disableGutters: controls.disableGlobalGutters,
+                    disableGutters: config.disableGlobalGutters,
                 },
             },
             MuiMenuItem: {
                 defaultProps: {
-                    dense: controls.denseLists,
+                    dense: config.denseLists,
                 },
             },
             MuiMenuList: {
                 defaultProps: {
-                    dense: controls.denseLists,
+                    dense: config.denseLists,
                 },
             },
             MuiOutlinedInput: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiPagination: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiPaginationItem: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiRadio: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiSelect: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiSlider: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiSwitch: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiTable: {
                 defaultProps: {
-                    size: controls.tableSize,
+                    size: config.tableSize,
                 },
             },
             MuiTableCell: {
                 defaultProps: {
-                    size: controls.tableSize,
+                    size: config.tableSize,
                 },
             },
             MuiTextField: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiToggleButton: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiToggleButtonGroup: {
                 defaultProps: {
-                    size: controls.componentSize,
+                    size: config.componentSize,
                 },
             },
             MuiToolbar: {
                 defaultProps: {
-                    disableGutters: controls.toolbarDisableGutters,
-                    variant: controls.toolbarDense ? 'dense' : 'regular',
+                    disableGutters: config.toolbarDisableGutters,
+                    variant: config.toolbarDense ? 'dense' : 'regular',
                 },
             },
         },
     });
 }
 
-export function createAdvancedDensityThemeOptions(controls: AdvancedDensityControls) {
+function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
     return {
         components: {
-            ...(controls.compactButtonsAndChips
+            ...(features.compactButtonsAndChips
                 ? {
                       MuiButton: {
                           styleOverrides: {
@@ -411,7 +411,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                       },
                   }
                 : {}),
-            ...(controls.compactIconButtons
+            ...(features.compactIconButtons
                 ? {
                       MuiIconButton: {
                           styleOverrides: {
@@ -425,7 +425,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                       },
                   }
                 : {}),
-            ...(controls.compactInputs
+            ...(features.compactInputs
                 ? {
                       MuiFilledInput: {
                           styleOverrides: {
@@ -492,7 +492,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                       },
                   }
                 : {}),
-            ...(controls.compactListsAndMenus
+            ...(features.compactListsAndMenus
                 ? {
                       MuiListItemButton: {
                           styleOverrides: {
@@ -520,7 +520,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                       },
                   }
                 : {}),
-            ...(controls.compactAccordionSummary
+            ...(features.compactAccordionSummary
                 ? {
                       MuiAccordionSummary: {
                           styleOverrides: {
@@ -540,7 +540,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                       },
                   }
                 : {}),
-            ...(controls.compactTableCells
+            ...(features.compactTableCells
                 ? {
                       MuiTableCell: {
                           styleOverrides: {
@@ -552,7 +552,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                       },
                   }
                 : {}),
-            ...(controls.compactTreeItems
+            ...(features.compactTreeItems
                 ? {
                       MuiRichTreeView: {
                           styleOverrides: {
@@ -573,4 +573,23 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                 : {}),
         },
     };
+}
+
+export function getPreferredColorMode(): DenseColorMode {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+        return 'light';
+    }
+
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+export function createDenseTheme({
+    animationsDisabled,
+    colorMode,
+    config,
+    features = DEFAULT_DENSE_THEME_FEATURES,
+}: CreateDenseThemeOptions) {
+    const baseTheme = createBaseDenseTheme(config, colorMode, animationsDisabled);
+
+    return createTheme(baseTheme, createDenseFeatureThemeOptions(features));
 }

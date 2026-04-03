@@ -1,37 +1,34 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-    ADVANCED_DENSITY_PRESETS,
-    DENSITY_PRESETS,
-    DENSE_ADVANCED_DENSITY_CONTROLS,
-    DEFAULT_ADVANCED_DENSITY_CONTROLS,
-} from './density-controls';
+import { DEFAULT_DENSE_THEME_FEATURES, DENSE_THEME_FEATURE_PRESETS, DENSE_THEME_PRESETS } from './dense';
 
-describe('mui-dense presets', () => {
+describe('mui-dense public presets', () => {
     it('keeps the dense preset aligned with the intended compact baseline', () => {
-        expect(DENSITY_PRESETS.dense).toMatchObject({
+        expect(DENSE_THEME_PRESETS.dense).toMatchObject({
             componentSize: 'small',
-            dataGridDensity: 'compact',
-            dataGridHeaderFilterHeight: 52,
-            dataGridHeaderFilters: false,
             denseFormMargins: true,
             denseLists: true,
             disableGlobalGutters: true,
-            imageGap: 4,
-            layoutScale: 0.2,
             listDisablePadding: true,
             spacingBase: 4,
             tableSize: 'small',
             toolbarDense: true,
             toolbarDisableGutters: true,
-            treeIndentation: 12,
             typographyScale: 1,
         });
     });
 
-    it('maps advanced controls per preset without inventing extra state', () => {
-        expect(ADVANCED_DENSITY_PRESETS.default).toEqual(DEFAULT_ADVANCED_DENSITY_CONTROLS);
-        expect(ADVANCED_DENSITY_PRESETS.dense).toEqual(DENSE_ADVANCED_DENSITY_CONTROLS);
-        expect(ADVANCED_DENSITY_PRESETS.densePlus).toEqual(DEFAULT_ADVANCED_DENSITY_CONTROLS);
+    it('maps theme-feature presets without inventing extra state', () => {
+        expect(DENSE_THEME_FEATURE_PRESETS.default).toEqual(DEFAULT_DENSE_THEME_FEATURES);
+        expect(DENSE_THEME_FEATURE_PRESETS.dense).toMatchObject({
+            compactAccordionSummary: true,
+            compactButtonsAndChips: true,
+            compactIconButtons: true,
+            compactInputs: true,
+            compactListsAndMenus: true,
+            compactTableCells: true,
+            compactTreeItems: true,
+        });
+        expect(DENSE_THEME_FEATURE_PRESETS.densePlus).toEqual(DEFAULT_DENSE_THEME_FEATURES);
     });
 });

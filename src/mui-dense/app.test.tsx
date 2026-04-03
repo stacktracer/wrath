@@ -275,7 +275,7 @@ describe('mui-dense page', () => {
         const [typographyScaleSlider] = requireSliderInputsInDensityCard('Typography Scale');
         const imageTileSliders = requireSliderInputsInDensityCard('Image Tiles');
         const dataGridSliders = requireSliderInputsInDensityCard('Data Grid Pro');
-        const [dataGridHeaderFilterHeightSlider] = dataGridSliders;
+        const [dataGridHeaderFilterHeightSlider, dataGridCellBlockPaddingSlider] = dataGridSliders;
         const [treeIndentationSlider] = requireSliderInputsInDensityCard('Tree View');
         const choiceInputsCard = requireDemoCard('Choice inputs');
         const filledInput = requireInput('mui-dense-filled-input');
@@ -367,8 +367,9 @@ describe('mui-dense page', () => {
         expect(Number(typographyScaleSlider.value)).toBe(1);
         expect(imageTileSliders).toHaveLength(1);
         expect(Number(imageTileSliders[0].value)).toBe(4);
-        expect(dataGridSliders).toHaveLength(1);
+        expect(dataGridSliders).toHaveLength(2);
         expect(Number(dataGridHeaderFilterHeightSlider.value)).toBe(52);
+        expect(Number(dataGridCellBlockPaddingSlider.value)).toBe(1);
         expect(dataGridHeaderFilterHeightSlider.disabled).toBe(true);
         expect(Number(treeIndentationSlider.value)).toBe(12);
         expect(window.getComputedStyle(choiceInputsCard).rowGap).toBe('8px');

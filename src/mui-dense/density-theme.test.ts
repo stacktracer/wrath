@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { DENSE_ADVANCED_DENSITY_CONTROLS, DENSITY_PRESETS } from './density-controls';
-import { createAdvancedDensityThemeOptions, createDensityTheme } from './density-theme';
+import { DENSE_THEME_FEATURE_PRESETS, DENSE_THEME_PRESETS, createDenseTheme } from './dense';
 
-describe('mui-dense animation policy', () => {
+describe('mui-dense public theme builder', () => {
     it('turns off transition timing and ripples when animations are disabled', () => {
-        const theme = createDensityTheme(DENSITY_PRESETS.dense, 'dark', true);
+        const theme = createDenseTheme({
+            animationsDisabled: true,
+            colorMode: 'dark',
+            config: DENSE_THEME_PRESETS.dense,
+            features: DENSE_THEME_FEATURE_PRESETS.dense,
+        });
 
         expect(theme.transitions.create(['opacity'])).toBe('none');
         expect(theme.transitions.duration.standard).toBe(0);
@@ -18,7 +22,11 @@ describe('mui-dense animation policy', () => {
     });
 
     it('leaves the normal motion system intact when animations stay enabled', () => {
-        const theme = createDensityTheme(DENSITY_PRESETS.default, 'light', false);
+        const theme = createDenseTheme({
+            animationsDisabled: false,
+            colorMode: 'light',
+            config: DENSE_THEME_PRESETS.default,
+        });
 
         expect(theme.transitions.duration.standard).toBeGreaterThan(0);
         expect(theme.components?.MuiButtonBase?.defaultProps).toMatchObject({
@@ -27,12 +35,15 @@ describe('mui-dense animation policy', () => {
         expect(theme.components?.MuiCssBaseline).toBeUndefined();
         expect(theme.components?.MuiCircularProgress).toBeUndefined();
     });
-});
 
-describe('mui-dense advanced theme options', () => {
-    it('nudges compact button and chip labels slightly downward', () => {
-        const options = createAdvancedDensityThemeOptions(DENSE_ADVANCED_DENSITY_CONTROLS);
-        const inputLabelOverride = options.components?.MuiInputLabel?.styleOverrides?.root as
+    it('applies the dense feature preset through the same top-level builder apps would call', () => {
+        const theme = createDenseTheme({
+            animationsDisabled: true,
+            colorMode: 'dark',
+            config: DENSE_THEME_PRESETS.dense,
+            features: DENSE_THEME_FEATURE_PRESETS.dense,
+        });
+        const inputLabelOverride = theme.components?.MuiInputLabel?.styleOverrides?.root as
             | ((args: {
                   ownerState: {
                       size?: 'small' | 'medium';
@@ -42,19 +53,19 @@ describe('mui-dense advanced theme options', () => {
               }) => { transform?: string })
             | undefined;
 
-        expect(options.components?.MuiButton?.styleOverrides?.containedSizeMedium).toMatchObject({
+        expect(theme.components?.MuiButton?.styleOverrides?.containedSizeMedium).toMatchObject({
             padding: '7px 12px 3px',
         });
-        expect(options.components?.MuiButton?.styleOverrides?.containedSizeSmall).toMatchObject({
+        expect(theme.components?.MuiButton?.styleOverrides?.containedSizeSmall).toMatchObject({
             padding: '4px 8px 0px',
         });
-        expect(options.components?.MuiButton?.styleOverrides?.outlinedSizeSmall).toMatchObject({
+        expect(theme.components?.MuiButton?.styleOverrides?.outlinedSizeSmall).toMatchObject({
             padding: '4px 7px 0px',
         });
-        expect(options.components?.MuiChip?.styleOverrides?.label).toMatchObject({
+        expect(theme.components?.MuiChip?.styleOverrides?.label).toMatchObject({
             transform: 'translateY(1.5px)',
         });
-        expect(options.components?.MuiChip?.styleOverrides?.labelSmall).toMatchObject({
+        expect(theme.components?.MuiChip?.styleOverrides?.labelSmall).toMatchObject({
             transform: 'translateY(1.5px)',
         });
         expect(
