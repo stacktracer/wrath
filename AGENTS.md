@@ -31,6 +31,9 @@
 - Include specific examples when they sharpen the argument, but stop before the plan turns into pseudocode.
 - Use structure only where it helps comprehension; if extra headings do not add signal, leave them out.
 - Write so the plan is easy to revise after review, because the first draft is usually not the final shape.
+- After executing a `plan.md`, write a sibling `outcome.md`.
+- Use `outcome.md` to record where the work actually landed, what changed from the plan, and any important open questions or discoveries that came out during execution.
+- Write `outcome.md` in the same general style as `plan.md`: short prose, not a long outline, with separate sections only where they help distinguish conceptually separate issues.
 - When creating a new comment thread:
     - Put it immediately below the specific paragraph it is about, not in a separate review section.
     - Add a line containing only `<!-- prettier-ignore -->`.
