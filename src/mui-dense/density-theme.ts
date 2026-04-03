@@ -33,6 +33,9 @@ const circularDashKeyframe = keyframes`
     }
 `;
 
+const COMPACT_BUTTON_VERTICAL_BIAS_PX = 1;
+const COMPACT_CHIP_LABEL_OFFSET_PX = 1.5;
+
 type CompactInputLabelOwnerState = {
     formControl?: unknown;
     size?: 'small' | 'medium';
@@ -40,16 +43,20 @@ type CompactInputLabelOwnerState = {
     variant?: 'standard' | 'filled' | 'outlined';
 };
 
+function getOpticallyBiasedButtonPadding(top: number, horizontal: number, bottom: number) {
+    return `${top + COMPACT_BUTTON_VERTICAL_BIAS_PX}px ${horizontal}px ${bottom - COMPACT_BUTTON_VERTICAL_BIAS_PX}px`;
+}
+
 function getCompactInputLabelStyles(ownerState: CompactInputLabelOwnerState) {
     const size = ownerState.size === 'small' ? 'small' : 'medium';
 
     if (ownerState.variant === 'outlined') {
         return ownerState.shrink
             ? {
-                  transform: `translate(14px, ${size === 'small' ? '-7px' : '-9px'}) scale(0.75)`,
+                  transform: `translate(14px, ${size === 'small' ? '-9px' : '-11px'}) scale(0.75)`,
               }
             : {
-                  transform: `translate(14px, ${size === 'small' ? '8px' : '14px'}) scale(1)`,
+                  transform: `translate(14px, ${size === 'small' ? '6px' : '12px'}) scale(1)`,
               };
     }
 
@@ -349,27 +356,27 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                               },
                               containedSizeMedium: {
                                   minHeight: 30,
-                                  padding: '6px 12px 4px',
+                                  padding: getOpticallyBiasedButtonPadding(6, 12, 4),
                               },
                               containedSizeSmall: {
                                   minHeight: 26,
-                                  padding: '3px 8px 1px',
+                                  padding: getOpticallyBiasedButtonPadding(3, 8, 1),
                               },
                               outlinedSizeMedium: {
                                   minHeight: 30,
-                                  padding: '5px 12px 3px',
+                                  padding: getOpticallyBiasedButtonPadding(5, 12, 3),
                               },
                               outlinedSizeSmall: {
                                   minHeight: 26,
-                                  padding: '3px 7px 1px',
+                                  padding: getOpticallyBiasedButtonPadding(3, 7, 1),
                               },
                               textSizeMedium: {
                                   minHeight: 30,
-                                  padding: '6px 6px 4px',
+                                  padding: getOpticallyBiasedButtonPadding(6, 6, 4),
                               },
                               textSizeSmall: {
                                   minHeight: 26,
-                                  padding: '3px 4px 1px',
+                                  padding: getOpticallyBiasedButtonPadding(3, 4, 1),
                               },
                           },
                       },
@@ -390,7 +397,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                                   height: '100%',
                                   paddingLeft: 10,
                                   paddingRight: 10,
-                                  transform: 'translateY(0.5px)',
+                                  transform: `translateY(${COMPACT_CHIP_LABEL_OFFSET_PX}px)`,
                               },
                               labelSmall: {
                                   alignItems: 'center',
@@ -398,7 +405,7 @@ export function createAdvancedDensityThemeOptions(controls: AdvancedDensityContr
                                   height: '100%',
                                   paddingLeft: 6,
                                   paddingRight: 6,
-                                  transform: 'translateY(0.5px)',
+                                  transform: `translateY(${COMPACT_CHIP_LABEL_OFFSET_PX}px)`,
                               },
                           },
                       },

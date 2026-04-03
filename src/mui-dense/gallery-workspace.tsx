@@ -192,7 +192,7 @@ export function GalleryWorkspace({
     const [swipeableDrawerOpen, setSwipeableDrawerOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [backdropOpen, setBackdropOpen] = useState(false);
-    const [snackbarOpen, setSnackbarOpen] = useState(true);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [speedDialOpen, setSpeedDialOpen] = useState(false);
     const [clickedAway, setClickedAway] = useState(false);
     const [trapFocusOpen, setTrapFocusOpen] = useState(false);
@@ -201,6 +201,7 @@ export function GalleryWorkspace({
     const [portalTarget, setPortalTarget] = useState<HTMLDivElement | null>(null);
     const [proTreeItems, setProTreeItems] = useState<TreeDemoItem[]>(PRO_TREE_ITEMS);
     const [treeMoveSummary, setTreeMoveSummary] = useState('Drag items in the Pro tree to reorder them.');
+    const [statusSpinnerAnimating, setStatusSpinnerAnimating] = useState(false);
 
     const menuOpen = Boolean(menuAnchorEl);
     const popoverOpen = Boolean(popoverAnchorEl);
@@ -581,6 +582,54 @@ export function GalleryWorkspace({
                         </DemoCard>
 
                         <DemoCard
+                            components="Alert, AlertTitle, CircularProgress, LinearProgress, Skeleton, SnackbarContent"
+                            title="Status and feedback visuals"
+                        >
+                            <Stack spacing={scaleSpacing(2.5)}>
+                                <Alert severity="warning">
+                                    <AlertTitle>Review queued</AlertTitle>
+                                    Lane ATL to LHR needs another pass before release.
+                                </Alert>
+
+                                <Stack direction="row" spacing={scaleSpacing(2)}>
+                                    <Stack spacing={scaleSpacing(1.5)}>
+                                        <Button
+                                            onClick={() => {
+                                                setStatusSpinnerAnimating(current => !current);
+                                            }}
+                                            variant="outlined"
+                                        >
+                                            {statusSpinnerAnimating ? 'Hide spinner' : 'Show spinner'}
+                                        </Button>
+
+                                        <Box
+                                            sx={{
+                                                alignItems: 'center',
+                                                display: 'flex',
+                                                height: 40,
+                                                justifyContent: 'center',
+                                                width: 40,
+                                            }}
+                                        >
+                                            {statusSpinnerAnimating ? <CircularProgress /> : null}
+                                        </Box>
+                                    </Stack>
+                                    <div>
+                                        <LinearProgress />
+                                    </div>
+                                </Stack>
+
+                                <Stack direction="row" spacing={scaleSpacing(2)}>
+                                    <Skeleton height={56} variant="rounded" width={112} />
+                                    <Skeleton variant="circular" width={48} height={48} />
+                                    <Skeleton variant="text" width="45%" />
+                                </Stack>
+
+                                <SnackbarContent message="Local feedback surface without portal positioning" />
+                            </Stack>
+                        </DemoCard>
+
+                        <DemoCard
                             components="List, ListSubheader, ListItem, ListItemButton, ListItemAvatar, ListItemIcon, ListItemText, ListItemSecondaryAction, MenuList"
                             title="Lists and menu lists"
                         >
@@ -614,33 +663,6 @@ export function GalleryWorkspace({
                                     <MenuItem>Pause notifications</MenuItem>
                                     <MenuItem>Open lane history</MenuItem>
                                 </MenuList>
-                            </Stack>
-                        </DemoCard>
-
-                        <DemoCard
-                            components="Alert, AlertTitle, CircularProgress, LinearProgress, Skeleton, SnackbarContent"
-                            title="Status and feedback visuals"
-                        >
-                            <Stack spacing={scaleSpacing(2.5)}>
-                                <Alert severity="warning">
-                                    <AlertTitle>Review queued</AlertTitle>
-                                    Lane ATL to LHR needs another pass before release.
-                                </Alert>
-
-                                <Stack direction="row" spacing={scaleSpacing(2)}>
-                                    <CircularProgress />
-                                    <div>
-                                        <LinearProgress />
-                                    </div>
-                                </Stack>
-
-                                <Stack direction="row" spacing={scaleSpacing(2)}>
-                                    <Skeleton height={56} variant="rounded" width={112} />
-                                    <Skeleton variant="circular" width={48} height={48} />
-                                    <Skeleton variant="text" width="45%" />
-                                </Stack>
-
-                                <SnackbarContent message="Local feedback surface without portal positioning" />
                             </Stack>
                         </DemoCard>
 
@@ -838,7 +860,11 @@ export function GalleryWorkspace({
 
                                 <RichTreeView
                                     aria-label="Rich workstation tree"
-                                    defaultExpandedItems={['rich-workstation', 'rich-overview']}
+                                    defaultExpandedItems={[
+                                        'rich-workstation',
+                                        'rich-overview',
+                                        'rich-analytics',
+                                    ]}
                                     itemChildrenIndentation={densityControls.treeIndentation}
                                     items={COMMUNITY_RICH_TREE_ITEMS}
                                 />
@@ -1353,7 +1379,7 @@ export function GalleryWorkspace({
                                     }}
                                     variant="outlined"
                                 >
-                                    Reopen snackbar
+                                    Open snackbar
                                 </Button>
                             </Stack>
                         </DemoCard>

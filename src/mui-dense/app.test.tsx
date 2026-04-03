@@ -135,6 +135,17 @@ function requireTreeItemContent(labelText: string) {
     return content;
 }
 
+function requireTreeItem(labelText: string) {
+    const content = requireTreeItemContent(labelText);
+    const treeItem = content.closest('[role="treeitem"]');
+
+    if (!(treeItem instanceof HTMLElement)) {
+        throw new Error(`Expected tree item for label: ${labelText}`);
+    }
+
+    return treeItem;
+}
+
 function readPx(element: Element, property: string) {
     return Number.parseFloat(window.getComputedStyle(element).getPropertyValue(property));
 }
@@ -300,13 +311,10 @@ describe('mui-dense page', () => {
         );
         const speedDialShell = requireDemoCard('Speed dial').querySelector('.mui-dense-speed-dial-shell');
         const densityPresetLabel = requireElement('#mui-dense-select-label');
-        const statusCardSpinner = requireDemoCard('Status and feedback visuals').querySelector(
-            '[role="progressbar"]',
-        );
-        const statusCardSpinnerCircle = statusCardSpinner?.querySelector('.MuiCircularProgress-circle');
         const simpleTreeCard = requireDemoCard('SimpleTreeView');
         const richTreeCard = requireDemoCard('RichTreeView');
         const richTreeProCard = requireDemoCard('RichTreeViewPro');
+        const richTreeAnalyticsItem = requireTreeItem('Analytics');
         const transitionsCard = requireDemoCard('Transitions');
         const speedDialCard = requireDemoCard('Speed dial');
         const utilityHelpersCard = requireDemoCard('Utility helpers');
@@ -316,6 +324,9 @@ describe('mui-dense page', () => {
         const appChromeCard = requireDemoCard('App bar and mobile stepper');
         const appChromeStepper = appChromeCard.querySelector('.MuiMobileStepper-root');
         const portalTargetSurface = utilityHelpersCard.querySelector('.mui-dense-portal-target');
+        const pageSnackbar = () => document.body.querySelector('.MuiSnackbar-root');
+        const spinnerAnimationToggleButton = requireTextButton('Show spinner');
+        const statusCardSpinnerSlot = spinnerAnimationToggleButton.parentElement?.lastElementChild;
         const transitionToggleButton = requireTextButton('Hide elements');
         const zoomToggleButton = requireTextButton('Hide element');
         const inputsSection = requireElement('#inputs');
@@ -390,8 +401,8 @@ describe('mui-dense page', () => {
         ]);
         expect(dataDisplayCardTitles).toEqual([
             'Images',
-            'Lists and menu lists',
             'Status and feedback visuals',
+            'Lists and menu lists',
             'Identity, badges, and chips',
         ]);
         expect(treesCardTitles).toEqual(['RichTreeViewPro', 'RichTreeView', 'SimpleTreeView']);
@@ -431,8 +442,7 @@ describe('mui-dense page', () => {
         expect(filledInputRoot).toBeInstanceOf(HTMLElement);
         expect(notesTextarea).toBeInstanceOf(HTMLTextAreaElement);
         expect(denseOutlinedInputRoot).toBeInstanceOf(HTMLElement);
-        expect(statusCardSpinner).toBeInstanceOf(HTMLElement);
-        expect(statusCardSpinnerCircle).toBeInstanceOf(SVGCircleElement);
+        expect(statusCardSpinnerSlot).toBeInstanceOf(HTMLElement);
         expect(tableContainer).toBeInstanceOf(HTMLElement);
         expect(dataGridRoot).toBeInstanceOf(HTMLElement);
         expect(dataGridHeaders).toBeInstanceOf(HTMLElement);
@@ -444,13 +454,9 @@ describe('mui-dense page', () => {
         expect(window.getComputedStyle(notesTextarea as HTMLTextAreaElement).maxWidth).toBe('100%');
         expect(window.getComputedStyle(portalTargetSurface as HTMLElement).gap).toBe('8px');
         expect(window.getComputedStyle(portalTargetSurface as HTMLElement).flexWrap).toBe('wrap');
-        expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationDuration).toBe('1.4s');
-        expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationIterationCount).toBe(
-            'infinite',
-        );
-        expect(window.getComputedStyle(statusCardSpinnerCircle as SVGCircleElement).animationDuration).toBe(
-            '1.4s',
-        );
+        expect(readPx(statusCardSpinnerSlot, 'width')).toBe(40);
+        expect(readPx(statusCardSpinnerSlot, 'height')).toBe(40);
+        expect((statusCardSpinnerSlot as HTMLElement).querySelector('[role="progressbar"]')).toBeNull();
         expect(window.getComputedStyle(dataGridRoot as HTMLElement).backgroundColor).toBe(
             window.getComputedStyle(tableContainer as HTMLElement).backgroundColor,
         );
@@ -524,6 +530,43 @@ describe('mui-dense page', () => {
         expect(utilityHelpersCard.textContent).toContain(
             'TrapFocus keeps keyboard focus inside the small region below while it is open.',
         );
+        expect(pageSnackbar()).toBeNull();
+        expect(richTreeAnalyticsItem.getAttribute('aria-expanded')).toBe('true');
+        const spinnerSlotRectBefore = (statusCardSpinnerSlot as HTMLElement).getBoundingClientRect();
+        spinnerAnimationToggleButton.click();
+        await nextFrame();
+        const statusCardSpinner = (statusCardSpinnerSlot as HTMLElement).querySelector(
+            '[role="progressbar"]',
+        );
+        const statusCardSpinnerCircle = statusCardSpinner?.querySelector('.MuiCircularProgress-circle');
+        expect(requireTextButton('Hide spinner')).toBeInstanceOf(HTMLButtonElement);
+        expect(statusCardSpinner).toBeInstanceOf(HTMLElement);
+        expect(statusCardSpinnerCircle).toBeInstanceOf(SVGCircleElement);
+        expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationDuration).toBe('1.4s');
+        expect(window.getComputedStyle(statusCardSpinner as HTMLElement).animationIterationCount).toBe(
+            'infinite',
+        );
+        expect(window.getComputedStyle(statusCardSpinnerCircle as SVGCircleElement).animationDuration).toBe(
+            '1.4s',
+        );
+        const spinnerSlotRectAfterShow = (statusCardSpinnerSlot as HTMLElement).getBoundingClientRect();
+        expect(Math.abs(spinnerSlotRectAfterShow.width - spinnerSlotRectBefore.width)).toBeLessThanOrEqual(1);
+        expect(Math.abs(spinnerSlotRectAfterShow.height - spinnerSlotRectBefore.height)).toBeLessThanOrEqual(
+            1,
+        );
+        requireTextButton('Hide spinner').click();
+        await nextFrame();
+        expect(requireTextButton('Show spinner')).toBeInstanceOf(HTMLButtonElement);
+        expect((statusCardSpinnerSlot as HTMLElement).querySelector('[role="progressbar"]')).toBeNull();
+        const spinnerSlotRectAfterHide = (statusCardSpinnerSlot as HTMLElement).getBoundingClientRect();
+        expect(Math.abs(spinnerSlotRectAfterHide.width - spinnerSlotRectBefore.width)).toBeLessThanOrEqual(1);
+        expect(Math.abs(spinnerSlotRectAfterHide.height - spinnerSlotRectBefore.height)).toBeLessThanOrEqual(
+            1,
+        );
+        await page.getByRole('button', { name: 'Open snackbar' }).click();
+        await nextFrame();
+        expect(pageSnackbar()).toBeInstanceOf(HTMLElement);
+        expect(pageSnackbar()?.textContent).toContain('Background poller connected');
         transitionToggleButton.click();
         await nextFrame();
         expect(requireTextButton('Show elements')).toBeInstanceOf(HTMLButtonElement);
