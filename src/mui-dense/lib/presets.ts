@@ -22,8 +22,6 @@ export const DEFAULT_DENSE_SETTINGS: DenseSettings = {
     dataGrid: {
         cellBlockPadding: '1px',
         density: 'standard',
-        headerFilters: false,
-        headerFilterHeight: 52,
     },
 };
 
@@ -51,8 +49,6 @@ export const DENSE_PRESETS: Record<DensePreset, DenseSettings> = {
         dataGrid: {
             cellBlockPadding: '1px',
             density: 'compact',
-            headerFilters: false,
-            headerFilterHeight: 52,
         },
     },
     densePlus: {
@@ -77,8 +73,6 @@ export const DENSE_PRESETS: Record<DensePreset, DenseSettings> = {
         dataGrid: {
             cellBlockPadding: '1px',
             density: 'compact',
-            headerFilters: true,
-            headerFilterHeight: 24,
         },
     },
 };

@@ -2,12 +2,8 @@ export type DensePreset = 'default' | 'dense' | 'densePlus';
 
 export type DenseDataGridDensity = 'comfortable' | 'standard' | 'compact';
 
-// FIXME: Can we remove the `headerFilters` field from this type? Not sure it belongs here.
-// FIXME: Can we provide a better knob than `headerFilterHeight`?
 export type DenseDataGridOptions = {
     density: DenseDataGridDensity;
-    headerFilters: boolean;
-    headerFilterHeight: number;
     cellBlockPadding: string;
 };
 

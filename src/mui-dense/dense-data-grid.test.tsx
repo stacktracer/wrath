@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { createRoot, type Root } from 'react-dom/client';
+import { gridClasses } from '@mui/x-data-grid-pro';
 import { page } from 'vitest/browser';
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -66,6 +67,72 @@ function requireGridColumnHeader(field: string) {
     return header;
 }
 
+function requireGridCell(field: string, cellText?: string) {
+    const cells = Array.from(
+        document.querySelectorAll<HTMLElement>(`[role="gridcell"][data-field="${field}"]`),
+    );
+    const cell =
+        cellText === undefined
+            ? cells[0]
+            : cells.find(candidate => candidate.textContent?.trim().includes(cellText));
+
+    if (!(cell instanceof HTMLElement)) {
+        throw new Error(`Expected grid cell for field: ${field}`);
+    }
+
+    return cell;
+}
+
+function requireGridHeaderFilterCell(field: string) {
+    const headerFilterCell = document.querySelector<HTMLElement>(
+        `[role="columnheader"][data-field="${field}"].${gridClasses['columnHeader--filter']}`,
+    );
+
+    if (!(headerFilterCell instanceof HTMLElement)) {
+        throw new Error(`Expected header filter cell for field: ${field}`);
+    }
+
+    return headerFilterCell;
+}
+
+function requireGridCheckboxSlot(selector: string) {
+    const checkboxSlot = document.querySelector<HTMLElement>(selector);
+
+    if (!(checkboxSlot instanceof HTMLElement)) {
+        throw new Error(`Expected grid checkbox slot for selector: ${selector}`);
+    }
+
+    return checkboxSlot;
+}
+
+function requireChildElement(parent: ParentNode, selector: string) {
+    const element = parent.querySelector(selector);
+
+    if (!(element instanceof HTMLElement)) {
+        throw new Error(`Expected child element for selector: ${selector}`);
+    }
+
+    return element;
+}
+
+function getTextRangeRect(element: HTMLElement) {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+
+    return range.getBoundingClientRect();
+}
+
+function expectHeightClose(actual: number, expected: number) {
+    expect(Math.abs(actual - expected)).toBeLessThanOrEqual(1);
+}
+
+function expectRectWithin(inner: DOMRect, outer: DOMRect, tolerance = 1.5) {
+    expect(inner.top).toBeGreaterThanOrEqual(outer.top - tolerance);
+    expect(inner.bottom).toBeLessThanOrEqual(outer.bottom + tolerance);
+    expect(inner.left).toBeGreaterThanOrEqual(outer.left - tolerance);
+    expect(inner.right).toBeLessThanOrEqual(outer.right + tolerance);
+}
+
 async function nextFrame() {
     await new Promise<void>(resolve => {
         requestAnimationFrame(() => {
@@ -87,7 +154,13 @@ async function waitForMetrics() {
     throw new Error('DenseDataGrid did not publish metrics in time.');
 }
 
-function DenseDataGridHarness({ cellBlockPadding }: { cellBlockPadding?: string }) {
+function DenseDataGridHarness({
+    cellBlockPadding,
+    headerFilters = false,
+}: {
+    cellBlockPadding?: string;
+    headerFilters?: boolean;
+}) {
     const [metrics, setMetrics] = useState<DenseDataGridMetrics | null>(null);
 
     return (
@@ -110,6 +183,7 @@ function DenseDataGridHarness({ cellBlockPadding }: { cellBlockPadding?: string 
                     checkboxSelection
                     columns={GRID_COLUMNS}
                     disableRowSelectionOnClick
+                    headerFilters={headerFilters}
                     rows={GRID_ROWS}
                     onMetricsChange={setMetrics}
                 />
@@ -135,27 +209,49 @@ describe('mui-dense DenseDataGrid', () => {
         await waitForMetrics();
 
         const metrics = requireMetrics();
+        const laneCell = requireGridCell('lane', 'ATL to LHR');
         const laneHeader = requireGridColumnHeader('lane');
 
         expect(metrics.rowHeight).toBe(30);
         expect(metrics.columnHeaderHeight).toBe(30);
         expect(metrics.devicePixelRatio).toBeGreaterThan(0);
-        expect(getComputedStyle(laneHeader).paddingTop).toBe('1px');
-        expect(getComputedStyle(laneHeader).paddingBottom).toBe('1px');
+        expectHeightClose(laneCell.getBoundingClientRect().height, metrics.rowHeight);
+        expectHeightClose(laneHeader.getBoundingClientRect().height, metrics.columnHeaderHeight);
     });
 
-    it('supports cap-based block padding for apps that want a text-relative tuning knob', async () => {
+    it('keeps large block padding inside the rendered slots without clipping content', async () => {
         await page.viewport(1000, 700);
-        mount(<DenseDataGridHarness cellBlockPadding="0.5cap" />);
+        mount(<DenseDataGridHarness cellBlockPadding="20px" headerFilters />);
 
         await expect.element(page.getByRole('grid')).toBeVisible();
         await waitForMetrics();
 
         const metrics = requireMetrics();
+        const laneCell = requireGridCell('lane', 'ATL to LHR');
         const laneHeader = requireGridColumnHeader('lane');
+        const laneHeaderTitle = requireChildElement(laneHeader, `.${gridClasses.columnHeaderTitle}`);
+        const laneHeaderFilterCell = requireGridHeaderFilterCell('lane');
+        const laneHeaderFilterInput = requireChildElement(laneHeaderFilterCell, '.MuiInputBase-root');
+        const rowCheckboxCell = requireGridCheckboxSlot(`.${gridClasses.cellCheckbox}[role="gridcell"]`);
+        const rowCheckboxInput = requireChildElement(rowCheckboxCell, `.${gridClasses.checkboxInput}`);
+        const headerCheckboxCell = requireGridCheckboxSlot(`.${gridClasses.columnHeaderCheckbox}`);
+        const headerCheckboxInput = requireChildElement(headerCheckboxCell, `.${gridClasses.checkboxInput}`);
 
         expect(metrics.rowHeight).toBeGreaterThan(30);
         expect(metrics.columnHeaderHeight).toBeGreaterThan(30);
-        expect(Number.parseFloat(getComputedStyle(laneHeader).paddingTop)).toBeGreaterThan(3);
+        expectHeightClose(laneCell.getBoundingClientRect().height, metrics.rowHeight);
+        expectHeightClose(laneHeader.getBoundingClientRect().height, metrics.columnHeaderHeight);
+        expectHeightClose(laneHeaderFilterCell.getBoundingClientRect().height, metrics.columnHeaderHeight);
+        expectRectWithin(getTextRangeRect(laneCell), laneCell.getBoundingClientRect());
+        expectRectWithin(getTextRangeRect(laneHeaderTitle), laneHeader.getBoundingClientRect());
+        expectRectWithin(rowCheckboxInput.getBoundingClientRect(), rowCheckboxCell.getBoundingClientRect());
+        expectRectWithin(
+            headerCheckboxInput.getBoundingClientRect(),
+            headerCheckboxCell.getBoundingClientRect(),
+        );
+        expectRectWithin(
+            laneHeaderFilterInput.getBoundingClientRect(),
+            laneHeaderFilterCell.getBoundingClientRect(),
+        );
     });
 });

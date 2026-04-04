@@ -34,10 +34,7 @@ export type DenseDataGridMetrics = {
     xHeight: number;
 };
 
-export type DenseDataGridProps = Omit<
-    DataGridProProps,
-    'columnHeaderHeight' | 'density' | 'headerFilterHeight' | 'headerFilters' | 'rowHeight'
-> & {
+export type DenseDataGridProps = Omit<DataGridProProps, 'columnHeaderHeight' | 'density' | 'rowHeight'> & {
     dense?: Partial<DenseDataGridOptions>;
     onMetricsChange?: (metrics: DenseDataGridMetrics) => void;
 };
@@ -45,8 +42,6 @@ export type DenseDataGridProps = Omit<
 export const DEFAULT_DENSE_DATA_GRID_OPTIONS: DenseDataGridOptions = {
     cellBlockPadding: '1px',
     density: 'standard',
-    headerFilters: false,
-    headerFilterHeight: 52,
 };
 
 const DEFAULT_DENSE_DATA_GRID_SIZING_TUNING: DenseDataGridSizingTuning = {
@@ -74,8 +69,6 @@ function resolveDenseDataGridOptions(dense: Partial<DenseDataGridOptions> | unde
     return {
         cellBlockPadding: normalizeDenseDataGridCellBlockPadding(dense?.cellBlockPadding),
         density: dense?.density ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.density,
-        headerFilters: dense?.headerFilters ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.headerFilters,
-        headerFilterHeight: dense?.headerFilterHeight ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.headerFilterHeight,
     };
 }
 
@@ -127,21 +120,14 @@ function resolveDenseDataGridCallerSx(callerSx: SxProps<Theme>, theme: Theme): S
         : (callerSx as SystemStyleObject<Theme>);
 }
 
-function createDenseDataGridSx(
-    dense: DenseDataGridOptions,
-    callerSx: SxProps<Theme> | undefined,
-): NonNullable<DataGridProProps['sx']> {
+function createDenseDataGridSx(callerSx: SxProps<Theme> | undefined): NonNullable<DataGridProProps['sx']> {
     const denseDataGridSx: SystemStyleObject<Theme> = {
         backgroundColor: 'background.paper',
-        [`& .${gridClasses.cell}`]: {
-            paddingBlock: dense.cellBlockPadding,
-        },
         [`& .${gridClasses.columnHeaders}`]: {
             backgroundColor: 'background.paper',
         },
         [`& .${gridClasses.columnHeader}`]: {
             backgroundColor: 'background.paper',
-            paddingBlock: dense.cellBlockPadding,
         },
         [`& .${gridClasses.columnHeader} .${gridClasses.sortButton}`]: {
             backgroundColor: 'background.paper',
@@ -175,6 +161,18 @@ export function snapToDevicePixel(value: number, devicePixelRatio: number) {
 
 export function formatPixelValue(value: number) {
     return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/\.?0+$/, '');
+}
+
+const DENSE_DATA_GRID_DENSITY_FACTORS: Record<DenseDataGridDensity, number> = {
+    comfortable: 1.3,
+    standard: 1,
+    compact: 0.7,
+};
+
+function resolveDenseDataGridHeightProp(targetHeight: number, density: DenseDataGridDensity) {
+    const densityFactor = DENSE_DATA_GRID_DENSITY_FACTORS[density] ?? 1;
+
+    return Math.max(1, Math.ceil(targetHeight / densityFactor));
 }
 
 function createDenseDataGridMetrics({
@@ -259,6 +257,11 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
             baseBodyFontSize,
             typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
         ),
+    );
+    const resolvedRowHeight = resolveDenseDataGridHeightProp(metrics.rowHeight, resolvedDense.density);
+    const resolvedColumnHeaderHeight = resolveDenseDataGridHeightProp(
+        metrics.columnHeaderHeight,
+        resolvedDense.density,
     );
     const gridRootRef = useRef<HTMLDivElement | null>(null);
     const body2TextProbeRef = useRef<HTMLSpanElement | null>(null);
@@ -354,18 +357,12 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
             >
                 <DataGridPro
                     {...dataGridProps}
-                    columnHeaderHeight={metrics.columnHeaderHeight}
+                    // MUI X multiplies explicit row and header heights by the current density factor.
+                    // The wrapper metrics describe the rendered pixels, so compensate before handing them back.
+                    columnHeaderHeight={resolvedColumnHeaderHeight}
                     density={resolvedDense.density}
-                    headerFilterHeight={resolvedDense.headerFilterHeight}
-                    headerFilters={resolvedDense.headerFilters}
-                    rowHeight={metrics.rowHeight}
-                    sx={createDenseDataGridSx(
-                        {
-                            ...resolvedDense,
-                            cellBlockPadding: resolvedCellBlockPadding,
-                        },
-                        sx,
-                    )}
+                    rowHeight={resolvedRowHeight}
+                    sx={createDenseDataGridSx(sx)}
                 />
             </div>
 

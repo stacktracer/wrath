@@ -17,6 +17,7 @@ export type GalleryAdvancedControlDefinition = {
 };
 
 type GalleryOnlyDenseControls = {
+    dataGridHeaderFilters: boolean;
     imageGap: number;
     layoutScale: number;
     treeIndentation: number;
@@ -26,8 +27,6 @@ export type GalleryDenseControls = Omit<DenseSettings, 'dataGrid'> &
     GalleryOnlyDenseControls & {
         dataGridCellBlockPadding: DenseSettings['dataGrid']['cellBlockPadding'];
         dataGridDensity: DenseSettings['dataGrid']['density'];
-        dataGridHeaderFilters: boolean;
-        dataGridHeaderFilterHeight: number;
     };
 
 export type GalleryPresetSelection = DensePreset | 'custom';
@@ -41,16 +40,19 @@ export const GALLERY_DENSE_PRESET_LABELS: Record<GalleryPresetSelection, string>
 
 const GALLERY_ONLY_DENSE_PRESETS: Record<DensePreset, GalleryOnlyDenseControls> = {
     default: {
+        dataGridHeaderFilters: false,
         imageGap: 12,
         layoutScale: 1,
         treeIndentation: 24,
     },
     dense: {
+        dataGridHeaderFilters: false,
         imageGap: 4,
         layoutScale: 0.2,
         treeIndentation: 12,
     },
     densePlus: {
+        dataGridHeaderFilters: true,
         imageGap: 0,
         layoutScale: 0.45,
         treeIndentation: 0,
@@ -68,8 +70,6 @@ function createGalleryDensePreset(
         ...galleryOnly,
         dataGridCellBlockPadding: dataGrid.cellBlockPadding,
         dataGridDensity: dataGrid.density,
-        dataGridHeaderFilters: dataGrid.headerFilters,
-        dataGridHeaderFilterHeight: dataGrid.headerFilterHeight,
     };
 }
 
@@ -131,8 +131,7 @@ export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseContro
     const {
         dataGridCellBlockPadding,
         dataGridDensity,
-        dataGridHeaderFilterHeight,
-        dataGridHeaderFilters,
+        dataGridHeaderFilters: _dataGridHeaderFilters,
         imageGap: _imageGap,
         layoutScale: _layoutScale,
         treeIndentation: _treeIndentation,
@@ -144,8 +143,6 @@ export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseContro
         dataGrid: {
             cellBlockPadding: dataGridCellBlockPadding,
             density: dataGridDensity,
-            headerFilterHeight: dataGridHeaderFilterHeight,
-            headerFilters: dataGridHeaderFilters,
         },
     };
 }

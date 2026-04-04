@@ -365,7 +365,7 @@ export function GallerySidebar({
                             </DensityControlCard>
 
                             <DensityControlCard
-                                description="Supported DenseDataGrid and DataGrid props for overall density, auto-sized row and header heights, optional header filters, and measured block padding."
+                                description="DenseDataGrid controls for overall density, auto-sized row and header heights, a direct header-filters toggle, and CSS-length vertical spacing."
                                 title="Data Grid Pro"
                             >
                                 <Stack spacing={1}>
@@ -420,24 +420,10 @@ export function GallerySidebar({
                                         Uses the live body text line-height, 1ex, checkbox icon size, and DPR{' '}
                                         {formatPixelValue(rowMetrics.devicePixelRatio)}.
                                     </Typography>
-
-                                    <Typography variant="body2">
-                                        Header filter height: {denseControls.dataGridHeaderFilterHeight}px
+                                    <Typography color="textSecondary" variant="caption">
+                                        Header filters inherit the computed header height unless a caller
+                                        passes `headerFilterHeight` directly to `DataGridPro`.
                                     </Typography>
-                                    <Slider
-                                        disabled={!denseControls.dataGridHeaderFilters}
-                                        max={52}
-                                        min={24}
-                                        onChange={(_event, value) => {
-                                            onUpdateDenseControl(
-                                                'dataGridHeaderFilterHeight',
-                                                value as number,
-                                            );
-                                        }}
-                                        step={2}
-                                        value={denseControls.dataGridHeaderFilterHeight}
-                                        valueLabelDisplay="auto"
-                                    />
 
                                     <Typography variant="body2">
                                         Cell block padding: {denseControls.dataGridCellBlockPadding}

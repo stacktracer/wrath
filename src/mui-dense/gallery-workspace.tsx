@@ -709,6 +709,7 @@ export function GalleryWorkspace({ dense, onDataGridMetricsChange, uiControls }:
                                     checkboxSelection
                                     columns={SHIPMENT_COLUMNS}
                                     disableRowSelectionOnClick
+                                    headerFilters={uiControls.dataGridHeaderFilters}
                                     label="Shipment lanes"
                                     onMetricsChange={onDataGridMetricsChange}
                                     pagination

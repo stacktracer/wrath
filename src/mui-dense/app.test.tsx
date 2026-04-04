@@ -274,8 +274,7 @@ describe('mui-dense page', () => {
         const [layoutScaleSlider] = requireSliderInputsInDensityCard('Layout Scale');
         const [typographyScaleSlider] = requireSliderInputsInDensityCard('Typography Scale');
         const imageTileSliders = requireSliderInputsInDensityCard('Image Tiles');
-        const dataGridSliders = requireSliderInputsInDensityCard('Data Grid Pro');
-        const [dataGridHeaderFilterHeightSlider] = dataGridSliders;
+        const dataGridDensityCard = requireDensityCard('Data Grid Pro');
         const dataGridCellBlockPaddingInput = requireInput('mui-dense-grid-cell-padding');
         const [treeIndentationSlider] = requireSliderInputsInDensityCard('Tree View');
         const choiceInputsCard = requireDemoCard('Choice inputs');
@@ -368,10 +367,8 @@ describe('mui-dense page', () => {
         expect(Number(typographyScaleSlider.value)).toBe(1);
         expect(imageTileSliders).toHaveLength(1);
         expect(Number(imageTileSliders[0].value)).toBe(4);
-        expect(dataGridSliders).toHaveLength(1);
-        expect(Number(dataGridHeaderFilterHeightSlider.value)).toBe(52);
         expect(dataGridCellBlockPaddingInput.value).toBe('1px');
-        expect(dataGridHeaderFilterHeightSlider.disabled).toBe(true);
+        expect(dataGridDensityCard.textContent).not.toContain('Header filter height:');
         expect(Number(treeIndentationSlider.value)).toBe(12);
         expect(window.getComputedStyle(choiceInputsCard).rowGap).toBe('8px');
         expect(window.getComputedStyle(choiceInputsCard).backgroundColor).toBe('rgb(0, 0, 0)');
