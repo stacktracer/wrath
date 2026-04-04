@@ -3,21 +3,22 @@ import { Container, CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 
 import {
+    DENSE_PRESETS,
     DEFAULT_DENSE_THEME_FEATURES,
-    DENSE_THEME_FEATURE_PRESETS,
     type DenseColorMode,
     type DenseDataGridMetrics,
     type DensePreset,
+    type DenseSettings,
     type DenseThemeFeatures,
     createDenseTheme,
     getPreferredColorMode,
-} from './dense';
+} from './lib';
 import {
-    type GalleryDensityControls,
-    GALLERY_DENSITY_PRESETS,
+    adaptGalleryControlsToDenseSettings,
+    type GalleryDenseControls,
+    GALLERY_DENSE_PRESETS,
     type GalleryPresetSelection,
-    adaptGalleryControlsToDenseConfig,
-} from './gallery-density';
+} from './gallery-dense';
 import { GallerySidebar } from './gallery-sidebar';
 import { GalleryWorkspace } from './gallery-workspace';
 
@@ -31,56 +32,57 @@ const DEFAULT_DENSE_DATA_GRID_METRICS: DenseDataGridMetrics = {
 };
 
 export function App() {
-    const [densityControls, setDensityControls] = useState<GalleryDensityControls>(
-        GALLERY_DENSITY_PRESETS.dense,
-    );
-    const [densityPreset, setDensityPreset] = useState<GalleryPresetSelection>('dense');
+    const [denseControls, setDenseControls] = useState<GalleryDenseControls>(GALLERY_DENSE_PRESETS.dense);
+    const [densePreset, setDensePreset] = useState<GalleryPresetSelection>('dense');
     const [colorMode, setColorMode] = useState<DenseColorMode>(() => getPreferredColorMode());
     const [animationsDisabled, setAnimationsDisabled] = useState(true);
-    const [themeFeatures, setThemeFeatures] = useState<DenseThemeFeatures>(DENSE_THEME_FEATURE_PRESETS.dense);
+    const [denseFeatures, setDenseFeatures] = useState<DenseThemeFeatures>(DENSE_PRESETS.dense.features);
     const [dataGridMetrics, setDataGridMetrics] = useState<DenseDataGridMetrics>(
         DEFAULT_DENSE_DATA_GRID_METRICS,
     );
-    const densityTheme = useMemo(
+    const denseSettings = useMemo<DenseSettings>(
+        () => adaptGalleryControlsToDenseSettings(denseControls, denseFeatures),
+        [denseControls, denseFeatures],
+    );
+    const denseTheme = useMemo(
         () =>
             createDenseTheme({
                 animationsDisabled,
                 colorMode,
-                config: adaptGalleryControlsToDenseConfig(densityControls),
-                features: themeFeatures,
+                dense: denseSettings,
             }),
-        [animationsDisabled, colorMode, densityControls, themeFeatures],
+        [animationsDisabled, colorMode, denseSettings],
     );
 
-    const applyDensityPreset = (preset: DensePreset) => {
-        setDensityControls(GALLERY_DENSITY_PRESETS[preset]);
-        setThemeFeatures(DENSE_THEME_FEATURE_PRESETS[preset]);
-        setDensityPreset(preset);
+    const applyDensePreset = (preset: DensePreset) => {
+        setDenseControls(GALLERY_DENSE_PRESETS[preset]);
+        setDenseFeatures(DENSE_PRESETS[preset].features);
+        setDensePreset(preset);
     };
 
-    const updateDensityControl = <Key extends keyof GalleryDensityControls>(
+    const updateDenseControl = <Key extends keyof GalleryDenseControls>(
         key: Key,
-        value: GalleryDensityControls[Key],
+        value: GalleryDenseControls[Key],
     ) => {
-        setDensityPreset('custom');
-        setDensityControls(current => ({
+        setDensePreset('custom');
+        setDenseControls(current => ({
             ...current,
             [key]: value,
         }));
     };
 
-    const updateThemeFeature = <Key extends keyof DenseThemeFeatures>(
+    const updateDenseFeature = <Key extends keyof DenseThemeFeatures>(
         key: Key,
         value: DenseThemeFeatures[Key],
     ) => {
-        setThemeFeatures(current => ({
+        setDenseFeatures(current => ({
             ...current,
             [key]: value,
         }));
     };
 
     return (
-        <ThemeProvider theme={densityTheme}>
+        <ThemeProvider theme={denseTheme}>
             <CssBaseline />
 
             <div className="mui-dense-app" data-mui-dense-color-mode={colorMode}>
@@ -89,28 +91,30 @@ export function App() {
                         <GallerySidebar
                             animationsDisabled={animationsDisabled}
                             colorMode={colorMode}
-                            densityControls={densityControls}
-                            densityPreset={densityPreset}
-                            onApplyDensityPreset={applyDensityPreset}
+                            denseControls={denseControls}
+                            denseFeatures={denseFeatures}
+                            densePreset={densePreset}
+                            onApplyDensePreset={applyDensePreset}
                             onColorModeChange={setColorMode}
-                            onResetThemeFeatures={() => {
-                                setThemeFeatures(DEFAULT_DENSE_THEME_FEATURES);
+                            onResetDenseFeatures={() => {
+                                setDenseFeatures(DEFAULT_DENSE_THEME_FEATURES);
                             }}
                             onResetToDefault={() => {
-                                applyDensityPreset('default');
+                                setDenseControls(GALLERY_DENSE_PRESETS.default);
+                                setDenseFeatures(DENSE_PRESETS.default.features);
+                                setDensePreset('default');
                                 setAnimationsDisabled(false);
                                 setColorMode(getPreferredColorMode());
                             }}
                             onSetAnimationsDisabled={setAnimationsDisabled}
-                            onUpdateDensityControl={updateDensityControl}
-                            onUpdateThemeFeature={updateThemeFeature}
+                            onUpdateDenseControl={updateDenseControl}
+                            onUpdateDenseFeature={updateDenseFeature}
                             rowMetrics={dataGridMetrics}
-                            themeFeatures={themeFeatures}
                         />
                         <GalleryWorkspace
-                            compactInputsEnabled={themeFeatures.compactInputs}
-                            densityControls={densityControls}
+                            dense={denseSettings}
                             onDataGridMetricsChange={setDataGridMetrics}
+                            uiControls={denseControls}
                         />
                     </div>
                 </Container>

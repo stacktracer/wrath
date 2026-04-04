@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_DENSE_THEME_FEATURES, DENSE_THEME_FEATURE_PRESETS, DENSE_THEME_PRESETS } from './dense';
+import { DEFAULT_DENSE_THEME_FEATURES, DENSE_PRESETS } from './lib';
 
 describe('mui-dense public presets', () => {
     it('keeps the dense preset aligned with the intended compact baseline', () => {
-        expect(DENSE_THEME_PRESETS.dense).toMatchObject({
+        expect(DENSE_PRESETS.dense.theme).toMatchObject({
             componentSize: 'small',
             denseFormMargins: true,
             denseLists: true,
@@ -19,8 +19,8 @@ describe('mui-dense public presets', () => {
     });
 
     it('maps theme-feature presets without inventing extra state', () => {
-        expect(DENSE_THEME_FEATURE_PRESETS.default).toEqual(DEFAULT_DENSE_THEME_FEATURES);
-        expect(DENSE_THEME_FEATURE_PRESETS.dense).toMatchObject({
+        expect(DENSE_PRESETS.default.features).toEqual(DEFAULT_DENSE_THEME_FEATURES);
+        expect(DENSE_PRESETS.dense.features).toMatchObject({
             compactAccordionSummary: true,
             compactButtonsAndChips: true,
             compactIconButtons: true,
@@ -29,6 +29,6 @@ describe('mui-dense public presets', () => {
             compactTableCells: true,
             compactTreeItems: true,
         });
-        expect(DENSE_THEME_FEATURE_PRESETS.densePlus).toEqual(DEFAULT_DENSE_THEME_FEATURES);
+        expect(DENSE_PRESETS.densePlus.features).toEqual(DEFAULT_DENSE_THEME_FEATURES);
     });
 });

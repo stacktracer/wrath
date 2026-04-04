@@ -8,9 +8,9 @@ import {
     DenseDataGrid,
     type DenseDataGridCellBlockPadding,
     type DenseDataGridMetrics,
-    DENSE_THEME_PRESETS,
+    DENSE_PRESETS,
     createDenseTheme,
-} from './dense';
+} from './lib';
 
 const GRID_COLUMNS = [
     {
@@ -101,7 +101,7 @@ function DenseDataGridHarness({ cellBlockPadding }: { cellBlockPadding?: DenseDa
             theme={createDenseTheme({
                 animationsDisabled: true,
                 colorMode: 'light',
-                config: DENSE_THEME_PRESETS.dense,
+                dense: DENSE_PRESETS.dense,
             })}
         >
             <div
@@ -111,7 +111,14 @@ function DenseDataGridHarness({ cellBlockPadding }: { cellBlockPadding?: DenseDa
                 }}
             >
                 <DenseDataGrid
-                    cellBlockPadding={cellBlockPadding}
+                    dense={
+                        cellBlockPadding === undefined
+                            ? DENSE_PRESETS.dense.dataGrid
+                            : {
+                                  ...DENSE_PRESETS.dense.dataGrid,
+                                  cellBlockPadding,
+                              }
+                    }
                     checkboxSelection
                     columns={GRID_COLUMNS}
                     disableRowSelectionOnClick

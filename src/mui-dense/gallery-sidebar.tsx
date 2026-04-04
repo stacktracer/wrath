@@ -19,52 +19,52 @@ import {
     type DenseColorMode,
     type DenseDataGridMetrics,
     type DenseThemeFeatures,
-} from './dense';
+} from './lib';
 import {
-    GALLERY_DENSITY_PRESET_LABELS,
+    GALLERY_DENSE_PRESET_LABELS,
     GALLERY_THEME_OVERRIDE_CONTROLS,
     GALLERY_TREE_VIEW_CONTROLS,
-    type GalleryDensityControls,
+    type GalleryDenseControls,
     type GalleryPresetSelection,
-} from './gallery-density';
+} from './gallery-dense';
 import { AdvancedControlTile, DensityControlCard } from './gallery-shell';
 
 type GallerySidebarProps = {
     animationsDisabled: boolean;
     colorMode: DenseColorMode;
-    densityControls: GalleryDensityControls;
-    densityPreset: GalleryPresetSelection;
-    onApplyDensityPreset: (preset: Exclude<GalleryPresetSelection, 'custom'>) => void;
+    denseControls: GalleryDenseControls;
+    denseFeatures: DenseThemeFeatures;
+    densePreset: GalleryPresetSelection;
+    onApplyDensePreset: (preset: Exclude<GalleryPresetSelection, 'custom'>) => void;
     onColorModeChange: (mode: DenseColorMode) => void;
-    onResetThemeFeatures: () => void;
+    onResetDenseFeatures: () => void;
     onResetToDefault: () => void;
     onSetAnimationsDisabled: (disabled: boolean) => void;
-    onUpdateDensityControl: <Key extends keyof GalleryDensityControls>(
+    onUpdateDenseControl: <Key extends keyof GalleryDenseControls>(
         key: Key,
-        value: GalleryDensityControls[Key],
+        value: GalleryDenseControls[Key],
     ) => void;
-    onUpdateThemeFeature: <Key extends keyof DenseThemeFeatures>(
+    onUpdateDenseFeature: <Key extends keyof DenseThemeFeatures>(
         key: Key,
         value: DenseThemeFeatures[Key],
     ) => void;
     rowMetrics: Pick<DenseDataGridMetrics, 'columnHeaderHeight' | 'devicePixelRatio' | 'rowHeight'>;
-    themeFeatures: DenseThemeFeatures;
 };
 
 export function GallerySidebar({
     animationsDisabled,
     colorMode,
-    densityControls,
-    densityPreset,
-    onApplyDensityPreset,
+    denseControls,
+    denseFeatures,
+    densePreset,
+    onApplyDensePreset,
     onColorModeChange,
-    onResetThemeFeatures,
+    onResetDenseFeatures,
     onResetToDefault,
     onSetAnimationsDisabled,
-    onUpdateDensityControl,
-    onUpdateThemeFeature,
+    onUpdateDenseControl,
+    onUpdateDenseFeature,
     rowMetrics,
-    themeFeatures,
 }: GallerySidebarProps) {
     const currentAnimationModeLabel = animationsDisabled ? 'Off' : 'On';
     const currentColorModeLabel = colorMode === 'dark' ? 'Dark' : 'Light';
@@ -142,11 +142,11 @@ export function GallerySidebar({
                                             <Button
                                                 key={preset}
                                                 onClick={() => {
-                                                    onApplyDensityPreset(preset);
+                                                    onApplyDensePreset(preset);
                                                 }}
-                                                variant={densityPreset === preset ? 'contained' : 'outlined'}
+                                                variant={densePreset === preset ? 'contained' : 'outlined'}
                                             >
-                                                {GALLERY_DENSITY_PRESET_LABELS[preset]}
+                                                {GALLERY_DENSE_PRESET_LABELS[preset]}
                                             </Button>
                                         ))}
                                     </ButtonGroup>
@@ -160,17 +160,17 @@ export function GallerySidebar({
                                 title="Spacing Base"
                             >
                                 <Typography variant="body2">
-                                    Spacing base: {densityControls.spacingBase}px
+                                    Spacing base: {denseControls.spacingBase}px
                                 </Typography>
                                 <Slider
                                     marks
                                     max={8}
                                     min={2}
                                     onChange={(_event, value) => {
-                                        onUpdateDensityControl('spacingBase', value as number);
+                                        onUpdateDenseControl('spacingBase', value as number);
                                     }}
                                     step={1}
-                                    value={densityControls.spacingBase}
+                                    value={denseControls.spacingBase}
                                     valueLabelDisplay="auto"
                                 />
                             </DensityControlCard>
@@ -180,17 +180,17 @@ export function GallerySidebar({
                                 title="Typography Scale"
                             >
                                 <Typography variant="body2">
-                                    Typography: {Math.round(densityControls.typographyScale * 100)}%
+                                    Typography: {Math.round(denseControls.typographyScale * 100)}%
                                 </Typography>
                                 <Slider
                                     marks
                                     max={1}
                                     min={0.65}
                                     onChange={(_event, value) => {
-                                        onUpdateDensityControl('typographyScale', value as number);
+                                        onUpdateDenseControl('typographyScale', value as number);
                                     }}
                                     step={0.05}
-                                    value={densityControls.typographyScale}
+                                    value={denseControls.typographyScale}
                                     valueLabelDisplay="auto"
                                 />
                             </DensityControlCard>
@@ -208,12 +208,12 @@ export function GallerySidebar({
                                             label="Component size"
                                             labelId="mui-dense-control-size-label"
                                             onChange={event => {
-                                                onUpdateDensityControl(
+                                                onUpdateDenseControl(
                                                     'componentSize',
                                                     event.target.value as 'small' | 'medium',
                                                 );
                                             }}
-                                            value={densityControls.componentSize}
+                                            value={denseControls.componentSize}
                                         >
                                             <MenuItem value="medium">Medium</MenuItem>
                                             <MenuItem value="small">Small</MenuItem>
@@ -223,9 +223,9 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={densityControls.denseFormMargins}
+                                                checked={denseControls.denseFormMargins}
                                                 onChange={event => {
-                                                    onUpdateDensityControl(
+                                                    onUpdateDenseControl(
                                                         'denseFormMargins',
                                                         event.target.checked,
                                                     );
@@ -238,9 +238,9 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={densityControls.disableGlobalGutters}
+                                                checked={denseControls.disableGlobalGutters}
                                                 onChange={event => {
-                                                    onUpdateDensityControl(
+                                                    onUpdateDenseControl(
                                                         'disableGlobalGutters',
                                                         event.target.checked,
                                                     );
@@ -260,12 +260,9 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={densityControls.denseLists}
+                                                checked={denseControls.denseLists}
                                                 onChange={event => {
-                                                    onUpdateDensityControl(
-                                                        'denseLists',
-                                                        event.target.checked,
-                                                    );
+                                                    onUpdateDenseControl('denseLists', event.target.checked);
                                                 }}
                                             />
                                         }
@@ -275,9 +272,9 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={densityControls.listDisablePadding}
+                                                checked={denseControls.listDisablePadding}
                                                 onChange={event => {
-                                                    onUpdateDensityControl(
+                                                    onUpdateDenseControl(
                                                         'listDisablePadding',
                                                         event.target.checked,
                                                     );
@@ -290,9 +287,9 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={densityControls.toolbarDense}
+                                                checked={denseControls.toolbarDense}
                                                 onChange={event => {
-                                                    onUpdateDensityControl(
+                                                    onUpdateDenseControl(
                                                         'toolbarDense',
                                                         event.target.checked,
                                                     );
@@ -305,9 +302,9 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={densityControls.toolbarDisableGutters}
+                                                checked={denseControls.toolbarDisableGutters}
                                                 onChange={event => {
-                                                    onUpdateDensityControl(
+                                                    onUpdateDenseControl(
                                                         'toolbarDisableGutters',
                                                         event.target.checked,
                                                     );
@@ -323,12 +320,12 @@ export function GallerySidebar({
                                             label="Table size"
                                             labelId="mui-dense-table-size-label"
                                             onChange={event => {
-                                                onUpdateDensityControl(
+                                                onUpdateDenseControl(
                                                     'tableSize',
                                                     event.target.value as 'small' | 'medium',
                                                 );
                                             }}
-                                            value={densityControls.tableSize}
+                                            value={denseControls.tableSize}
                                         >
                                             <MenuItem value="medium">Medium</MenuItem>
                                             <MenuItem value="small">Small</MenuItem>
@@ -342,17 +339,17 @@ export function GallerySidebar({
                                 title="Layout Scale"
                             >
                                 <Typography variant="body2">
-                                    Layout scale: {densityControls.layoutScale.toFixed(2)}x
+                                    Layout scale: {denseControls.layoutScale.toFixed(2)}x
                                 </Typography>
                                 <Slider
                                     marks
                                     max={1}
                                     min={0.2}
                                     onChange={(_event, value) => {
-                                        onUpdateDensityControl('layoutScale', value as number);
+                                        onUpdateDenseControl('layoutScale', value as number);
                                     }}
                                     step={0.05}
-                                    value={densityControls.layoutScale}
+                                    value={denseControls.layoutScale}
                                     valueLabelDisplay="auto"
                                 />
                             </DensityControlCard>
@@ -362,15 +359,15 @@ export function GallerySidebar({
                                 title="Image Tiles"
                             >
                                 <Stack spacing={1}>
-                                    <Typography variant="body2">Gap: {densityControls.imageGap}px</Typography>
+                                    <Typography variant="body2">Gap: {denseControls.imageGap}px</Typography>
                                     <Slider
                                         max={12}
                                         min={0}
                                         onChange={(_event, value) => {
-                                            onUpdateDensityControl('imageGap', value as number);
+                                            onUpdateDenseControl('imageGap', value as number);
                                         }}
                                         step={1}
-                                        value={densityControls.imageGap}
+                                        value={denseControls.imageGap}
                                         valueLabelDisplay="auto"
                                     />
                                 </Stack>
@@ -389,7 +386,7 @@ export function GallerySidebar({
                                             label="Grid density"
                                             labelId="mui-dense-grid-density-label"
                                             onChange={event => {
-                                                onUpdateDensityControl(
+                                                onUpdateDenseControl(
                                                     'dataGridDensity',
                                                     event.target.value as
                                                         | 'comfortable'
@@ -397,7 +394,7 @@ export function GallerySidebar({
                                                         | 'compact',
                                                 );
                                             }}
-                                            value={densityControls.dataGridDensity}
+                                            value={denseControls.dataGridDensity}
                                         >
                                             <MenuItem value="comfortable">Comfortable</MenuItem>
                                             <MenuItem value="standard">Standard</MenuItem>
@@ -408,9 +405,9 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={densityControls.dataGridHeaderFilters}
+                                                checked={denseControls.dataGridHeaderFilters}
                                                 onChange={event => {
-                                                    onUpdateDensityControl(
+                                                    onUpdateDenseControl(
                                                         'dataGridHeaderFilters',
                                                         event.target.checked,
                                                     );
@@ -434,21 +431,20 @@ export function GallerySidebar({
                                     </Typography>
 
                                     <Typography variant="body2">
-                                        Header filter height: {densityControls.dataGridHeaderFilterHeight}
-                                        px
+                                        Header filter height: {denseControls.dataGridHeaderFilterHeight}px
                                     </Typography>
                                     <Slider
-                                        disabled={!densityControls.dataGridHeaderFilters}
+                                        disabled={!denseControls.dataGridHeaderFilters}
                                         max={52}
                                         min={24}
                                         onChange={(_event, value) => {
-                                            onUpdateDensityControl(
+                                            onUpdateDenseControl(
                                                 'dataGridHeaderFilterHeight',
                                                 value as number,
                                             );
                                         }}
                                         step={2}
-                                        value={densityControls.dataGridHeaderFilterHeight}
+                                        value={denseControls.dataGridHeaderFilterHeight}
                                         valueLabelDisplay="auto"
                                     />
 
@@ -461,16 +457,16 @@ export function GallerySidebar({
                                             labelId="mui-dense-grid-cell-padding-unit-label"
                                             onChange={event => {
                                                 const nextUnit = event.target.value as 'px' | 'ex';
-                                                onUpdateDensityControl(
+                                                onUpdateDenseControl(
                                                     'dataGridCellBlockPaddingUnit',
                                                     nextUnit,
                                                 );
-                                                onUpdateDensityControl(
+                                                onUpdateDenseControl(
                                                     'dataGridCellBlockPadding',
                                                     nextUnit === 'px' ? 1 : 0.12,
                                                 );
                                             }}
-                                            value={densityControls.dataGridCellBlockPaddingUnit}
+                                            value={denseControls.dataGridCellBlockPaddingUnit}
                                         >
                                             <MenuItem value="px">px</MenuItem>
                                             <MenuItem value="ex">ex</MenuItem>
@@ -479,22 +475,19 @@ export function GallerySidebar({
 
                                     <Typography variant="body2">
                                         Cell block padding:{' '}
-                                        {formatPixelValue(densityControls.dataGridCellBlockPadding)}
-                                        {densityControls.dataGridCellBlockPaddingUnit}
+                                        {formatPixelValue(denseControls.dataGridCellBlockPadding)}
+                                        {denseControls.dataGridCellBlockPaddingUnit}
                                     </Typography>
                                     <Slider
-                                        max={densityControls.dataGridCellBlockPaddingUnit === 'px' ? 4 : 0.5}
+                                        max={denseControls.dataGridCellBlockPaddingUnit === 'px' ? 4 : 0.5}
                                         min={0}
                                         onChange={(_event, value) => {
-                                            onUpdateDensityControl(
-                                                'dataGridCellBlockPadding',
-                                                value as number,
-                                            );
+                                            onUpdateDenseControl('dataGridCellBlockPadding', value as number);
                                         }}
                                         step={
-                                            densityControls.dataGridCellBlockPaddingUnit === 'px' ? 0.5 : 0.02
+                                            denseControls.dataGridCellBlockPaddingUnit === 'px' ? 0.5 : 0.02
                                         }
-                                        value={densityControls.dataGridCellBlockPadding}
+                                        value={denseControls.dataGridCellBlockPadding}
                                         valueLabelDisplay="auto"
                                     />
                                 </Stack>
@@ -505,16 +498,16 @@ export function GallerySidebar({
                                 title="Tree View"
                             >
                                 <Typography variant="body2">
-                                    Tree indentation: {densityControls.treeIndentation}px
+                                    Tree indentation: {denseControls.treeIndentation}px
                                 </Typography>
                                 <Slider
                                     max={24}
                                     min={0}
                                     onChange={(_event, value) => {
-                                        onUpdateDensityControl('treeIndentation', value as number);
+                                        onUpdateDenseControl('treeIndentation', value as number);
                                     }}
                                     step={2}
-                                    value={densityControls.treeIndentation}
+                                    value={denseControls.treeIndentation}
                                     valueLabelDisplay="auto"
                                 />
                             </DensityControlCard>
@@ -535,7 +528,7 @@ export function GallerySidebar({
                                 </Typography>
                             </div>
 
-                            <Button onClick={onResetThemeFeatures} variant="outlined">
+                            <Button onClick={onResetDenseFeatures} variant="outlined">
                                 Reset advanced controls
                             </Button>
                         </div>
@@ -559,11 +552,11 @@ export function GallerySidebar({
                                 <div className="mui-dense-advanced-grid">
                                     {GALLERY_THEME_OVERRIDE_CONTROLS.map(definition => (
                                         <AdvancedControlTile
-                                            checked={themeFeatures[definition.key]}
+                                            checked={denseFeatures[definition.key]}
                                             definition={definition}
                                             key={definition.key}
                                             onChange={nextValue => {
-                                                onUpdateThemeFeature(definition.key, nextValue);
+                                                onUpdateDenseFeature(definition.key, nextValue);
                                             }}
                                         />
                                     ))}
@@ -582,11 +575,11 @@ export function GallerySidebar({
                                 <div className="mui-dense-advanced-grid">
                                     {GALLERY_TREE_VIEW_CONTROLS.map(definition => (
                                         <AdvancedControlTile
-                                            checked={themeFeatures[definition.key]}
+                                            checked={denseFeatures[definition.key]}
                                             definition={definition}
                                             key={definition.key}
                                             onChange={nextValue => {
-                                                onUpdateThemeFeature(definition.key, nextValue);
+                                                onUpdateDenseFeature(definition.key, nextValue);
                                             }}
                                         />
                                     ))}

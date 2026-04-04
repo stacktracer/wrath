@@ -4,6 +4,8 @@ import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import type { SystemStyleObject } from '@mui/system';
 import { DataGridPro, type DataGridProProps, gridClasses } from '@mui/x-data-grid-pro';
 
+import type { DenseDataGridCellBlockPadding, DenseDataGridOptions } from './types';
+
 const HIDDEN_MEASUREMENT_STYLE = {
     height: 0,
     left: '-10000px',
@@ -41,19 +43,22 @@ export type DenseDataGridMetrics = {
     xHeight: number;
 };
 
-export type DenseDataGridCellBlockPadding = {
-    unit: 'px' | 'ex';
-    value: number;
-};
-
-export type DenseDataGridProps = Omit<DataGridProProps, 'columnHeaderHeight' | 'rowHeight'> & {
-    cellBlockPadding?: DenseDataGridCellBlockPadding;
+export type DenseDataGridProps = Omit<
+    DataGridProProps,
+    'columnHeaderHeight' | 'density' | 'headerFilterHeight' | 'headerFilters' | 'rowHeight'
+> & {
+    dense?: Partial<DenseDataGridOptions>;
     onMetricsChange?: (metrics: DenseDataGridMetrics) => void;
 };
 
-export const DEFAULT_DENSE_DATA_GRID_CELL_BLOCK_PADDING: DenseDataGridCellBlockPadding = {
-    unit: 'px',
-    value: 1,
+export const DEFAULT_DENSE_DATA_GRID_OPTIONS: DenseDataGridOptions = {
+    cellBlockPadding: {
+        unit: 'px',
+        value: 1,
+    },
+    density: 'standard',
+    headerFilters: false,
+    headerFilterHeight: 52,
 };
 
 const DEFAULT_DENSE_DATA_GRID_MEASUREMENT_TUNING: DenseDataGridMeasurementTuning = {
@@ -76,12 +81,18 @@ function resolveDenseDataGridMeasurementTuning(
     };
 }
 
-function resolveDenseDataGridCellBlockPadding(
-    cellBlockPadding: DenseDataGridCellBlockPadding | undefined,
-): DenseDataGridCellBlockPadding {
+function resolveDenseDataGridOptions(dense: Partial<DenseDataGridOptions> | undefined): DenseDataGridOptions {
     return {
-        unit: cellBlockPadding?.unit ?? DEFAULT_DENSE_DATA_GRID_CELL_BLOCK_PADDING.unit,
-        value: Math.max(0, cellBlockPadding?.value ?? DEFAULT_DENSE_DATA_GRID_CELL_BLOCK_PADDING.value),
+        cellBlockPadding: {
+            unit: dense?.cellBlockPadding?.unit ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding.unit,
+            value: Math.max(
+                0,
+                dense?.cellBlockPadding?.value ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding.value,
+            ),
+        },
+        density: dense?.density ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.density,
+        headerFilters: dense?.headerFilters ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.headerFilters,
+        headerFilterHeight: dense?.headerFilterHeight ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.headerFilterHeight,
     };
 }
 
@@ -116,20 +127,20 @@ function resolveDenseDataGridCallerSx(callerSx: SxProps<Theme>, theme: Theme): S
 }
 
 function createDenseDataGridSx(
-    cellBlockPadding: DenseDataGridCellBlockPadding,
+    dense: DenseDataGridOptions,
     callerSx: SxProps<Theme> | undefined,
 ): NonNullable<DataGridProProps['sx']> {
     const denseDataGridSx: SystemStyleObject<Theme> = {
         backgroundColor: 'background.paper',
         [`& .${gridClasses.cell}`]: {
-            paddingBlock: formatDenseDataGridCellBlockPadding(cellBlockPadding),
+            paddingBlock: formatDenseDataGridCellBlockPadding(dense.cellBlockPadding),
         },
         [`& .${gridClasses.columnHeaders}`]: {
             backgroundColor: 'background.paper',
         },
         [`& .${gridClasses.columnHeader}`]: {
             backgroundColor: 'background.paper',
-            paddingBlock: formatDenseDataGridCellBlockPadding(cellBlockPadding),
+            paddingBlock: formatDenseDataGridCellBlockPadding(dense.cellBlockPadding),
         },
         [`& .${gridClasses.columnHeader} .${gridClasses.sortButton}`]: {
             backgroundColor: 'background.paper',
@@ -196,41 +207,35 @@ function calculateDenseDataGridMetrics({
 function createFallbackDenseDataGridMetrics(
     baseBodyFontSize: number,
     devicePixelRatio: number,
-    cellBlockPadding?: DenseDataGridCellBlockPadding,
+    dense?: Partial<DenseDataGridOptions>,
     tuning?: Partial<DenseDataGridMeasurementTuning>,
 ): DenseDataGridMetrics {
     const resolvedTuning = resolveDenseDataGridMeasurementTuning(tuning);
-    const resolvedCellBlockPadding = resolveDenseDataGridCellBlockPadding(cellBlockPadding);
+    const resolvedDense = resolveDenseDataGridOptions(dense);
     const fallbackXHeight = baseBodyFontSize * resolvedTuning.fallbackXHeightRatio;
 
     return calculateDenseDataGridMetrics({
         checkboxHeight: 0,
         devicePixelRatio,
+        cellBlockPadding: resolvedDense.cellBlockPadding,
         textLineHeight: baseBodyFontSize * resolvedTuning.fallbackTextLineHeightRatio,
-        cellBlockPadding: resolvedCellBlockPadding,
         tuning: resolvedTuning,
         xHeight: fallbackXHeight,
     });
 }
 
-export function DenseDataGrid({
-    cellBlockPadding,
-    density,
-    onMetricsChange,
-    sx,
-    ...dataGridProps
-}: DenseDataGridProps) {
+export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: DenseDataGridProps) {
     const theme = useTheme();
     const [devicePixelRatio, setDevicePixelRatio] = useState(() =>
         typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
     );
-    const resolvedCellBlockPadding = resolveDenseDataGridCellBlockPadding(cellBlockPadding);
+    const resolvedDense = resolveDenseDataGridOptions(dense);
     const baseBodyFontSize = typeof theme.typography.fontSize === 'number' ? theme.typography.fontSize : 14;
     const [metrics, setMetrics] = useState<DenseDataGridMetrics>(() =>
         createFallbackDenseDataGridMetrics(
             baseBodyFontSize,
             typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
-            resolvedCellBlockPadding,
+            resolvedDense,
         ),
     );
     const rootRef = useRef<HTMLDivElement | null>(null);
@@ -285,7 +290,7 @@ export function DenseDataGrid({
                 checkboxHeight,
                 devicePixelRatio,
                 textLineHeight,
-                cellBlockPadding: resolvedCellBlockPadding,
+                cellBlockPadding: resolvedDense.cellBlockPadding,
                 xHeight,
             });
 
@@ -310,10 +315,10 @@ export function DenseDataGrid({
         };
     }, [
         baseBodyFontSize,
-        density,
         devicePixelRatio,
-        resolvedCellBlockPadding.unit,
-        resolvedCellBlockPadding.value,
+        resolvedDense.cellBlockPadding.unit,
+        resolvedDense.cellBlockPadding.value,
+        resolvedDense.density,
     ]);
 
     useEffect(() => {
@@ -332,9 +337,11 @@ export function DenseDataGrid({
                 <DataGridPro
                     {...dataGridProps}
                     columnHeaderHeight={metrics.columnHeaderHeight}
-                    density={density}
+                    density={resolvedDense.density}
+                    headerFilterHeight={resolvedDense.headerFilterHeight}
+                    headerFilters={resolvedDense.headerFilters}
                     rowHeight={metrics.rowHeight}
-                    sx={createDenseDataGridSx(resolvedCellBlockPadding, sx)}
+                    sx={createDenseDataGridSx(resolvedDense, sx)}
                 />
             </div>
 

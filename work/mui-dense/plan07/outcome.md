@@ -1,0 +1,7 @@
+# MUI Dense, Plan07 Outcome
+
+This pass kept `mui-dense` as the feature name and moved the reusable layer under `src/mui-dense/lib/`. The public surface is now organized around `DENSE_PRESETS`, `createDenseTheme`, and `DenseDataGrid`, so a caller can choose a preset, override a few dense settings, build the theme, and render the dense-aware grid without pulling in gallery-specific wiring. The gallery still owns its richer local control state, but it now adapts that state into one `DenseSettings` object before calling the reusable API.
+
+The main structural change was consolidation. Presets now include theme options, advanced feature toggles, and Data Grid defaults in one table instead of forcing callers to coordinate separate preset and feature maps. `createDenseTheme` consumes the same dense object shape the gallery uses for `DenseDataGrid`, and the direct tests now target that `lib/` surface rather than the old split exports. The gallery remains the validation path: `app.tsx` imports from `./lib`, builds the theme from the adapted dense settings, and renders the grid through `DenseDataGrid`.
+
+No reusable stylesheet layer was added in this pass. The dense policy still lives mostly in MUI theme logic, default props, style overrides, and the thin Data Grid wrapper. The gallery's page layout CSS stayed local, and I did not find gallery CSS that needed to graduate into the reusable layer to make the new API work.

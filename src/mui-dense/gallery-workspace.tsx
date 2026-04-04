@@ -129,7 +129,7 @@ import {
 import { RichTreeView, SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { RichTreeViewPro, useRichTreeViewProApiRef } from '@mui/x-tree-view-pro';
 
-import { DenseDataGrid, type DenseDataGridMetrics } from './dense';
+import { DenseDataGrid, type DenseDataGridMetrics, type DenseSettings } from './lib';
 import {
     BeaconIcon,
     ChevronIcon,
@@ -146,14 +146,14 @@ import {
     type RouteOption,
     type TreeDemoItem,
 } from './gallery-data';
-import { getGalleryDataGridCellBlockPadding, type GalleryDensityControls } from './gallery-density';
+import type { GalleryDenseControls } from './gallery-dense';
 import { DemoCard, Section } from './gallery-shell';
 import { muiXLicenseConfigured } from './license';
 
 type GalleryWorkspaceProps = {
-    compactInputsEnabled: boolean;
-    densityControls: GalleryDensityControls;
+    dense: DenseSettings;
     onDataGridMetricsChange: (metrics: DenseDataGridMetrics) => void;
+    uiControls: GalleryDenseControls;
 };
 
 const COMPACT_DEMO_MAX_WIDTH = 395;
@@ -162,11 +162,7 @@ const TABLE_DEMO_MAX_WIDTH = 667;
 const DATA_GRID_DEMO_MAX_WIDTH = 1111;
 const NAVIGATION_CHROME_MAX_WIDTH = 1000;
 
-export function GalleryWorkspace({
-    compactInputsEnabled,
-    densityControls,
-    onDataGridMetricsChange,
-}: GalleryWorkspaceProps) {
+export function GalleryWorkspace({ dense, onDataGridMetricsChange, uiControls }: GalleryWorkspaceProps) {
     const proTreeApiRef = useRichTreeViewProApiRef<TreeDemoItem>();
     const [routeValue, setRouteValue] = useState<RouteOption | null>(ROUTE_OPTIONS[2]);
     const [densityChoice, setDensityChoice] = useState('comfortable');
@@ -203,7 +199,7 @@ export function GalleryWorkspace({
     const popoverOpen = Boolean(popoverAnchorEl);
     const popperOpen = Boolean(popperAnchorEl);
     const scaleSpacing = (value: number) =>
-        Math.max(0.5, Number((value * densityControls.layoutScale).toFixed(2)));
+        Math.max(0.5, Number((value * uiControls.layoutScale).toFixed(2)));
 
     const handleMenuOpen = (event: MouseEvent<HTMLButtonElement>) => {
         setMenuAnchorEl(event.currentTarget);
@@ -355,12 +351,12 @@ export function GalleryWorkspace({
                                     label="Dashboard title"
                                 />
 
-                                <FormControl size={densityControls.componentSize} variant="standard">
+                                <FormControl size={uiControls.componentSize} variant="standard">
                                     <InputLabel htmlFor="mui-dense-standard-input">Standard input</InputLabel>
                                     <Input defaultValue="route-group-alpha" id="mui-dense-standard-input" />
                                 </FormControl>
 
-                                <FormControl size={densityControls.componentSize} variant="filled">
+                                <FormControl size={uiControls.componentSize} variant="filled">
                                     <InputLabel htmlFor="mui-dense-filled-input">Filled input</InputLabel>
                                     <FilledInput
                                         defaultValue="inbound exception queue"
@@ -368,8 +364,8 @@ export function GalleryWorkspace({
                                     />
                                 </FormControl>
 
-                                <Box sx={compactInputsEnabled ? { pt: 1 } : undefined}>
-                                    <FormControl size={densityControls.componentSize} variant="outlined">
+                                <Box sx={dense.features.compactInputs ? { pt: 1 } : undefined}>
+                                    <FormControl size={uiControls.componentSize} variant="outlined">
                                         <InputLabel htmlFor="mui-dense-outlined-input">
                                             Outlined input
                                         </InputLabel>
@@ -441,7 +437,7 @@ export function GalleryWorkspace({
                                     value={routeValue}
                                 />
 
-                                <FormControl size={densityControls.componentSize}>
+                                <FormControl size={uiControls.componentSize}>
                                     <InputLabel id="mui-dense-select-label">Density preset</InputLabel>
                                     <Select
                                         label="Density preset"
@@ -464,7 +460,7 @@ export function GalleryWorkspace({
                                     <FormHelperText>Standard MUI select menu</FormHelperText>
                                 </FormControl>
 
-                                <FormControl size={densityControls.componentSize} variant="standard">
+                                <FormControl size={uiControls.componentSize} variant="standard">
                                     <InputLabel htmlFor="mui-dense-native-select">Native select</InputLabel>
                                     <NativeSelect
                                         id="mui-dense-native-select"
@@ -548,7 +544,7 @@ export function GalleryWorkspace({
                             <Stack spacing={scaleSpacing(2.5)}>
                                 <ImageList
                                     cols={2}
-                                    gap={densityControls.imageGap}
+                                    gap={uiControls.imageGap}
                                     sx={{
                                         overflowY: 'visible',
                                     }}
@@ -709,13 +705,10 @@ export function GalleryWorkspace({
                         >
                             <div className="mui-dense-data-grid">
                                 <DenseDataGrid
-                                    cellBlockPadding={getGalleryDataGridCellBlockPadding(densityControls)}
+                                    dense={dense.dataGrid}
                                     checkboxSelection
                                     columns={SHIPMENT_COLUMNS}
                                     disableRowSelectionOnClick
-                                    density={densityControls.dataGridDensity}
-                                    headerFilterHeight={densityControls.dataGridHeaderFilterHeight}
-                                    headerFilters={densityControls.dataGridHeaderFilters}
                                     label="Shipment lanes"
                                     onMetricsChange={onDataGridMetricsChange}
                                     pagination
@@ -805,7 +798,7 @@ export function GalleryWorkspace({
                                     apiRef={proTreeApiRef}
                                     aria-label="Pro control-room tree"
                                     defaultExpandedItems={['pro-control-room', 'pro-floor']}
-                                    itemChildrenIndentation={densityControls.treeIndentation}
+                                    itemChildrenIndentation={uiControls.treeIndentation}
                                     items={proTreeItems}
                                     itemsReordering
                                     onItemPositionChange={({ itemId, oldPosition, newPosition }) => {
@@ -846,7 +839,7 @@ export function GalleryWorkspace({
                                         'rich-overview',
                                         'rich-analytics',
                                     ]}
-                                    itemChildrenIndentation={densityControls.treeIndentation}
+                                    itemChildrenIndentation={uiControls.treeIndentation}
                                     items={COMMUNITY_RICH_TREE_ITEMS}
                                 />
                             </Stack>
@@ -865,7 +858,7 @@ export function GalleryWorkspace({
                                 <SimpleTreeView
                                     aria-label="Simple control-room tree"
                                     defaultExpandedItems={['simple-control-room', 'simple-floor-ops']}
-                                    itemChildrenIndentation={densityControls.treeIndentation}
+                                    itemChildrenIndentation={uiControls.treeIndentation}
                                 >
                                     <TreeItem itemId="simple-control-room" label="Control room">
                                         <TreeItem itemId="simple-wallboard" label="Wallboard" />

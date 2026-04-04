@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { FormControlLabel, Paper, Stack, Switch, Typography } from '@mui/material';
 
-import type { GalleryAdvancedControlDefinition } from './gallery-density';
+import type { GalleryAdvancedControlDefinition } from './gallery-dense';
 
 export function Section({
     children,

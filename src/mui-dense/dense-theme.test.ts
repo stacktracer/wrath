@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { DENSE_THEME_FEATURE_PRESETS, DENSE_THEME_PRESETS, createDenseTheme } from './dense';
+import { DENSE_PRESETS, createDenseTheme } from './lib';
 
 describe('mui-dense public theme builder', () => {
     it('turns off transition timing and ripples when animations are disabled', () => {
         const theme = createDenseTheme({
             animationsDisabled: true,
             colorMode: 'dark',
-            config: DENSE_THEME_PRESETS.dense,
-            features: DENSE_THEME_FEATURE_PRESETS.dense,
+            dense: DENSE_PRESETS.dense,
         });
 
         expect(theme.transitions.create(['opacity'])).toBe('none');
@@ -25,7 +24,7 @@ describe('mui-dense public theme builder', () => {
         const theme = createDenseTheme({
             animationsDisabled: false,
             colorMode: 'light',
-            config: DENSE_THEME_PRESETS.default,
+            dense: DENSE_PRESETS.default,
         });
 
         expect(theme.transitions.duration.standard).toBeGreaterThan(0);
@@ -40,8 +39,7 @@ describe('mui-dense public theme builder', () => {
         const theme = createDenseTheme({
             animationsDisabled: true,
             colorMode: 'dark',
-            config: DENSE_THEME_PRESETS.dense,
-            features: DENSE_THEME_FEATURE_PRESETS.dense,
+            dense: DENSE_PRESETS.dense,
         });
         const inputLabelOverride = theme.components?.MuiInputLabel?.styleOverrides?.root as
             | ((args: {

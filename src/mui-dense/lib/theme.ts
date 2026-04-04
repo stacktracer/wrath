@@ -5,7 +5,7 @@ import type {} from '@mui/x-tree-view/themeAugmentation';
 import type {} from '@mui/x-tree-view-pro/themeAugmentation';
 
 import { DEFAULT_DENSE_THEME_FEATURES } from './presets';
-import type { DenseColorMode, DenseThemeConfig, DenseThemeFeatures } from './types';
+import type { DenseColorMode, DenseSettings, DenseThemeFeatures, DenseThemeOptions } from './types';
 
 const circularRotateKeyframe = keyframes`
     0% {
@@ -47,8 +47,7 @@ type CompactInputLabelOwnerState = {
 type CreateDenseThemeOptions = {
     animationsDisabled: boolean;
     colorMode: DenseColorMode;
-    config: DenseThemeConfig;
-    features?: DenseThemeFeatures;
+    dense: Pick<DenseSettings, 'theme'> & Partial<Pick<DenseSettings, 'features'>>;
 };
 
 function getOpticallyBiasedButtonPadding(top: number, horizontal: number, bottom: number) {
@@ -127,7 +126,7 @@ function createCompactTreeSelectors(theme: Theme) {
 }
 
 function createBaseDenseTheme(
-    config: DenseThemeConfig,
+    config: DenseThemeOptions,
     colorMode: DenseColorMode,
     animationsDisabled: boolean,
 ) {
@@ -583,13 +582,11 @@ export function getPreferredColorMode(): DenseColorMode {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export function createDenseTheme({
-    animationsDisabled,
-    colorMode,
-    config,
-    features = DEFAULT_DENSE_THEME_FEATURES,
-}: CreateDenseThemeOptions) {
-    const baseTheme = createBaseDenseTheme(config, colorMode, animationsDisabled);
+export function createDenseTheme({ animationsDisabled, colorMode, dense }: CreateDenseThemeOptions) {
+    const baseTheme = createBaseDenseTheme(dense.theme, colorMode, animationsDisabled);
 
-    return createTheme(baseTheme, createDenseFeatureThemeOptions(features));
+    return createTheme(
+        baseTheme,
+        createDenseFeatureThemeOptions(dense.features ?? DEFAULT_DENSE_THEME_FEATURES),
+    );
 }
