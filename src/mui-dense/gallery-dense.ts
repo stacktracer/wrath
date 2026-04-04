@@ -1,14 +1,13 @@
 import {
     DENSE_PRESETS,
     type DenseDataGridCellBlockPadding,
+    type DenseFeatureKey,
     type DensePreset,
     type DenseSettings,
-    type DenseThemeFeatures,
-    type DenseThemeOptions,
 } from './lib';
 
 export type GalleryAdvancedControlDefinition = {
-    key: keyof DenseThemeFeatures;
+    key: DenseFeatureKey;
     label: string;
     mechanism: string;
     description: string;
@@ -20,7 +19,7 @@ type GalleryOnlyDenseControls = {
     treeIndentation: number;
 };
 
-export type GalleryDenseControls = DenseThemeOptions &
+export type GalleryDenseControls = Omit<DenseSettings, 'dataGrid'> &
     GalleryOnlyDenseControls & {
         dataGridCellBlockPadding: number;
         dataGridCellBlockPaddingUnit: DenseDataGridCellBlockPadding['unit'];
@@ -56,34 +55,27 @@ const GALLERY_ONLY_DENSE_PRESETS: Record<DensePreset, GalleryOnlyDenseControls> 
     },
 };
 
+function createGalleryDensePreset(
+    preset: DensePreset,
+    galleryOnly: GalleryOnlyDenseControls,
+): GalleryDenseControls {
+    const { dataGrid, ...denseSettings } = DENSE_PRESETS[preset];
+
+    return {
+        ...denseSettings,
+        ...galleryOnly,
+        dataGridCellBlockPadding: dataGrid.cellBlockPadding.value,
+        dataGridCellBlockPaddingUnit: dataGrid.cellBlockPadding.unit,
+        dataGridDensity: dataGrid.density,
+        dataGridHeaderFilters: dataGrid.headerFilters,
+        dataGridHeaderFilterHeight: dataGrid.headerFilterHeight,
+    };
+}
+
 export const GALLERY_DENSE_PRESETS: Record<DensePreset, GalleryDenseControls> = {
-    default: {
-        ...DENSE_PRESETS.default.theme,
-        ...GALLERY_ONLY_DENSE_PRESETS.default,
-        dataGridCellBlockPadding: DENSE_PRESETS.default.dataGrid.cellBlockPadding.value,
-        dataGridCellBlockPaddingUnit: DENSE_PRESETS.default.dataGrid.cellBlockPadding.unit,
-        dataGridDensity: DENSE_PRESETS.default.dataGrid.density,
-        dataGridHeaderFilters: DENSE_PRESETS.default.dataGrid.headerFilters,
-        dataGridHeaderFilterHeight: DENSE_PRESETS.default.dataGrid.headerFilterHeight,
-    },
-    dense: {
-        ...DENSE_PRESETS.dense.theme,
-        ...GALLERY_ONLY_DENSE_PRESETS.dense,
-        dataGridCellBlockPadding: DENSE_PRESETS.dense.dataGrid.cellBlockPadding.value,
-        dataGridCellBlockPaddingUnit: DENSE_PRESETS.dense.dataGrid.cellBlockPadding.unit,
-        dataGridDensity: DENSE_PRESETS.dense.dataGrid.density,
-        dataGridHeaderFilters: DENSE_PRESETS.dense.dataGrid.headerFilters,
-        dataGridHeaderFilterHeight: DENSE_PRESETS.dense.dataGrid.headerFilterHeight,
-    },
-    densePlus: {
-        ...DENSE_PRESETS.densePlus.theme,
-        ...GALLERY_ONLY_DENSE_PRESETS.densePlus,
-        dataGridCellBlockPadding: DENSE_PRESETS.densePlus.dataGrid.cellBlockPadding.value,
-        dataGridCellBlockPaddingUnit: DENSE_PRESETS.densePlus.dataGrid.cellBlockPadding.unit,
-        dataGridDensity: DENSE_PRESETS.densePlus.dataGrid.density,
-        dataGridHeaderFilters: DENSE_PRESETS.densePlus.dataGrid.headerFilters,
-        dataGridHeaderFilterHeight: DENSE_PRESETS.densePlus.dataGrid.headerFilterHeight,
-    },
+    default: createGalleryDensePreset('default', GALLERY_ONLY_DENSE_PRESETS.default),
+    dense: createGalleryDensePreset('dense', GALLERY_ONLY_DENSE_PRESETS.dense),
+    densePlus: createGalleryDensePreset('densePlus', GALLERY_ONLY_DENSE_PRESETS.densePlus),
 };
 
 export const GALLERY_THEME_OVERRIDE_CONTROLS: GalleryAdvancedControlDefinition[] = [
@@ -134,29 +126,21 @@ export const GALLERY_TREE_VIEW_CONTROLS: GalleryAdvancedControlDefinition[] = [
     },
 ];
 
-export function adaptGalleryControlsToDenseSettings(
-    controls: GalleryDenseControls,
-    features: DenseThemeFeatures,
-): DenseSettings {
+export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseControls): DenseSettings {
     const {
-        componentSize,
         dataGridCellBlockPadding,
         dataGridCellBlockPaddingUnit,
         dataGridDensity,
         dataGridHeaderFilterHeight,
         dataGridHeaderFilters,
-        denseFormMargins,
-        denseLists,
-        disableGlobalGutters,
-        listDisablePadding,
-        spacingBase,
-        tableSize,
-        toolbarDense,
-        toolbarDisableGutters,
-        typographyScale,
+        imageGap: _imageGap,
+        layoutScale: _layoutScale,
+        treeIndentation: _treeIndentation,
+        ...denseSettings
     } = controls;
 
     return {
+        ...denseSettings,
         dataGrid: {
             cellBlockPadding: {
                 unit: dataGridCellBlockPaddingUnit,
@@ -165,19 +149,6 @@ export function adaptGalleryControlsToDenseSettings(
             density: dataGridDensity,
             headerFilterHeight: dataGridHeaderFilterHeight,
             headerFilters: dataGridHeaderFilters,
-        },
-        features,
-        theme: {
-            componentSize,
-            denseFormMargins,
-            denseLists,
-            disableGlobalGutters,
-            listDisablePadding,
-            spacingBase,
-            tableSize,
-            toolbarDense,
-            toolbarDisableGutters,
-            typographyScale,
         },
     };
 }

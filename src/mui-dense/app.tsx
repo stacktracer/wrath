@@ -3,15 +3,11 @@ import { Container, CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 
 import {
-    DENSE_PRESETS,
-    DEFAULT_DENSE_THEME_FEATURES,
-    type DenseColorMode,
+    DEFAULT_DENSE_SETTINGS,
     type DenseDataGridMetrics,
+    type DenseFeatureKey,
     type DensePreset,
-    type DenseSettings,
-    type DenseThemeFeatures,
     createDenseTheme,
-    getPreferredColorMode,
 } from './lib';
 import {
     adaptGalleryControlsToDenseSettings,
@@ -31,32 +27,29 @@ const DEFAULT_DENSE_DATA_GRID_METRICS: DenseDataGridMetrics = {
     xHeight: 0,
 };
 
+function getPreferredColorMode(): 'light' | 'dark' {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+        return 'light';
+    }
+
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 export function App() {
     const [denseControls, setDenseControls] = useState<GalleryDenseControls>(GALLERY_DENSE_PRESETS.dense);
     const [densePreset, setDensePreset] = useState<GalleryPresetSelection>('dense');
-    const [colorMode, setColorMode] = useState<DenseColorMode>(() => getPreferredColorMode());
-    const [animationsDisabled, setAnimationsDisabled] = useState(true);
-    const [denseFeatures, setDenseFeatures] = useState<DenseThemeFeatures>(DENSE_PRESETS.dense.features);
+    const [colorMode, setColorMode] = useState<'light' | 'dark'>(() => getPreferredColorMode());
     const [dataGridMetrics, setDataGridMetrics] = useState<DenseDataGridMetrics>(
         DEFAULT_DENSE_DATA_GRID_METRICS,
     );
-    const denseSettings = useMemo<DenseSettings>(
-        () => adaptGalleryControlsToDenseSettings(denseControls, denseFeatures),
-        [denseControls, denseFeatures],
-    );
+    const denseSettings = useMemo(() => adaptGalleryControlsToDenseSettings(denseControls), [denseControls]);
     const denseTheme = useMemo(
-        () =>
-            createDenseTheme({
-                animationsDisabled,
-                colorMode,
-                dense: denseSettings,
-            }),
-        [animationsDisabled, colorMode, denseSettings],
+        () => createDenseTheme(denseSettings, { mode: colorMode }),
+        [colorMode, denseSettings],
     );
 
     const applyDensePreset = (preset: DensePreset) => {
         setDenseControls(GALLERY_DENSE_PRESETS[preset]);
-        setDenseFeatures(DENSE_PRESETS[preset].features);
         setDensePreset(preset);
     };
 
@@ -71,11 +64,8 @@ export function App() {
         }));
     };
 
-    const updateDenseFeature = <Key extends keyof DenseThemeFeatures>(
-        key: Key,
-        value: DenseThemeFeatures[Key],
-    ) => {
-        setDenseFeatures(current => ({
+    const updateDenseFeature = (key: DenseFeatureKey, value: boolean) => {
+        setDenseControls(current => ({
             ...current,
             [key]: value,
         }));
@@ -89,24 +79,28 @@ export function App() {
                 <Container className="mui-dense-shell" maxWidth="xl">
                     <div className="mui-dense-workspace">
                         <GallerySidebar
-                            animationsDisabled={animationsDisabled}
                             colorMode={colorMode}
                             denseControls={denseControls}
-                            denseFeatures={denseFeatures}
                             densePreset={densePreset}
                             onApplyDensePreset={applyDensePreset}
                             onColorModeChange={setColorMode}
                             onResetDenseFeatures={() => {
-                                setDenseFeatures(DEFAULT_DENSE_THEME_FEATURES);
+                                setDenseControls(current => ({
+                                    ...current,
+                                    compactAccordionSummary: DEFAULT_DENSE_SETTINGS.compactAccordionSummary,
+                                    compactButtonsAndChips: DEFAULT_DENSE_SETTINGS.compactButtonsAndChips,
+                                    compactIconButtons: DEFAULT_DENSE_SETTINGS.compactIconButtons,
+                                    compactInputs: DEFAULT_DENSE_SETTINGS.compactInputs,
+                                    compactListsAndMenus: DEFAULT_DENSE_SETTINGS.compactListsAndMenus,
+                                    compactTableCells: DEFAULT_DENSE_SETTINGS.compactTableCells,
+                                    compactTreeItems: DEFAULT_DENSE_SETTINGS.compactTreeItems,
+                                }));
                             }}
                             onResetToDefault={() => {
                                 setDenseControls(GALLERY_DENSE_PRESETS.default);
-                                setDenseFeatures(DENSE_PRESETS.default.features);
                                 setDensePreset('default');
-                                setAnimationsDisabled(false);
                                 setColorMode(getPreferredColorMode());
                             }}
-                            onSetAnimationsDisabled={setAnimationsDisabled}
                             onUpdateDenseControl={updateDenseControl}
                             onUpdateDenseFeature={updateDenseFeature}
                             rowMetrics={dataGridMetrics}

@@ -4,15 +4,12 @@ import { DENSE_PRESETS, createDenseTheme } from './lib';
 
 describe('mui-dense public theme builder', () => {
     it('turns off transition timing and ripples when animations are disabled', () => {
-        const theme = createDenseTheme({
-            animationsDisabled: true,
-            colorMode: 'dark',
-            dense: DENSE_PRESETS.dense,
-        });
+        const theme = createDenseTheme(DENSE_PRESETS.dense, { mode: 'dark' });
 
         expect(theme.transitions.create(['opacity'])).toBe('none');
         expect(theme.transitions.duration.standard).toBe(0);
         expect(theme.transitions.easing.easeInOut).toBe('linear');
+        expect(theme.palette.mode).toBe('dark');
         expect(theme.components?.MuiButtonBase?.defaultProps).toMatchObject({
             disableRipple: true,
         });
@@ -21,13 +18,10 @@ describe('mui-dense public theme builder', () => {
     });
 
     it('leaves the normal motion system intact when animations stay enabled', () => {
-        const theme = createDenseTheme({
-            animationsDisabled: false,
-            colorMode: 'light',
-            dense: DENSE_PRESETS.default,
-        });
+        const theme = createDenseTheme(DENSE_PRESETS.default, { mode: 'light' });
 
         expect(theme.transitions.duration.standard).toBeGreaterThan(0);
+        expect(theme.palette.mode).toBe('light');
         expect(theme.components?.MuiButtonBase?.defaultProps).toMatchObject({
             disableRipple: false,
         });
@@ -36,11 +30,7 @@ describe('mui-dense public theme builder', () => {
     });
 
     it('applies the dense feature preset through the same top-level builder apps would call', () => {
-        const theme = createDenseTheme({
-            animationsDisabled: true,
-            colorMode: 'dark',
-            dense: DENSE_PRESETS.dense,
-        });
+        const theme = createDenseTheme(DENSE_PRESETS.dense, { mode: 'dark' });
         const inputLabelOverride = theme.components?.MuiInputLabel?.styleOverrides?.root as
             | ((args: {
                   ownerState: {

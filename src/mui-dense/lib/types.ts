@@ -1,29 +1,4 @@
-export type DenseColorMode = 'light' | 'dark';
-
 export type DensePreset = 'default' | 'dense' | 'densePlus';
-
-export type DenseThemeOptions = {
-    spacingBase: number;
-    typographyScale: number;
-    componentSize: 'small' | 'medium';
-    denseFormMargins: boolean;
-    disableGlobalGutters: boolean;
-    denseLists: boolean;
-    listDisablePadding: boolean;
-    toolbarDense: boolean;
-    toolbarDisableGutters: boolean;
-    tableSize: 'small' | 'medium';
-};
-
-export type DenseThemeFeatures = {
-    compactButtonsAndChips: boolean;
-    compactIconButtons: boolean;
-    compactInputs: boolean;
-    compactListsAndMenus: boolean;
-    compactAccordionSummary: boolean;
-    compactTableCells: boolean;
-    compactTreeItems: boolean;
-};
 
 export type DenseDataGridDensity = 'comfortable' | 'standard' | 'compact';
 
@@ -39,8 +14,33 @@ export type DenseDataGridOptions = {
     cellBlockPadding: DenseDataGridCellBlockPadding;
 };
 
+export type DenseFeatureKey =
+    | 'compactButtonsAndChips'
+    | 'compactIconButtons'
+    | 'compactInputs'
+    | 'compactListsAndMenus'
+    | 'compactAccordionSummary'
+    | 'compactTableCells'
+    | 'compactTreeItems';
+
 export type DenseSettings = {
+    disableAnimations: boolean;
+    spacingBase: number;
+    typographyScale: number;
+    componentSize: 'small' | 'medium';
+    denseFormMargins: boolean;
+    disableGlobalGutters: boolean;
+    denseLists: boolean;
+    listDisablePadding: boolean;
+    toolbarDense: boolean;
+    toolbarDisableGutters: boolean;
+    tableSize: 'small' | 'medium';
+    compactButtonsAndChips: boolean;
+    compactIconButtons: boolean;
+    compactInputs: boolean;
+    compactListsAndMenus: boolean;
+    compactAccordionSummary: boolean;
+    compactTableCells: boolean;
+    compactTreeItems: boolean;
     dataGrid: DenseDataGridOptions;
-    features: DenseThemeFeatures;
-    theme: DenseThemeOptions;
 };

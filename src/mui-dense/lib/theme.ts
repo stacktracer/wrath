@@ -1,11 +1,10 @@
 import { treeItemClasses } from '@mui/x-tree-view';
-import { createTheme, keyframes, type Theme } from '@mui/material/styles';
+import { createTheme, keyframes, type Theme, type ThemeOptions } from '@mui/material/styles';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 import type {} from '@mui/x-tree-view-pro/themeAugmentation';
 
-import { DEFAULT_DENSE_THEME_FEATURES } from './presets';
-import type { DenseColorMode, DenseSettings, DenseThemeFeatures, DenseThemeOptions } from './types';
+import type { DenseSettings } from './types';
 
 const circularRotateKeyframe = keyframes`
     0% {
@@ -34,9 +33,6 @@ const circularDashKeyframe = keyframes`
     }
 `;
 
-const COMPACT_BUTTON_VERTICAL_BIAS_PX = 1;
-const COMPACT_CHIP_LABEL_OFFSET_PX = 1.5;
-
 type CompactInputLabelOwnerState = {
     formControl?: unknown;
     size?: 'small' | 'medium';
@@ -44,14 +40,8 @@ type CompactInputLabelOwnerState = {
     variant?: 'standard' | 'filled' | 'outlined';
 };
 
-type CreateDenseThemeOptions = {
-    animationsDisabled: boolean;
-    colorMode: DenseColorMode;
-    dense: Pick<DenseSettings, 'theme'> & Partial<Pick<DenseSettings, 'features'>>;
-};
-
 function getOpticallyBiasedButtonPadding(top: number, horizontal: number, bottom: number) {
-    return `${top + COMPACT_BUTTON_VERTICAL_BIAS_PX}px ${horizontal}px ${bottom - COMPACT_BUTTON_VERTICAL_BIAS_PX}px`;
+    return `${top + 1}px ${horizontal}px ${bottom - 1}px`;
 }
 
 function getCompactInputLabelStyles(ownerState: CompactInputLabelOwnerState) {
@@ -125,20 +115,14 @@ function createCompactTreeSelectors(theme: Theme) {
     };
 }
 
-function createBaseDenseTheme(
-    config: DenseThemeOptions,
-    colorMode: DenseColorMode,
-    animationsDisabled: boolean,
-) {
+export function createDenseTheme(dense: DenseSettings, palette?: ThemeOptions['palette']) {
     return createTheme({
-        palette: {
-            mode: colorMode,
-        },
-        spacing: config.spacingBase,
+        ...(palette === undefined ? {} : { palette }),
+        spacing: dense.spacingBase,
         typography: {
-            fontSize: Math.round(14 * config.typographyScale),
+            fontSize: Math.round(14 * dense.typographyScale),
         },
-        transitions: animationsDisabled
+        transitions: dense.disableAnimations
             ? {
                   create: () => 'none',
                   duration: {
@@ -162,193 +146,40 @@ function createBaseDenseTheme(
         components: {
             MuiAccordion: {
                 defaultProps: {
-                    disableGutters: config.disableGlobalGutters,
+                    disableGutters: dense.disableGlobalGutters,
                 },
             },
+            ...(dense.compactAccordionSummary
+                ? {
+                      MuiAccordionSummary: {
+                          styleOverrides: {
+                              content: {
+                                  '&.Mui-expanded': {
+                                      marginBlock: 8,
+                                  },
+                                  marginBlock: 8,
+                              },
+                              root: {
+                                  '&.Mui-expanded': {
+                                      minHeight: 44,
+                                  },
+                                  minHeight: 44,
+                              },
+                          },
+                      },
+                  }
+                : {}),
             MuiAutocomplete: {
                 defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiButtonBase: {
-                defaultProps: {
-                    disableRipple: animationsDisabled,
+                    size: dense.componentSize,
                 },
             },
             MuiButton: {
                 defaultProps: {
-                    size: config.componentSize,
+                    size: dense.componentSize,
                 },
-            },
-            MuiButtonGroup: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiChip: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            ...(animationsDisabled
-                ? {
-                      MuiCircularProgress: {
-                          styleOverrides: {
-                              indeterminate: {
-                                  animation: `${circularRotateKeyframe} 1.4s linear infinite !important`,
-                              },
-                              circleIndeterminate: {
-                                  animation: `${circularDashKeyframe} 1.4s ease-in-out infinite !important`,
-                              },
-                          },
-                      },
-                  }
-                : {}),
-            ...(animationsDisabled
-                ? {
-                      MuiCssBaseline: {
-                          styleOverrides: {
-                              '*, *::before, *::after': {
-                                  animation: 'none !important',
-                                  scrollBehavior: 'auto !important',
-                                  transition: 'none !important',
-                              },
-                          },
-                      },
-                  }
-                : {}),
-            MuiContainer: {
-                defaultProps: {
-                    disableGutters: config.disableGlobalGutters,
-                },
-            },
-            MuiFab: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiFilledInput: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiFormControl: {
-                defaultProps: config.denseFormMargins ? { margin: 'dense' } : {},
-            },
-            MuiIconButton: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiList: {
-                defaultProps: {
-                    dense: config.denseLists,
-                    disablePadding: config.listDisablePadding,
-                },
-            },
-            MuiListItem: {
-                defaultProps: {
-                    dense: config.denseLists,
-                    disableGutters: config.disableGlobalGutters,
-                    disablePadding: config.listDisablePadding,
-                },
-            },
-            MuiListItemButton: {
-                defaultProps: {
-                    dense: config.denseLists,
-                },
-            },
-            MuiListSubheader: {
-                defaultProps: {
-                    disableGutters: config.disableGlobalGutters,
-                },
-            },
-            MuiMenuItem: {
-                defaultProps: {
-                    dense: config.denseLists,
-                },
-            },
-            MuiMenuList: {
-                defaultProps: {
-                    dense: config.denseLists,
-                },
-            },
-            MuiOutlinedInput: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiPagination: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiPaginationItem: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiRadio: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiSelect: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiSlider: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiSwitch: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiTable: {
-                defaultProps: {
-                    size: config.tableSize,
-                },
-            },
-            MuiTableCell: {
-                defaultProps: {
-                    size: config.tableSize,
-                },
-            },
-            MuiTextField: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiToggleButton: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiToggleButtonGroup: {
-                defaultProps: {
-                    size: config.componentSize,
-                },
-            },
-            MuiToolbar: {
-                defaultProps: {
-                    disableGutters: config.toolbarDisableGutters,
-                    variant: config.toolbarDense ? 'dense' : 'regular',
-                },
-            },
-        },
-    });
-}
-
-function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
-    return {
-        components: {
-            ...(features.compactButtonsAndChips
-                ? {
-                      MuiButton: {
+                ...(dense.compactButtonsAndChips
+                    ? {
                           styleOverrides: {
                               root: {
                                   lineHeight: 1.2,
@@ -378,8 +209,25 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                                   padding: getOpticallyBiasedButtonPadding(3, 4, 1),
                               },
                           },
-                      },
-                      MuiChip: {
+                      }
+                    : {}),
+            },
+            MuiButtonBase: {
+                defaultProps: {
+                    disableRipple: dense.disableAnimations,
+                },
+            },
+            MuiButtonGroup: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiChip: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+                ...(dense.compactButtonsAndChips
+                    ? {
                           styleOverrides: {
                               root: {
                                   lineHeight: 1.15,
@@ -396,7 +244,7 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                                   height: '100%',
                                   paddingLeft: 10,
                                   paddingRight: 10,
-                                  transform: `translateY(${COMPACT_CHIP_LABEL_OFFSET_PX}px)`,
+                                  transform: 'translateY(1.5px)',
                               },
                               labelSmall: {
                                   alignItems: 'center',
@@ -404,15 +252,92 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                                   height: '100%',
                                   paddingLeft: 6,
                                   paddingRight: 6,
-                                  transform: `translateY(${COMPACT_CHIP_LABEL_OFFSET_PX}px)`,
+                                  transform: 'translateY(1.5px)',
+                              },
+                          },
+                      }
+                    : {}),
+            },
+            ...(dense.disableAnimations
+                ? {
+                      MuiCircularProgress: {
+                          styleOverrides: {
+                              indeterminate: {
+                                  animation: `${circularRotateKeyframe} 1.4s linear infinite !important`,
+                              },
+                              circleIndeterminate: {
+                                  animation: `${circularDashKeyframe} 1.4s ease-in-out infinite !important`,
                               },
                           },
                       },
                   }
                 : {}),
-            ...(features.compactIconButtons
+            ...(dense.disableAnimations
                 ? {
-                      MuiIconButton: {
+                      MuiCssBaseline: {
+                          styleOverrides: {
+                              '*, *::before, *::after': {
+                                  animation: 'none !important',
+                                  scrollBehavior: 'auto !important',
+                                  transition: 'none !important',
+                              },
+                          },
+                      },
+                  }
+                : {}),
+            MuiContainer: {
+                defaultProps: {
+                    disableGutters: dense.disableGlobalGutters,
+                },
+            },
+            MuiFab: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiFilledInput: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+                ...(dense.compactInputs
+                    ? {
+                          styleOverrides: {
+                              input: {
+                                  paddingTop: 20,
+                                  paddingRight: 10,
+                                  paddingBottom: 7,
+                                  paddingLeft: 10,
+                                  '&.MuiInputBase-inputSizeSmall': {
+                                      paddingTop: 17,
+                                      paddingRight: 10,
+                                      paddingBottom: 3,
+                                      paddingLeft: 10,
+                                  },
+                              },
+                          },
+                      }
+                    : {}),
+            },
+            MuiFormControl: {
+                defaultProps: dense.denseFormMargins ? { margin: 'dense' } : {},
+            },
+            ...(dense.compactInputs
+                ? {
+                      MuiFormHelperText: {
+                          styleOverrides: {
+                              root: {
+                                  marginTop: 2,
+                              },
+                          },
+                      },
+                  }
+                : {}),
+            MuiIconButton: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+                ...(dense.compactIconButtons
+                    ? {
                           styleOverrides: {
                               sizeMedium: {
                                   padding: 6,
@@ -421,34 +346,11 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                                   padding: 4,
                               },
                           },
-                      },
-                  }
-                : {}),
-            ...(features.compactInputs
+                      }
+                    : {}),
+            },
+            ...(dense.compactInputs
                 ? {
-                      MuiFilledInput: {
-                          styleOverrides: {
-                              input: {
-                                  paddingTop: 20,
-                                  paddingRight: 10,
-                                  paddingBottom: 7,
-                                  paddingLeft: 10,
-                              },
-                              inputSizeSmall: {
-                                  paddingTop: 17,
-                                  paddingRight: 10,
-                                  paddingBottom: 3,
-                                  paddingLeft: 10,
-                              },
-                          },
-                      },
-                      MuiFormHelperText: {
-                          styleOverrides: {
-                              root: {
-                                  marginTop: 2,
-                              },
-                          },
-                      },
                       MuiInput: {
                           styleOverrides: {
                               input: {
@@ -479,7 +381,77 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                                   getCompactInputLabelStyles(ownerState),
                           },
                       },
-                      MuiOutlinedInput: {
+                  }
+                : {}),
+            MuiList: {
+                defaultProps: {
+                    dense: dense.denseLists,
+                    disablePadding: dense.listDisablePadding,
+                },
+            },
+            MuiListItem: {
+                defaultProps: {
+                    dense: dense.denseLists,
+                    disableGutters: dense.disableGlobalGutters,
+                    disablePadding: dense.listDisablePadding,
+                },
+            },
+            MuiListItemButton: {
+                defaultProps: {
+                    dense: dense.denseLists,
+                },
+                ...(dense.compactListsAndMenus
+                    ? {
+                          styleOverrides: {
+                              root: {
+                                  minHeight: 34,
+                                  paddingBlock: 4,
+                              },
+                          },
+                      }
+                    : {}),
+            },
+            MuiListSubheader: {
+                defaultProps: {
+                    disableGutters: dense.disableGlobalGutters,
+                },
+                ...(dense.compactListsAndMenus
+                    ? {
+                          styleOverrides: {
+                              root: {
+                                  lineHeight: '2rem',
+                                  paddingInline: 12,
+                              },
+                          },
+                      }
+                    : {}),
+            },
+            MuiMenuItem: {
+                defaultProps: {
+                    dense: dense.denseLists,
+                },
+                ...(dense.compactListsAndMenus
+                    ? {
+                          styleOverrides: {
+                              root: {
+                                  minHeight: 34,
+                                  paddingBlock: 4,
+                              },
+                          },
+                      }
+                    : {}),
+            },
+            MuiMenuList: {
+                defaultProps: {
+                    dense: dense.denseLists,
+                },
+            },
+            MuiOutlinedInput: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+                ...(dense.compactInputs
+                    ? {
                           styleOverrides: {
                               input: {
                                   padding: '14px 12px',
@@ -488,70 +460,25 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                                   padding: '7px 12px',
                               },
                           },
-                      },
-                  }
-                : {}),
-            ...(features.compactListsAndMenus
-                ? {
-                      MuiListItemButton: {
-                          styleOverrides: {
-                              root: {
-                                  minHeight: 34,
-                                  paddingBlock: 4,
-                              },
-                          },
-                      },
-                      MuiListSubheader: {
-                          styleOverrides: {
-                              root: {
-                                  lineHeight: '2rem',
-                                  paddingInline: 12,
-                              },
-                          },
-                      },
-                      MuiMenuItem: {
-                          styleOverrides: {
-                              root: {
-                                  minHeight: 34,
-                                  paddingBlock: 4,
-                              },
-                          },
-                      },
-                  }
-                : {}),
-            ...(features.compactAccordionSummary
-                ? {
-                      MuiAccordionSummary: {
-                          styleOverrides: {
-                              content: {
-                                  '&.Mui-expanded': {
-                                      marginBlock: 8,
-                                  },
-                                  marginBlock: 8,
-                              },
-                              root: {
-                                  '&.Mui-expanded': {
-                                      minHeight: 44,
-                                  },
-                                  minHeight: 44,
-                              },
-                          },
-                      },
-                  }
-                : {}),
-            ...(features.compactTableCells
-                ? {
-                      MuiTableCell: {
-                          styleOverrides: {
-                              root: {
-                                  paddingBlock: 6,
-                                  paddingInline: 10,
-                              },
-                          },
-                      },
-                  }
-                : {}),
-            ...(features.compactTreeItems
+                      }
+                    : {}),
+            },
+            MuiPagination: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiPaginationItem: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiRadio: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            ...(dense.compactTreeItems
                 ? {
                       MuiRichTreeView: {
                           styleOverrides: {
@@ -563,6 +490,15 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                               root: ({ theme }: { theme: Theme }) => createCompactTreeSelectors(theme),
                           },
                       },
+                  }
+                : {}),
+            MuiSelect: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            ...(dense.compactTreeItems
+                ? {
                       MuiSimpleTreeView: {
                           styleOverrides: {
                               root: ({ theme }: { theme: Theme }) => createCompactTreeSelectors(theme),
@@ -570,23 +506,57 @@ function createDenseFeatureThemeOptions(features: DenseThemeFeatures) {
                       },
                   }
                 : {}),
+            MuiSlider: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiSwitch: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiTable: {
+                defaultProps: {
+                    size: dense.tableSize,
+                },
+            },
+            MuiTableCell: {
+                defaultProps: {
+                    size: dense.tableSize,
+                },
+                ...(dense.compactTableCells
+                    ? {
+                          styleOverrides: {
+                              root: {
+                                  paddingBlock: 6,
+                                  paddingInline: 10,
+                              },
+                          },
+                      }
+                    : {}),
+            },
+            MuiTextField: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiToggleButton: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiToggleButtonGroup: {
+                defaultProps: {
+                    size: dense.componentSize,
+                },
+            },
+            MuiToolbar: {
+                defaultProps: {
+                    disableGutters: dense.toolbarDisableGutters,
+                    variant: dense.toolbarDense ? 'dense' : 'regular',
+                },
+            },
         },
-    };
-}
-
-export function getPreferredColorMode(): DenseColorMode {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-        return 'light';
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
-
-export function createDenseTheme({ animationsDisabled, colorMode, dense }: CreateDenseThemeOptions) {
-    const baseTheme = createBaseDenseTheme(dense.theme, colorMode, animationsDisabled);
-
-    return createTheme(
-        baseTheme,
-        createDenseFeatureThemeOptions(dense.features ?? DEFAULT_DENSE_THEME_FEATURES),
-    );
+    });
 }

@@ -1,6 +1,17 @@
-import type { DensePreset, DenseSettings, DenseThemeFeatures } from './types';
+import type { DensePreset, DenseSettings } from './types';
 
-export const DEFAULT_DENSE_THEME_FEATURES: DenseThemeFeatures = {
+export const DEFAULT_DENSE_SETTINGS: DenseSettings = {
+    disableAnimations: false,
+    spacingBase: 8,
+    typographyScale: 1,
+    componentSize: 'medium',
+    denseFormMargins: false,
+    disableGlobalGutters: false,
+    denseLists: false,
+    listDisablePadding: false,
+    toolbarDense: false,
+    toolbarDisableGutters: false,
+    tableSize: 'medium',
     compactButtonsAndChips: false,
     compactIconButtons: false,
     compactInputs: false,
@@ -8,9 +19,6 @@ export const DEFAULT_DENSE_THEME_FEATURES: DenseThemeFeatures = {
     compactAccordionSummary: false,
     compactTableCells: false,
     compactTreeItems: false,
-};
-
-export const DEFAULT_DENSE_SETTINGS: DenseSettings = {
     dataGrid: {
         cellBlockPadding: {
             unit: 'px',
@@ -20,24 +28,29 @@ export const DEFAULT_DENSE_SETTINGS: DenseSettings = {
         headerFilters: false,
         headerFilterHeight: 52,
     },
-    features: DEFAULT_DENSE_THEME_FEATURES,
-    theme: {
-        spacingBase: 8,
-        typographyScale: 1,
-        componentSize: 'medium',
-        denseFormMargins: false,
-        disableGlobalGutters: false,
-        denseLists: false,
-        listDisablePadding: false,
-        toolbarDense: false,
-        toolbarDisableGutters: false,
-        tableSize: 'medium',
-    },
 };
 
 export const DENSE_PRESETS: Record<DensePreset, DenseSettings> = {
     default: DEFAULT_DENSE_SETTINGS,
     dense: {
+        disableAnimations: true,
+        spacingBase: 4,
+        typographyScale: 1,
+        componentSize: 'small',
+        denseFormMargins: true,
+        disableGlobalGutters: true,
+        denseLists: true,
+        listDisablePadding: true,
+        toolbarDense: true,
+        toolbarDisableGutters: true,
+        tableSize: 'small',
+        compactButtonsAndChips: true,
+        compactIconButtons: true,
+        compactInputs: true,
+        compactListsAndMenus: true,
+        compactAccordionSummary: true,
+        compactTableCells: true,
+        compactTreeItems: true,
         dataGrid: {
             cellBlockPadding: {
                 unit: 'px',
@@ -47,30 +60,26 @@ export const DENSE_PRESETS: Record<DensePreset, DenseSettings> = {
             headerFilters: false,
             headerFilterHeight: 52,
         },
-        features: {
-            ...DEFAULT_DENSE_THEME_FEATURES,
-            compactButtonsAndChips: true,
-            compactIconButtons: true,
-            compactInputs: true,
-            compactListsAndMenus: true,
-            compactAccordionSummary: true,
-            compactTableCells: true,
-            compactTreeItems: true,
-        },
-        theme: {
-            spacingBase: 4,
-            typographyScale: 1,
-            componentSize: 'small',
-            denseFormMargins: true,
-            disableGlobalGutters: true,
-            denseLists: true,
-            listDisablePadding: true,
-            toolbarDense: true,
-            toolbarDisableGutters: true,
-            tableSize: 'small',
-        },
     },
     densePlus: {
+        disableAnimations: true,
+        spacingBase: 2,
+        typographyScale: 0.65,
+        componentSize: 'small',
+        denseFormMargins: true,
+        disableGlobalGutters: true,
+        denseLists: true,
+        listDisablePadding: true,
+        toolbarDense: true,
+        toolbarDisableGutters: true,
+        tableSize: 'small',
+        compactButtonsAndChips: false,
+        compactIconButtons: false,
+        compactInputs: false,
+        compactListsAndMenus: false,
+        compactAccordionSummary: false,
+        compactTableCells: false,
+        compactTreeItems: false,
         dataGrid: {
             cellBlockPadding: {
                 unit: 'px',
@@ -79,19 +88,6 @@ export const DENSE_PRESETS: Record<DensePreset, DenseSettings> = {
             density: 'compact',
             headerFilters: true,
             headerFilterHeight: 24,
-        },
-        features: DEFAULT_DENSE_THEME_FEATURES,
-        theme: {
-            spacingBase: 2,
-            typographyScale: 0.65,
-            componentSize: 'small',
-            denseFormMargins: true,
-            disableGlobalGutters: true,
-            denseLists: true,
-            listDisablePadding: true,
-            toolbarDense: true,
-            toolbarDisableGutters: true,
-            tableSize: 'small',
         },
     },
 };

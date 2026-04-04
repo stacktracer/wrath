@@ -14,12 +14,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import {
-    formatPixelValue,
-    type DenseColorMode,
-    type DenseDataGridMetrics,
-    type DenseThemeFeatures,
-} from './lib';
+import { formatPixelValue, type DenseDataGridMetrics, type DenseFeatureKey } from './lib';
 import {
     GALLERY_DENSE_PRESET_LABELS,
     GALLERY_THEME_OVERRIDE_CONTROLS,
@@ -30,43 +25,34 @@ import {
 import { AdvancedControlTile, DensityControlCard } from './gallery-shell';
 
 type GallerySidebarProps = {
-    animationsDisabled: boolean;
-    colorMode: DenseColorMode;
+    colorMode: 'light' | 'dark';
     denseControls: GalleryDenseControls;
-    denseFeatures: DenseThemeFeatures;
     densePreset: GalleryPresetSelection;
     onApplyDensePreset: (preset: Exclude<GalleryPresetSelection, 'custom'>) => void;
-    onColorModeChange: (mode: DenseColorMode) => void;
+    onColorModeChange: (mode: 'light' | 'dark') => void;
     onResetDenseFeatures: () => void;
     onResetToDefault: () => void;
-    onSetAnimationsDisabled: (disabled: boolean) => void;
     onUpdateDenseControl: <Key extends keyof GalleryDenseControls>(
         key: Key,
         value: GalleryDenseControls[Key],
     ) => void;
-    onUpdateDenseFeature: <Key extends keyof DenseThemeFeatures>(
-        key: Key,
-        value: DenseThemeFeatures[Key],
-    ) => void;
+    onUpdateDenseFeature: (key: DenseFeatureKey, value: boolean) => void;
     rowMetrics: Pick<DenseDataGridMetrics, 'columnHeaderHeight' | 'devicePixelRatio' | 'rowHeight'>;
 };
 
 export function GallerySidebar({
-    animationsDisabled,
     colorMode,
     denseControls,
-    denseFeatures,
     densePreset,
     onApplyDensePreset,
     onColorModeChange,
     onResetDenseFeatures,
     onResetToDefault,
-    onSetAnimationsDisabled,
     onUpdateDenseControl,
     onUpdateDenseFeature,
     rowMetrics,
 }: GallerySidebarProps) {
-    const currentAnimationModeLabel = animationsDisabled ? 'Off' : 'On';
+    const currentAnimationModeLabel = denseControls.disableAnimations ? 'Off' : 'On';
     const currentColorModeLabel = colorMode === 'dark' ? 'Dark' : 'Light';
 
     return (
@@ -116,9 +102,12 @@ export function GallerySidebar({
                                     <FormControlLabel
                                         control={
                                             <Switch
-                                                checked={animationsDisabled}
+                                                checked={denseControls.disableAnimations}
                                                 onChange={event => {
-                                                    onSetAnimationsDisabled(event.target.checked);
+                                                    onUpdateDenseControl(
+                                                        'disableAnimations',
+                                                        event.target.checked,
+                                                    );
                                                 }}
                                             />
                                         }
@@ -552,7 +541,7 @@ export function GallerySidebar({
                                 <div className="mui-dense-advanced-grid">
                                     {GALLERY_THEME_OVERRIDE_CONTROLS.map(definition => (
                                         <AdvancedControlTile
-                                            checked={denseFeatures[definition.key]}
+                                            checked={denseControls[definition.key]}
                                             definition={definition}
                                             key={definition.key}
                                             onChange={nextValue => {
@@ -575,7 +564,7 @@ export function GallerySidebar({
                                 <div className="mui-dense-advanced-grid">
                                     {GALLERY_TREE_VIEW_CONTROLS.map(definition => (
                                         <AdvancedControlTile
-                                            checked={denseFeatures[definition.key]}
+                                            checked={denseControls[definition.key]}
                                             definition={definition}
                                             key={definition.key}
                                             onChange={nextValue => {

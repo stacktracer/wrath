@@ -4,15 +4,13 @@ export {
     type DenseDataGridMetrics,
     type DenseDataGridProps,
 } from './data-grid';
-export { DEFAULT_DENSE_SETTINGS, DEFAULT_DENSE_THEME_FEATURES, DENSE_PRESETS } from './presets';
-export { createDenseTheme, getPreferredColorMode } from './theme';
+export { DEFAULT_DENSE_SETTINGS, DENSE_PRESETS } from './presets';
+export { createDenseTheme } from './theme';
 export type {
-    DenseColorMode,
     DenseDataGridCellBlockPadding,
     DenseDataGridDensity,
     DenseDataGridOptions,
+    DenseFeatureKey,
     DensePreset,
     DenseSettings,
-    DenseThemeFeatures,
-    DenseThemeOptions,
 } from './types';

@@ -364,7 +364,7 @@ export function GalleryWorkspace({ dense, onDataGridMetricsChange, uiControls }:
                                     />
                                 </FormControl>
 
-                                <Box sx={dense.features.compactInputs ? { pt: 1 } : undefined}>
+                                <Box sx={dense.compactInputs ? { pt: 1 } : undefined}>
                                     <FormControl size={uiControls.componentSize} variant="outlined">
                                         <InputLabel htmlFor="mui-dense-outlined-input">
                                             Outlined input

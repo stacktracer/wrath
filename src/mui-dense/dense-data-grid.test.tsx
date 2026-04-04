@@ -97,13 +97,7 @@ function DenseDataGridHarness({ cellBlockPadding }: { cellBlockPadding?: DenseDa
     const [metrics, setMetrics] = useState<DenseDataGridMetrics | null>(null);
 
     return (
-        <ThemeProvider
-            theme={createDenseTheme({
-                animationsDisabled: true,
-                colorMode: 'light',
-                dense: DENSE_PRESETS.dense,
-            })}
-        >
+        <ThemeProvider theme={createDenseTheme(DENSE_PRESETS.dense, { mode: 'light' })}>
             <div
                 style={{
                     height: '360px',
