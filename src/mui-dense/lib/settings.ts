@@ -19,7 +19,7 @@ export type DenseSettings = {
     compactTreeItems: boolean;
     dataGrid: {
         density: 'comfortable' | 'standard' | 'compact';
-        contentVerticalPadding: string;
+        textVerticalPadding: string;
     };
 };
 
@@ -43,7 +43,7 @@ export const DEFAULT_DENSE_SETTINGS: DenseSettings = {
     compactTableCells: false,
     compactTreeItems: false,
     dataGrid: {
-        contentVerticalPadding: '1px',
+        textVerticalPadding: '1px',
         density: 'standard',
     },
 };

@@ -158,10 +158,10 @@ async function waitForMetrics() {
 }
 
 function DenseDataGridHarness({
-    contentVerticalPadding,
+    textVerticalPadding,
     headerFilters = false,
 }: {
-    contentVerticalPadding?: string;
+    textVerticalPadding?: string;
     headerFilters?: boolean;
 }) {
     const [metrics, setMetrics] = useState<DenseDataGridMetrics | null>(null);
@@ -176,11 +176,11 @@ function DenseDataGridHarness({
             >
                 <DenseDataGrid
                     dense={
-                        contentVerticalPadding === undefined
+                        textVerticalPadding === undefined
                             ? DENSE_SETTINGS.dataGrid
                             : {
                                   ...DENSE_SETTINGS.dataGrid,
-                                  contentVerticalPadding,
+                                  textVerticalPadding,
                               }
                     }
                     checkboxSelection
@@ -204,7 +204,7 @@ afterEach(() => {
 });
 
 describe('mui-dense DenseDataGrid', () => {
-    it('publishes measured metrics and applies the default content vertical padding', async () => {
+    it('publishes measured metrics and applies the default text vertical padding', async () => {
         await page.viewport(1000, 700);
         mount(<DenseDataGridHarness />);
 
@@ -214,25 +214,17 @@ describe('mui-dense DenseDataGrid', () => {
         const metrics = requireMetrics();
         const laneCell = requireGridCell('lane', 'ATL to LHR');
         const laneHeader = requireGridColumnHeader('lane');
-        const rowCheckboxCell = requireGridCheckboxSlot(`.${gridClasses.cellCheckbox}[role="gridcell"]`);
-        const rowCheckboxInput = requireChildElement(rowCheckboxCell, `.${gridClasses.checkboxInput}`);
-        const rowCheckboxIcon = rowCheckboxInput.querySelector('svg');
-
-        if (!(rowCheckboxIcon instanceof SVGElement)) {
-            throw new Error('Expected row checkbox icon SVG.');
-        }
 
         expect(metrics.rowHeight).toBeGreaterThan(0);
         expect(metrics.columnHeaderHeight).toBeGreaterThan(0);
         expect(metrics.devicePixelRatio).toBeGreaterThan(0);
         expectHeightClose(laneCell.getBoundingClientRect().height, metrics.rowHeight);
         expectHeightClose(laneHeader.getBoundingClientRect().height, metrics.columnHeaderHeight);
-        expectHeightClose(metrics.checkboxHeight, rowCheckboxIcon.getBoundingClientRect().height);
     });
 
-    it('lets 0px remove the extra vertical padding that 1px adds', async () => {
+    it('lets 0px remove the extra text padding that 1px adds', async () => {
         await page.viewport(1000, 700);
-        mount(<DenseDataGridHarness contentVerticalPadding="0px" />);
+        mount(<DenseDataGridHarness textVerticalPadding="0px" />);
 
         await expect.element(page.getByRole('grid')).toBeVisible();
         await waitForMetrics();
@@ -249,7 +241,7 @@ describe('mui-dense DenseDataGrid', () => {
         activeRoot = null;
         document.body.innerHTML = '';
 
-        mount(<DenseDataGridHarness contentVerticalPadding="1px" />);
+        mount(<DenseDataGridHarness textVerticalPadding="1px" />);
 
         await expect.element(page.getByRole('grid')).toBeVisible();
         await waitForMetrics();
@@ -260,9 +252,9 @@ describe('mui-dense DenseDataGrid', () => {
         expect(zeroMetrics.columnHeaderHeight).toBeLessThan(onePixelMetrics.columnHeaderHeight);
     });
 
-    it('keeps large content vertical padding inside the rendered slots without clipping content', async () => {
+    it('keeps large text vertical padding inside the rendered slots without clipping content', async () => {
         await page.viewport(1000, 700);
-        mount(<DenseDataGridHarness contentVerticalPadding="20px" headerFilters />);
+        mount(<DenseDataGridHarness textVerticalPadding="20px" headerFilters />);
 
         await expect.element(page.getByRole('grid')).toBeVisible();
         await waitForMetrics();

@@ -1,8 +1,8 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import type { SystemStyleObject } from '@mui/system';
-import { DataGridPro, type DataGridProProps, gridClasses } from '@mui/x-data-grid-pro';
+import { DataGridPro, gridClasses, type DataGridProProps } from '@mui/x-data-grid-pro';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type { DenseSettings } from './settings';
 
@@ -17,19 +17,12 @@ const HIDDEN_PROBE_STYLE = {
     width: 0,
 } as const;
 
-type DenseDataGridSizingTuning = {
-    fallbackTextLineHeightRatio: number;
-    fallbackXHeightRatio: number;
-};
 type DenseDataGridSettings = DenseSettings['dataGrid'];
 
 export type DenseDataGridMetrics = {
-    checkboxHeight: number;
     columnHeaderHeight: number;
     devicePixelRatio: number;
     rowHeight: number;
-    textLineHeight: number;
-    xHeight: number;
 };
 
 export type DenseDataGridProps = Omit<DataGridProProps, 'columnHeaderHeight' | 'density' | 'rowHeight'> & {
@@ -38,48 +31,33 @@ export type DenseDataGridProps = Omit<DataGridProProps, 'columnHeaderHeight' | '
 };
 
 const DEFAULT_DENSE_DATA_GRID_SETTINGS: DenseDataGridSettings = {
-    contentVerticalPadding: '1px',
-    density: 'standard',
+    textVerticalPadding: '1px',
+    density: 'compact',
 };
 
-const DEFAULT_DENSE_DATA_GRID_SIZING_TUNING: DenseDataGridSizingTuning = {
-    fallbackTextLineHeightRatio: 1.43,
-    fallbackXHeightRatio: 0.57,
-};
+const DEFAULT_DENSE_DATA_GRID_FALLBACK_TEXT_LINE_HEIGHT_RATIO = 1.43;
 
 const DENSE_DATA_GRID_METRICS_EPSILON = 0.01;
-
-function resolveDenseDataGridSizingTuning(
-    tuning: Partial<DenseDataGridSizingTuning> | undefined,
-): DenseDataGridSizingTuning {
-    return {
-        fallbackTextLineHeightRatio:
-            tuning?.fallbackTextLineHeightRatio ??
-            DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackTextLineHeightRatio,
-        fallbackXHeightRatio:
-            tuning?.fallbackXHeightRatio ?? DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackXHeightRatio,
-    };
-}
 
 function resolveDenseDataGridSettings(
     dense: Partial<DenseDataGridSettings> | undefined,
 ): DenseDataGridSettings {
     return {
-        contentVerticalPadding: normalizeDenseDataGridContentVerticalPadding(dense?.contentVerticalPadding),
+        textVerticalPadding: normalizeDenseDataGridTextVerticalPadding(dense?.textVerticalPadding),
         density: dense?.density ?? DEFAULT_DENSE_DATA_GRID_SETTINGS.density,
     };
 }
 
-function normalizeDenseDataGridContentVerticalPadding(contentVerticalPadding: string | undefined) {
-    const normalized = contentVerticalPadding?.trim();
+function normalizeDenseDataGridTextVerticalPadding(textVerticalPadding: string | undefined) {
+    const normalized = textVerticalPadding?.trim();
 
     return normalized && normalized.length > 0
         ? normalized
-        : DEFAULT_DENSE_DATA_GRID_SETTINGS.contentVerticalPadding;
+        : DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding;
 }
 
-function resolveSupportedDenseDataGridContentVerticalPadding(contentVerticalPadding: string) {
-    const normalized = normalizeDenseDataGridContentVerticalPadding(contentVerticalPadding);
+function resolveSupportedDenseDataGridTextVerticalPadding(textVerticalPadding: string) {
+    const normalized = normalizeDenseDataGridTextVerticalPadding(textVerticalPadding);
 
     if (
         typeof window === 'undefined' ||
@@ -89,13 +67,13 @@ function resolveSupportedDenseDataGridContentVerticalPadding(contentVerticalPadd
         return normalized;
     }
 
-    return DEFAULT_DENSE_DATA_GRID_SETTINGS.contentVerticalPadding;
+    return DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding;
 }
 
-function resolveDenseDataGridContentVerticalPaddingPixels(contentVerticalPaddingProbe: HTMLElement) {
+function resolveDenseDataGridTextVerticalPaddingPixels(textVerticalPaddingProbe: HTMLElement) {
     return parsePixelValue(
-        window.getComputedStyle(contentVerticalPaddingProbe).paddingTop,
-        Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.contentVerticalPadding) || 1,
+        window.getComputedStyle(textVerticalPaddingProbe).paddingTop,
+        Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding) || 1,
     );
 }
 
@@ -161,6 +139,10 @@ export function formatPixelValue(value: number) {
     return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/\.?0+$/, '');
 }
 
+// MUI X's internal density multipliers (see densitySelector in @mui/x-data-grid). DataGrid internally
+// scaled the row-height value we pass it by one of these, depending on the density setting. We already
+// compute row-height in px, so we divide by the scale factor before passing it to DataGrid, so that
+// DataGrid will end up at the intended row-height.
 const DENSE_DATA_GRID_DENSITY_FACTORS: Record<DenseDataGridSettings['density'], number> = {
     comfortable: 1.3,
     standard: 1,
@@ -174,31 +156,21 @@ function resolveDenseDataGridHeightProp(targetHeight: number, density: DenseData
 }
 
 function createDenseDataGridMetrics({
-    checkboxHeight,
-    contentVerticalPaddingPixels,
+    textVerticalPaddingPixels,
     devicePixelRatio,
     textLineHeight,
-    xHeight,
 }: {
-    checkboxHeight: number;
-    contentVerticalPaddingPixels: number;
+    textVerticalPaddingPixels: number;
     devicePixelRatio: number;
     textLineHeight: number;
-    xHeight: number;
 }): DenseDataGridMetrics {
-    const contentVerticalPadding = contentVerticalPaddingPixels * 2;
-    const computedHeight = snapToDevicePixel(
-        Math.max(textLineHeight, checkboxHeight) + contentVerticalPadding,
-        devicePixelRatio,
-    );
+    const textVerticalPadding = textVerticalPaddingPixels * 2;
+    const computedHeight = snapToDevicePixel(textLineHeight + textVerticalPadding, devicePixelRatio);
 
     return {
-        checkboxHeight: Number(checkboxHeight.toFixed(2)),
         columnHeaderHeight: computedHeight,
         devicePixelRatio,
         rowHeight: computedHeight,
-        textLineHeight: Number(textLineHeight.toFixed(2)),
-        xHeight: Number(xHeight.toFixed(2)),
     };
 }
 
@@ -209,28 +181,19 @@ function areDenseDataGridMetricsEqual(left: DenseDataGridMetrics, right: DenseDa
     return (
         left.devicePixelRatio === right.devicePixelRatio &&
         areClose(left.rowHeight, right.rowHeight) &&
-        areClose(left.columnHeaderHeight, right.columnHeaderHeight) &&
-        areClose(left.textLineHeight, right.textLineHeight) &&
-        areClose(left.xHeight, right.xHeight) &&
-        areClose(left.checkboxHeight, right.checkboxHeight)
+        areClose(left.columnHeaderHeight, right.columnHeaderHeight)
     );
 }
 
 function createFallbackDenseDataGridMetrics(
     baseBodyFontSize: number,
     devicePixelRatio: number,
-    tuning?: Partial<DenseDataGridSizingTuning>,
 ): DenseDataGridMetrics {
-    const resolvedTuning = resolveDenseDataGridSizingTuning(tuning);
-    const fallbackXHeight = baseBodyFontSize * resolvedTuning.fallbackXHeightRatio;
-
     return createDenseDataGridMetrics({
-        checkboxHeight: 0,
-        contentVerticalPaddingPixels:
-            Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.contentVerticalPadding) || 1,
+        textVerticalPaddingPixels:
+            Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding) || 1,
         devicePixelRatio,
-        textLineHeight: baseBodyFontSize * resolvedTuning.fallbackTextLineHeightRatio,
-        xHeight: fallbackXHeight,
+        textLineHeight: baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_FALLBACK_TEXT_LINE_HEIGHT_RATIO,
     });
 }
 
@@ -240,8 +203,8 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
     );
     const resolvedDense = resolveDenseDataGridSettings(dense);
-    const resolvedContentVerticalPadding = resolveSupportedDenseDataGridContentVerticalPadding(
-        resolvedDense.contentVerticalPadding,
+    const resolvedTextVerticalPadding = resolveSupportedDenseDataGridTextVerticalPadding(
+        resolvedDense.textVerticalPadding,
     );
     const baseBodyFontSize = typeof theme.typography.fontSize === 'number' ? theme.typography.fontSize : 14;
     const [metrics, setMetrics] = useState<DenseDataGridMetrics>(() =>
@@ -255,10 +218,8 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         metrics.columnHeaderHeight,
         resolvedDense.density,
     );
-    const gridRootRef = useRef<HTMLDivElement | null>(null);
     const body2TextProbeRef = useRef<HTMLSpanElement | null>(null);
-    const contentVerticalPaddingProbeRef = useRef<HTMLSpanElement | null>(null);
-    const xHeightProbeRef = useRef<HTMLSpanElement | null>(null);
+    const textVerticalPaddingProbeRef = useRef<HTMLSpanElement | null>(null);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -285,42 +246,29 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         }
 
         const body2TextProbe = body2TextProbeRef.current;
-        const contentVerticalPaddingProbe = contentVerticalPaddingProbeRef.current;
-        const xHeightProbe = xHeightProbeRef.current;
+        const textVerticalPaddingProbe = textVerticalPaddingProbeRef.current;
 
-        if (body2TextProbe === null || contentVerticalPaddingProbe === null || xHeightProbe === null) {
+        if (body2TextProbe === null || textVerticalPaddingProbe === null) {
             return undefined;
         }
 
         const frame = window.requestAnimationFrame(() => {
             // These hidden probes let the grid size itself from the same typography the page already uses.
-            // We read `body2` line height from computed styles, resolve the requested extra vertical padding by
-            // letting the browser compute a hidden probe, and sample the rendered checkbox icon because selection
-            // columns can demand more height than plain text alone. We size to the visible content that must fit
-            // inside the row, not to the checkbox root's invisible hit-target padding. The final row/header size is
-            // the taller of the text line or checkbox icon, plus the caller-requested extra vertical padding. We
-            // still capture a `1ex` probe for diagnostics, but it no longer contributes hidden slack when the caller
-            // asks for `0px`.
+            // We read `body2` line height from computed styles and resolve the requested extra text padding by
+            // letting the browser compute a hidden probe. The wrapper's automatic row and header heights are now
+            // text-driven on purpose, so non-text content like selection checkboxes no longer changes the computed
+            // size floor.
             const computedStyles = window.getComputedStyle(body2TextProbe);
             const textLineHeight = parsePixelValue(
                 computedStyles.lineHeight,
-                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackTextLineHeightRatio,
+                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_FALLBACK_TEXT_LINE_HEIGHT_RATIO,
             );
-            const contentVerticalPaddingPixels =
-                resolveDenseDataGridContentVerticalPaddingPixels(contentVerticalPaddingProbe);
-            const xHeight =
-                xHeightProbe.getBoundingClientRect().height ||
-                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackXHeightRatio;
-            const checkboxProbe = gridRootRef.current?.querySelector<SVGSVGElement>(
-                `.${gridClasses.cellCheckbox} svg, .${gridClasses.columnHeaderCheckbox} svg`,
-            );
-            const checkboxHeight = checkboxProbe?.getBoundingClientRect().height ?? 0;
+            const textVerticalPaddingPixels =
+                resolveDenseDataGridTextVerticalPaddingPixels(textVerticalPaddingProbe);
             const nextMetrics = createDenseDataGridMetrics({
-                checkboxHeight,
-                contentVerticalPaddingPixels,
+                textVerticalPaddingPixels,
                 devicePixelRatio,
                 textLineHeight,
-                xHeight,
             });
 
             // This runs in the next animation frame, so `currentMetrics` may not be the same as `metrics`.
@@ -334,7 +282,7 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         return () => {
             window.cancelAnimationFrame(frame);
         };
-    }, [baseBodyFontSize, devicePixelRatio, resolvedContentVerticalPadding, resolvedDense.density]);
+    }, [baseBodyFontSize, devicePixelRatio, resolvedDense.density, resolvedTextVerticalPadding]);
 
     useEffect(() => {
         onMetricsChange?.(metrics);
@@ -343,7 +291,6 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
     return (
         <>
             <div
-                ref={gridRootRef}
                 style={{
                     height: '100%',
                     minWidth: 0,
@@ -366,23 +313,13 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
                 </Typography>
                 <Box
                     component="span"
-                    ref={contentVerticalPaddingProbeRef}
+                    ref={textVerticalPaddingProbeRef}
                     sx={currentTheme => ({
                         ...currentTheme.typography.body2,
                         boxSizing: 'content-box',
                         display: 'block',
                         height: 0,
-                        paddingBlock: resolvedContentVerticalPadding,
-                        width: 0,
-                    })}
-                />
-                <Box
-                    component="span"
-                    ref={xHeightProbeRef}
-                    sx={currentTheme => ({
-                        ...currentTheme.typography.body2,
-                        display: 'block',
-                        height: '1ex',
+                        paddingBlock: resolvedTextVerticalPadding,
                         width: 0,
                     })}
                 />

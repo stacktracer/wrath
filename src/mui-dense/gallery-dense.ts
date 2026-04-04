@@ -27,7 +27,7 @@ type GalleryOnlyDenseControls = {
 
 export type GalleryDenseControls = Omit<DenseSettings, 'dataGrid'> &
     GalleryOnlyDenseControls & {
-        dataGridContentVerticalPadding: DenseSettings['dataGrid']['contentVerticalPadding'];
+        dataGridTextVerticalPadding: DenseSettings['dataGrid']['textVerticalPadding'];
         dataGridDensity: DenseSettings['dataGrid']['density'];
     };
 
@@ -117,7 +117,7 @@ function createGalleryDensePreset(
     return {
         ...denseSettings,
         ...galleryOnly,
-        dataGridContentVerticalPadding: dataGrid.contentVerticalPadding,
+        dataGridTextVerticalPadding: dataGrid.textVerticalPadding,
         dataGridDensity: dataGrid.density,
     };
 }
@@ -178,7 +178,7 @@ export const GALLERY_TREE_VIEW_CONTROLS: GalleryAdvancedControlDefinition[] = [
 
 export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseControls): DenseSettings {
     const {
-        dataGridContentVerticalPadding,
+        dataGridTextVerticalPadding,
         dataGridDensity,
         dataGridHeaderFilters: _dataGridHeaderFilters,
         imageGap: _imageGap,
@@ -190,7 +190,7 @@ export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseContro
     return {
         ...denseSettings,
         dataGrid: {
-            contentVerticalPadding: dataGridContentVerticalPadding,
+            textVerticalPadding: dataGridTextVerticalPadding,
             density: dataGridDensity,
         },
     };

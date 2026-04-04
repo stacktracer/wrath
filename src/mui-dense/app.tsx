@@ -15,12 +15,9 @@ import { GallerySidebar } from './gallery-sidebar';
 import { GalleryWorkspace } from './gallery-workspace';
 
 const DEFAULT_DENSE_DATA_GRID_METRICS: DenseDataGridMetrics = {
-    checkboxHeight: 0,
     columnHeaderHeight: 0,
     devicePixelRatio: typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
     rowHeight: 0,
-    textLineHeight: 0,
-    xHeight: 0,
 };
 
 function getPreferredColorMode(): 'light' | 'dark' {

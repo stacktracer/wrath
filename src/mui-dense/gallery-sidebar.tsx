@@ -417,8 +417,7 @@ export function GallerySidebar({
                                         {formatPixelValue(rowMetrics.columnHeaderHeight)}px (auto)
                                     </Typography>
                                     <Typography color="textSecondary" variant="caption">
-                                        Uses the live body text line-height, a diagnostic 1ex probe, the
-                                        rendered checkbox icon height, and DPR{' '}
+                                        Uses the live body text line-height and DPR{' '}
                                         {formatPixelValue(rowMetrics.devicePixelRatio)}.
                                     </Typography>
                                     <Typography color="textSecondary" variant="caption">
@@ -427,16 +426,15 @@ export function GallerySidebar({
                                     </Typography>
 
                                     <Typography variant="body2">
-                                        Content vertical padding:{' '}
-                                        {denseControls.dataGridContentVerticalPadding}
+                                        Text vertical padding: {denseControls.dataGridTextVerticalPadding}
                                     </Typography>
-                                    <ButtonGroup aria-label="Content vertical padding examples" size="small">
+                                    <ButtonGroup aria-label="Text vertical padding examples" size="small">
                                         <Button
                                             onClick={() => {
-                                                onUpdateDenseControl('dataGridContentVerticalPadding', '1px');
+                                                onUpdateDenseControl('dataGridTextVerticalPadding', '1px');
                                             }}
                                             variant={
-                                                denseControls.dataGridContentVerticalPadding === '1px'
+                                                denseControls.dataGridTextVerticalPadding === '1px'
                                                     ? 'contained'
                                                     : 'outlined'
                                             }
@@ -445,13 +443,10 @@ export function GallerySidebar({
                                         </Button>
                                         <Button
                                             onClick={() => {
-                                                onUpdateDenseControl(
-                                                    'dataGridContentVerticalPadding',
-                                                    '0.5cap',
-                                                );
+                                                onUpdateDenseControl('dataGridTextVerticalPadding', '0.5cap');
                                             }}
                                             variant={
-                                                denseControls.dataGridContentVerticalPadding === '0.5cap'
+                                                denseControls.dataGridTextVerticalPadding === '0.5cap'
                                                     ? 'contained'
                                                     : 'outlined'
                                             }
@@ -461,17 +456,17 @@ export function GallerySidebar({
                                     </ButtonGroup>
                                     <TextField
                                         helperText="Any CSS length. Examples: 1px, 0.5cap, 0.35em, 0.25rem."
-                                        id="mui-dense-grid-content-vertical-padding"
-                                        label="Content vertical padding"
+                                        id="mui-dense-grid-text-vertical-padding"
+                                        label="Text vertical padding"
                                         onChange={event => {
                                             onUpdateDenseControl(
-                                                'dataGridContentVerticalPadding',
+                                                'dataGridTextVerticalPadding',
                                                 event.target.value,
                                             );
                                         }}
                                         placeholder="0.5cap"
                                         size="small"
-                                        value={denseControls.dataGridContentVerticalPadding}
+                                        value={denseControls.dataGridTextVerticalPadding}
                                     />
                                 </Stack>
                             </DensityControlCard>
