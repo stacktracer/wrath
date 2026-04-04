@@ -2,15 +2,10 @@ import { useMemo, useState } from 'react';
 import { Container, CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 
-import {
-    DEFAULT_DENSE_SETTINGS,
-    type DenseDataGridMetrics,
-    type DenseFeatureKey,
-    type DensePreset,
-    createDenseTheme,
-} from './lib';
+import { DEFAULT_DENSE_SETTINGS, type DenseDataGridMetrics, type DensePreset, createDenseTheme } from './lib';
 import {
     adaptGalleryControlsToDenseSettings,
+    type DenseFeatureKey,
     type GalleryDenseControls,
     GALLERY_DENSE_PRESETS,
     type GalleryPresetSelection,

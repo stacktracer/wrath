@@ -4,13 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { page } from 'vitest/browser';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import {
-    DenseDataGrid,
-    type DenseDataGridCellBlockPadding,
-    type DenseDataGridMetrics,
-    DENSE_PRESETS,
-    createDenseTheme,
-} from './lib';
+import { DenseDataGrid, type DenseDataGridMetrics, DENSE_PRESETS, createDenseTheme } from './lib';
 
 const GRID_COLUMNS = [
     {
@@ -93,7 +87,7 @@ async function waitForMetrics() {
     throw new Error('DenseDataGrid did not publish metrics in time.');
 }
 
-function DenseDataGridHarness({ cellBlockPadding }: { cellBlockPadding?: DenseDataGridCellBlockPadding }) {
+function DenseDataGridHarness({ cellBlockPadding }: { cellBlockPadding?: string }) {
     const [metrics, setMetrics] = useState<DenseDataGridMetrics | null>(null);
 
     return (
@@ -150,9 +144,9 @@ describe('mui-dense DenseDataGrid', () => {
         expect(getComputedStyle(laneHeader).paddingBottom).toBe('1px');
     });
 
-    it('supports ex-based block padding for apps that want a text-relative tuning knob', async () => {
+    it('supports cap-based block padding for apps that want a text-relative tuning knob', async () => {
         await page.viewport(1000, 700);
-        mount(<DenseDataGridHarness cellBlockPadding={{ unit: 'ex', value: 0.5 }} />);
+        mount(<DenseDataGridHarness cellBlockPadding="0.5cap" />);
 
         await expect.element(page.getByRole('grid')).toBeVisible();
         await waitForMetrics();

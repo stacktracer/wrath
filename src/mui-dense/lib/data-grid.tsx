@@ -4,7 +4,7 @@ import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import type { SystemStyleObject } from '@mui/system';
 import { DataGridPro, type DataGridProProps, gridClasses } from '@mui/x-data-grid-pro';
 
-import type { DenseDataGridCellBlockPadding, DenseDataGridOptions } from './types';
+import type { DenseDataGridOptions } from './types';
 
 const HIDDEN_PROBE_STYLE = {
     height: 0,
@@ -43,10 +43,7 @@ export type DenseDataGridProps = Omit<
 };
 
 export const DEFAULT_DENSE_DATA_GRID_OPTIONS: DenseDataGridOptions = {
-    cellBlockPadding: {
-        unit: 'px',
-        value: 1,
-    },
+    cellBlockPadding: '1px',
     density: 'standard',
     headerFilters: false,
     headerFilterHeight: 52,
@@ -75,28 +72,40 @@ function resolveDenseDataGridSizingTuning(
 
 function resolveDenseDataGridOptions(dense: Partial<DenseDataGridOptions> | undefined): DenseDataGridOptions {
     return {
-        cellBlockPadding: {
-            unit: dense?.cellBlockPadding?.unit ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding.unit,
-            value: Math.max(
-                0,
-                dense?.cellBlockPadding?.value ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding.value,
-            ),
-        },
+        cellBlockPadding: normalizeDenseDataGridCellBlockPadding(dense?.cellBlockPadding),
         density: dense?.density ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.density,
         headerFilters: dense?.headerFilters ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.headerFilters,
         headerFilterHeight: dense?.headerFilterHeight ?? DEFAULT_DENSE_DATA_GRID_OPTIONS.headerFilterHeight,
     };
 }
 
-function resolveDenseDataGridCellBlockPaddingPixels(
-    cellBlockPadding: DenseDataGridCellBlockPadding,
-    xHeight: number,
-) {
-    return cellBlockPadding.unit === 'ex' ? cellBlockPadding.value * xHeight : cellBlockPadding.value;
+function normalizeDenseDataGridCellBlockPadding(cellBlockPadding: string | undefined) {
+    const normalized = cellBlockPadding?.trim();
+
+    return normalized && normalized.length > 0
+        ? normalized
+        : DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding;
 }
 
-function formatDenseDataGridCellBlockPadding(cellBlockPadding: DenseDataGridCellBlockPadding) {
-    return `${formatPixelValue(cellBlockPadding.value)}${cellBlockPadding.unit}`;
+function resolveSupportedDenseDataGridCellBlockPadding(cellBlockPadding: string) {
+    const normalized = normalizeDenseDataGridCellBlockPadding(cellBlockPadding);
+
+    if (
+        typeof window === 'undefined' ||
+        typeof window.CSS?.supports !== 'function' ||
+        window.CSS.supports('padding-top', normalized)
+    ) {
+        return normalized;
+    }
+
+    return DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding;
+}
+
+function resolveDenseDataGridCellBlockPaddingPixels(cellBlockPaddingProbe: HTMLElement) {
+    return parsePixelValue(
+        window.getComputedStyle(cellBlockPaddingProbe).paddingTop,
+        Number.parseFloat(DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding) || 1,
+    );
 }
 
 function resolveDenseDataGridCallerSx(callerSx: SxProps<Theme>, theme: Theme): SystemStyleObject<Theme> {
@@ -125,14 +134,14 @@ function createDenseDataGridSx(
     const denseDataGridSx: SystemStyleObject<Theme> = {
         backgroundColor: 'background.paper',
         [`& .${gridClasses.cell}`]: {
-            paddingBlock: formatDenseDataGridCellBlockPadding(dense.cellBlockPadding),
+            paddingBlock: dense.cellBlockPadding,
         },
         [`& .${gridClasses.columnHeaders}`]: {
             backgroundColor: 'background.paper',
         },
         [`& .${gridClasses.columnHeader}`]: {
             backgroundColor: 'background.paper',
-            paddingBlock: formatDenseDataGridCellBlockPadding(dense.cellBlockPadding),
+            paddingBlock: dense.cellBlockPadding,
         },
         [`& .${gridClasses.columnHeader} .${gridClasses.sortButton}`]: {
             backgroundColor: 'background.paper',
@@ -169,22 +178,22 @@ export function formatPixelValue(value: number) {
 }
 
 function createDenseDataGridMetrics({
+    cellBlockPaddingPixels,
     checkboxHeight,
     devicePixelRatio,
     textLineHeight,
-    cellBlockPadding,
     tuning,
     xHeight,
 }: {
+    cellBlockPaddingPixels: number;
     checkboxHeight: number;
     devicePixelRatio: number;
     textLineHeight: number;
-    cellBlockPadding: DenseDataGridCellBlockPadding;
     tuning?: Partial<DenseDataGridSizingTuning>;
     xHeight: number;
 }): DenseDataGridMetrics {
     const resolvedTuning = resolveDenseDataGridSizingTuning(tuning);
-    const textPadding = resolveDenseDataGridCellBlockPaddingPixels(cellBlockPadding, xHeight) * 2;
+    const textPadding = cellBlockPaddingPixels * 2;
     const computedHeight = snapToDevicePixel(
         Math.max(
             textLineHeight + xHeight + textPadding,
@@ -220,17 +229,15 @@ function areDenseDataGridMetricsEqual(left: DenseDataGridMetrics, right: DenseDa
 function createFallbackDenseDataGridMetrics(
     baseBodyFontSize: number,
     devicePixelRatio: number,
-    dense?: Partial<DenseDataGridOptions>,
     tuning?: Partial<DenseDataGridSizingTuning>,
 ): DenseDataGridMetrics {
     const resolvedTuning = resolveDenseDataGridSizingTuning(tuning);
-    const resolvedDense = resolveDenseDataGridOptions(dense);
     const fallbackXHeight = baseBodyFontSize * resolvedTuning.fallbackXHeightRatio;
 
     return createDenseDataGridMetrics({
+        cellBlockPaddingPixels: Number.parseFloat(DEFAULT_DENSE_DATA_GRID_OPTIONS.cellBlockPadding) || 1,
         checkboxHeight: 0,
         devicePixelRatio,
-        cellBlockPadding: resolvedDense.cellBlockPadding,
         textLineHeight: baseBodyFontSize * resolvedTuning.fallbackTextLineHeightRatio,
         tuning: resolvedTuning,
         xHeight: fallbackXHeight,
@@ -243,16 +250,19 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
     );
     const resolvedDense = resolveDenseDataGridOptions(dense);
+    const resolvedCellBlockPadding = resolveSupportedDenseDataGridCellBlockPadding(
+        resolvedDense.cellBlockPadding,
+    );
     const baseBodyFontSize = typeof theme.typography.fontSize === 'number' ? theme.typography.fontSize : 14;
     const [metrics, setMetrics] = useState<DenseDataGridMetrics>(() =>
         createFallbackDenseDataGridMetrics(
             baseBodyFontSize,
             typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
-            resolvedDense,
         ),
     );
     const gridRootRef = useRef<HTMLDivElement | null>(null);
     const body2TextProbeRef = useRef<HTMLSpanElement | null>(null);
+    const cellBlockPaddingProbeRef = useRef<HTMLSpanElement | null>(null);
     const xHeightProbeRef = useRef<HTMLSpanElement | null>(null);
 
     useEffect(() => {
@@ -280,24 +290,27 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         }
 
         const body2TextProbe = body2TextProbeRef.current;
+        const cellBlockPaddingProbe = cellBlockPaddingProbeRef.current;
         const xHeightProbe = xHeightProbeRef.current;
 
-        if (body2TextProbe === null || xHeightProbe === null) {
+        if (body2TextProbe === null || cellBlockPaddingProbe === null || xHeightProbe === null) {
             return undefined;
         }
 
         const frame = window.requestAnimationFrame(() => {
             // These hidden probes let the grid size itself from the same typography the page already uses.
             // We read `body2` line height from computed styles, use a `1ex` probe as an approximation of lowercase
-            // text height, and sample the checkbox icon because selection columns can demand more height than text
-            // alone. The final row/header size is the taller of the text stack plus block padding or the checkbox
-            // icon plus tuned breathing room. This remains a little fragile because it depends on MUI X class
-            // selectors and on `1ex`, which can vary slightly by font and browser.
+            // text height, resolve the requested cell padding by letting the browser compute the padding probe, and
+            // sample the checkbox icon because selection columns can demand more height than text alone. The final
+            // row/header size is the taller of the text stack plus resolved block padding or the checkbox icon plus
+            // tuned breathing room. This remains a little fragile because it depends on MUI X class selectors and
+            // on font-relative units such as `ex` and `cap`, which can vary slightly by font and browser.
             const computedStyles = window.getComputedStyle(body2TextProbe);
             const textLineHeight = parsePixelValue(
                 computedStyles.lineHeight,
                 baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackTextLineHeightRatio,
             );
+            const cellBlockPaddingPixels = resolveDenseDataGridCellBlockPaddingPixels(cellBlockPaddingProbe);
             const xHeight =
                 xHeightProbe.getBoundingClientRect().height ||
                 baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackXHeightRatio;
@@ -306,10 +319,10 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
             );
             const checkboxHeight = checkboxProbe?.getBoundingClientRect().height ?? 0;
             const nextMetrics = createDenseDataGridMetrics({
+                cellBlockPaddingPixels,
                 checkboxHeight,
                 devicePixelRatio,
                 textLineHeight,
-                cellBlockPadding: resolvedDense.cellBlockPadding,
                 xHeight,
             });
 
@@ -324,13 +337,7 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         return () => {
             window.cancelAnimationFrame(frame);
         };
-    }, [
-        baseBodyFontSize,
-        devicePixelRatio,
-        resolvedDense.cellBlockPadding.unit,
-        resolvedDense.cellBlockPadding.value,
-        resolvedDense.density,
-    ]);
+    }, [baseBodyFontSize, devicePixelRatio, resolvedCellBlockPadding, resolvedDense.density]);
 
     useEffect(() => {
         onMetricsChange?.(metrics);
@@ -352,7 +359,13 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
                     headerFilterHeight={resolvedDense.headerFilterHeight}
                     headerFilters={resolvedDense.headerFilters}
                     rowHeight={metrics.rowHeight}
-                    sx={createDenseDataGridSx(resolvedDense, sx)}
+                    sx={createDenseDataGridSx(
+                        {
+                            ...resolvedDense,
+                            cellBlockPadding: resolvedCellBlockPadding,
+                        },
+                        sx,
+                    )}
                 />
             </div>
 
@@ -360,6 +373,18 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
                 <Typography component="span" ref={body2TextProbeRef} variant="body2">
                     Body2 probe
                 </Typography>
+                <Box
+                    component="span"
+                    ref={cellBlockPaddingProbeRef}
+                    sx={currentTheme => ({
+                        ...currentTheme.typography.body2,
+                        boxSizing: 'content-box',
+                        display: 'block',
+                        height: 0,
+                        paddingBlock: resolvedCellBlockPadding,
+                        width: 0,
+                    })}
+                />
                 <Box
                     component="span"
                     ref={xHeightProbeRef}

@@ -11,17 +11,19 @@ import {
     Slider,
     Stack,
     Switch,
+    TextField,
     Typography,
 } from '@mui/material';
 
-import { formatPixelValue, type DenseDataGridMetrics, type DenseFeatureKey } from './lib';
 import {
+    type DenseFeatureKey,
     GALLERY_DENSE_PRESET_LABELS,
     GALLERY_THEME_OVERRIDE_CONTROLS,
     GALLERY_TREE_VIEW_CONTROLS,
     type GalleryDenseControls,
     type GalleryPresetSelection,
 } from './gallery-dense';
+import { formatPixelValue, type DenseDataGridMetrics } from './lib';
 import { AdvancedControlTile, DensityControlCard } from './gallery-shell';
 
 type GallerySidebarProps = {
@@ -437,47 +439,48 @@ export function GallerySidebar({
                                         valueLabelDisplay="auto"
                                     />
 
-                                    <FormControl size="small">
-                                        <InputLabel id="mui-dense-grid-cell-padding-unit-label">
-                                            Cell padding unit
-                                        </InputLabel>
-                                        <Select
-                                            label="Cell padding unit"
-                                            labelId="mui-dense-grid-cell-padding-unit-label"
-                                            onChange={event => {
-                                                const nextUnit = event.target.value as 'px' | 'ex';
-                                                onUpdateDenseControl(
-                                                    'dataGridCellBlockPaddingUnit',
-                                                    nextUnit,
-                                                );
-                                                onUpdateDenseControl(
-                                                    'dataGridCellBlockPadding',
-                                                    nextUnit === 'px' ? 1 : 0.12,
-                                                );
-                                            }}
-                                            value={denseControls.dataGridCellBlockPaddingUnit}
-                                        >
-                                            <MenuItem value="px">px</MenuItem>
-                                            <MenuItem value="ex">ex</MenuItem>
-                                        </Select>
-                                    </FormControl>
-
                                     <Typography variant="body2">
-                                        Cell block padding:{' '}
-                                        {formatPixelValue(denseControls.dataGridCellBlockPadding)}
-                                        {denseControls.dataGridCellBlockPaddingUnit}
+                                        Cell block padding: {denseControls.dataGridCellBlockPadding}
                                     </Typography>
-                                    <Slider
-                                        max={denseControls.dataGridCellBlockPaddingUnit === 'px' ? 4 : 0.5}
-                                        min={0}
-                                        onChange={(_event, value) => {
-                                            onUpdateDenseControl('dataGridCellBlockPadding', value as number);
+                                    <ButtonGroup aria-label="Cell block padding examples" size="small">
+                                        <Button
+                                            onClick={() => {
+                                                onUpdateDenseControl('dataGridCellBlockPadding', '1px');
+                                            }}
+                                            variant={
+                                                denseControls.dataGridCellBlockPadding === '1px'
+                                                    ? 'contained'
+                                                    : 'outlined'
+                                            }
+                                        >
+                                            1px
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                onUpdateDenseControl('dataGridCellBlockPadding', '0.5cap');
+                                            }}
+                                            variant={
+                                                denseControls.dataGridCellBlockPadding === '0.5cap'
+                                                    ? 'contained'
+                                                    : 'outlined'
+                                            }
+                                        >
+                                            0.5cap
+                                        </Button>
+                                    </ButtonGroup>
+                                    <TextField
+                                        helperText="Any CSS length. Examples: 1px, 0.5cap, 0.35em, 0.25rem."
+                                        id="mui-dense-grid-cell-padding"
+                                        label="Cell block padding"
+                                        onChange={event => {
+                                            onUpdateDenseControl(
+                                                'dataGridCellBlockPadding',
+                                                event.target.value,
+                                            );
                                         }}
-                                        step={
-                                            denseControls.dataGridCellBlockPaddingUnit === 'px' ? 0.5 : 0.02
-                                        }
+                                        placeholder="0.5cap"
+                                        size="small"
                                         value={denseControls.dataGridCellBlockPadding}
-                                        valueLabelDisplay="auto"
                                     />
                                 </Stack>
                             </DensityControlCard>

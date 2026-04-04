@@ -20,10 +20,7 @@ export const DEFAULT_DENSE_SETTINGS: DenseSettings = {
     compactTableCells: false,
     compactTreeItems: false,
     dataGrid: {
-        cellBlockPadding: {
-            unit: 'px',
-            value: 1,
-        },
+        cellBlockPadding: '1px',
         density: 'standard',
         headerFilters: false,
         headerFilterHeight: 52,
@@ -52,10 +49,7 @@ export const DENSE_PRESETS: Record<DensePreset, DenseSettings> = {
         compactTableCells: true,
         compactTreeItems: true,
         dataGrid: {
-            cellBlockPadding: {
-                unit: 'px',
-                value: 1,
-            },
+            cellBlockPadding: '1px',
             density: 'compact',
             headerFilters: false,
             headerFilterHeight: 52,
@@ -81,10 +75,7 @@ export const DENSE_PRESETS: Record<DensePreset, DenseSettings> = {
         compactTableCells: false,
         compactTreeItems: false,
         dataGrid: {
-            cellBlockPadding: {
-                unit: 'px',
-                value: 1,
-            },
+            cellBlockPadding: '1px',
             density: 'compact',
             headerFilters: true,
             headerFilterHeight: 24,

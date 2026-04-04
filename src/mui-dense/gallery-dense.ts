@@ -1,10 +1,13 @@
-import {
-    DENSE_PRESETS,
-    type DenseDataGridCellBlockPadding,
-    type DenseFeatureKey,
-    type DensePreset,
-    type DenseSettings,
-} from './lib';
+import { DENSE_PRESETS, type DensePreset, type DenseSettings } from './lib';
+
+export type DenseFeatureKey =
+    | 'compactButtonsAndChips'
+    | 'compactIconButtons'
+    | 'compactInputs'
+    | 'compactListsAndMenus'
+    | 'compactAccordionSummary'
+    | 'compactTableCells'
+    | 'compactTreeItems';
 
 export type GalleryAdvancedControlDefinition = {
     key: DenseFeatureKey;
@@ -21,8 +24,7 @@ type GalleryOnlyDenseControls = {
 
 export type GalleryDenseControls = Omit<DenseSettings, 'dataGrid'> &
     GalleryOnlyDenseControls & {
-        dataGridCellBlockPadding: number;
-        dataGridCellBlockPaddingUnit: DenseDataGridCellBlockPadding['unit'];
+        dataGridCellBlockPadding: DenseSettings['dataGrid']['cellBlockPadding'];
         dataGridDensity: DenseSettings['dataGrid']['density'];
         dataGridHeaderFilters: boolean;
         dataGridHeaderFilterHeight: number;
@@ -64,8 +66,7 @@ function createGalleryDensePreset(
     return {
         ...denseSettings,
         ...galleryOnly,
-        dataGridCellBlockPadding: dataGrid.cellBlockPadding.value,
-        dataGridCellBlockPaddingUnit: dataGrid.cellBlockPadding.unit,
+        dataGridCellBlockPadding: dataGrid.cellBlockPadding,
         dataGridDensity: dataGrid.density,
         dataGridHeaderFilters: dataGrid.headerFilters,
         dataGridHeaderFilterHeight: dataGrid.headerFilterHeight,
@@ -129,7 +130,6 @@ export const GALLERY_TREE_VIEW_CONTROLS: GalleryAdvancedControlDefinition[] = [
 export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseControls): DenseSettings {
     const {
         dataGridCellBlockPadding,
-        dataGridCellBlockPaddingUnit,
         dataGridDensity,
         dataGridHeaderFilterHeight,
         dataGridHeaderFilters,
@@ -142,10 +142,7 @@ export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseContro
     return {
         ...denseSettings,
         dataGrid: {
-            cellBlockPadding: {
-                unit: dataGridCellBlockPaddingUnit,
-                value: dataGridCellBlockPadding,
-            },
+            cellBlockPadding: dataGridCellBlockPadding,
             density: dataGridDensity,
             headerFilterHeight: dataGridHeaderFilterHeight,
             headerFilters: dataGridHeaderFilters,
