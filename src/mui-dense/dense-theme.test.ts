@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { DENSE_PRESETS, createDenseTheme } from './lib';
+import { DEFAULT_DENSE_SETTINGS, createDenseTheme } from './lib';
+import { GALLERY_DENSE_PRESETS, adaptGalleryControlsToDenseSettings } from './gallery-dense';
+
+const DENSE_SETTINGS = adaptGalleryControlsToDenseSettings(GALLERY_DENSE_PRESETS.dense);
 
 describe('mui-dense public theme builder', () => {
     it('turns off transition timing and ripples when animations are disabled', () => {
-        const theme = createDenseTheme(DENSE_PRESETS.dense, { mode: 'dark' });
+        const theme = createDenseTheme(DENSE_SETTINGS, { mode: 'dark' });
 
         expect(theme.transitions.create(['opacity'])).toBe('none');
         expect(theme.transitions.duration.standard).toBe(0);
@@ -18,7 +21,7 @@ describe('mui-dense public theme builder', () => {
     });
 
     it('leaves the normal motion system intact when animations stay enabled', () => {
-        const theme = createDenseTheme(DENSE_PRESETS.default, { mode: 'light' });
+        const theme = createDenseTheme(DEFAULT_DENSE_SETTINGS, { mode: 'light' });
 
         expect(theme.transitions.duration.standard).toBeGreaterThan(0);
         expect(theme.palette.mode).toBe('light');
@@ -30,7 +33,7 @@ describe('mui-dense public theme builder', () => {
     });
 
     it('applies the dense feature preset through the same top-level builder apps would call', () => {
-        const theme = createDenseTheme(DENSE_PRESETS.dense, { mode: 'dark' });
+        const theme = createDenseTheme(DENSE_SETTINGS, { mode: 'dark' });
         const inputLabelOverride = theme.components?.MuiInputLabel?.styleOverrides?.root as
             | ((args: {
                   ownerState: {

@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_DENSE_SETTINGS, DENSE_PRESETS } from './lib';
+import { DEFAULT_DENSE_SETTINGS } from './lib';
+import { GALLERY_DENSE_PRESETS, adaptGalleryControlsToDenseSettings } from './gallery-dense';
 
-describe('mui-dense public presets', () => {
+describe('mui-dense gallery presets', () => {
     it('keeps the dense preset aligned with the intended compact baseline', () => {
-        expect(DENSE_PRESETS.dense).toMatchObject({
+        expect(adaptGalleryControlsToDenseSettings(GALLERY_DENSE_PRESETS.dense)).toMatchObject({
             componentSize: 'small',
             disableAnimations: true,
             denseFormMargins: true,
@@ -20,7 +21,7 @@ describe('mui-dense public presets', () => {
     });
 
     it('maps theme-feature presets without inventing extra state', () => {
-        expect(DENSE_PRESETS.default).toMatchObject({
+        expect(adaptGalleryControlsToDenseSettings(GALLERY_DENSE_PRESETS.default)).toMatchObject({
             compactAccordionSummary: DEFAULT_DENSE_SETTINGS.compactAccordionSummary,
             compactButtonsAndChips: DEFAULT_DENSE_SETTINGS.compactButtonsAndChips,
             compactIconButtons: DEFAULT_DENSE_SETTINGS.compactIconButtons,
@@ -29,7 +30,7 @@ describe('mui-dense public presets', () => {
             compactTableCells: DEFAULT_DENSE_SETTINGS.compactTableCells,
             compactTreeItems: DEFAULT_DENSE_SETTINGS.compactTreeItems,
         });
-        expect(DENSE_PRESETS.dense).toMatchObject({
+        expect(adaptGalleryControlsToDenseSettings(GALLERY_DENSE_PRESETS.dense)).toMatchObject({
             compactAccordionSummary: true,
             compactButtonsAndChips: true,
             compactIconButtons: true,
@@ -38,7 +39,7 @@ describe('mui-dense public presets', () => {
             compactTableCells: true,
             compactTreeItems: true,
         });
-        expect(DENSE_PRESETS.densePlus).toMatchObject({
+        expect(adaptGalleryControlsToDenseSettings(GALLERY_DENSE_PRESETS.densePlus)).toMatchObject({
             compactAccordionSummary: DEFAULT_DENSE_SETTINGS.compactAccordionSummary,
             compactButtonsAndChips: DEFAULT_DENSE_SETTINGS.compactButtonsAndChips,
             compactIconButtons: DEFAULT_DENSE_SETTINGS.compactIconButtons,

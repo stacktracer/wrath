@@ -2,10 +2,11 @@ import { useMemo, useState } from 'react';
 import { Container, CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 
-import { DEFAULT_DENSE_SETTINGS, type DenseDataGridMetrics, type DensePreset, createDenseTheme } from './lib';
+import { DEFAULT_DENSE_SETTINGS, type DenseDataGridMetrics, createDenseTheme } from './lib';
 import {
     adaptGalleryControlsToDenseSettings,
     type DenseFeatureKey,
+    type GalleryDensePreset,
     type GalleryDenseControls,
     GALLERY_DENSE_PRESETS,
     type GalleryPresetSelection,
@@ -43,7 +44,7 @@ export function App() {
         [colorMode, denseSettings],
     );
 
-    const applyDensePreset = (preset: DensePreset) => {
+    const applyDensePreset = (preset: GalleryDensePreset) => {
         setDenseControls(GALLERY_DENSE_PRESETS[preset]);
         setDensePreset(preset);
     };

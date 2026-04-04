@@ -4,6 +4,6 @@ export {
     type DenseDataGridMetrics,
     type DenseDataGridProps,
 } from './data-grid';
-export { DEFAULT_DENSE_SETTINGS, DENSE_PRESETS } from './presets';
+export { DEFAULT_DENSE_SETTINGS } from './settings';
 export { createDenseTheme } from './theme';
-export type { DenseDataGridDensity, DenseDataGridOptions, DensePreset, DenseSettings } from './types';
+export type { DenseSettings } from './settings';

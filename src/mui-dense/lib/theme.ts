@@ -4,7 +4,7 @@ import type {} from '@mui/x-data-grid-pro/themeAugmentation';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 import type {} from '@mui/x-tree-view-pro/themeAugmentation';
 
-import type { DenseSettings } from './types';
+import type { DenseSettings } from './settings';
 
 const circularRotateKeyframe = keyframes`
     0% {

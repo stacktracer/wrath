@@ -1,4 +1,6 @@
-import { DENSE_PRESETS, type DensePreset, type DenseSettings } from './lib';
+import { DEFAULT_DENSE_SETTINGS, type DenseSettings } from './lib';
+
+export type GalleryDensePreset = 'default' | 'dense' | 'densePlus';
 
 export type DenseFeatureKey =
     | 'compactButtonsAndChips'
@@ -25,11 +27,11 @@ type GalleryOnlyDenseControls = {
 
 export type GalleryDenseControls = Omit<DenseSettings, 'dataGrid'> &
     GalleryOnlyDenseControls & {
-        dataGridCellBlockPadding: DenseSettings['dataGrid']['cellBlockPadding'];
+        dataGridContentVerticalPadding: DenseSettings['dataGrid']['contentVerticalPadding'];
         dataGridDensity: DenseSettings['dataGrid']['density'];
     };
 
-export type GalleryPresetSelection = DensePreset | 'custom';
+export type GalleryPresetSelection = GalleryDensePreset | 'custom';
 
 export const GALLERY_DENSE_PRESET_LABELS: Record<GalleryPresetSelection, string> = {
     custom: 'Custom',
@@ -38,7 +40,7 @@ export const GALLERY_DENSE_PRESET_LABELS: Record<GalleryPresetSelection, string>
     densePlus: 'Dense+',
 };
 
-const GALLERY_ONLY_DENSE_PRESETS: Record<DensePreset, GalleryOnlyDenseControls> = {
+const GALLERY_ONLY_DENSE_PRESETS: Record<GalleryDensePreset, GalleryOnlyDenseControls> = {
     default: {
         dataGridHeaderFilters: false,
         imageGap: 12,
@@ -59,21 +61,68 @@ const GALLERY_ONLY_DENSE_PRESETS: Record<DensePreset, GalleryOnlyDenseControls> 
     },
 };
 
+const GALLERY_DENSE_SETTINGS_PRESETS: Record<GalleryDensePreset, DenseSettings> = {
+    default: DEFAULT_DENSE_SETTINGS,
+    dense: {
+        ...DEFAULT_DENSE_SETTINGS,
+        disableAnimations: true,
+        spacingBase: 4,
+        typographyScale: 1,
+        componentSize: 'small',
+        denseFormMargins: true,
+        disableGlobalGutters: true,
+        denseLists: true,
+        listDisablePadding: true,
+        toolbarDense: true,
+        toolbarDisableGutters: true,
+        tableSize: 'small',
+        compactButtonsAndChips: true,
+        compactIconButtons: true,
+        compactInputs: true,
+        compactListsAndMenus: true,
+        compactAccordionSummary: true,
+        compactTableCells: true,
+        compactTreeItems: true,
+        dataGrid: {
+            ...DEFAULT_DENSE_SETTINGS.dataGrid,
+            density: 'compact',
+        },
+    },
+    densePlus: {
+        ...DEFAULT_DENSE_SETTINGS,
+        disableAnimations: true,
+        spacingBase: 2,
+        typographyScale: 0.65,
+        componentSize: 'small',
+        denseFormMargins: true,
+        disableGlobalGutters: true,
+        denseLists: true,
+        listDisablePadding: true,
+        toolbarDense: true,
+        toolbarDisableGutters: true,
+        tableSize: 'small',
+        dataGrid: {
+            ...DEFAULT_DENSE_SETTINGS.dataGrid,
+            density: 'compact',
+        },
+    },
+};
+
 function createGalleryDensePreset(
-    preset: DensePreset,
+    preset: GalleryDensePreset,
     galleryOnly: GalleryOnlyDenseControls,
 ): GalleryDenseControls {
-    const { dataGrid, ...denseSettings } = DENSE_PRESETS[preset];
+    const { dataGrid, ...denseSettings } = GALLERY_DENSE_SETTINGS_PRESETS[preset];
 
     return {
         ...denseSettings,
         ...galleryOnly,
-        dataGridCellBlockPadding: dataGrid.cellBlockPadding,
+        dataGridContentVerticalPadding: dataGrid.contentVerticalPadding,
         dataGridDensity: dataGrid.density,
     };
 }
 
-export const GALLERY_DENSE_PRESETS: Record<DensePreset, GalleryDenseControls> = {
+export const GALLERY_DENSE_PRESETS: Record<GalleryDensePreset, GalleryDenseControls> = {
     default: createGalleryDensePreset('default', GALLERY_ONLY_DENSE_PRESETS.default),
     dense: createGalleryDensePreset('dense', GALLERY_ONLY_DENSE_PRESETS.dense),
     densePlus: createGalleryDensePreset('densePlus', GALLERY_ONLY_DENSE_PRESETS.densePlus),
@@ -129,7 +178,7 @@ export const GALLERY_TREE_VIEW_CONTROLS: GalleryAdvancedControlDefinition[] = [
 
 export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseControls): DenseSettings {
     const {
-        dataGridCellBlockPadding,
+        dataGridContentVerticalPadding,
         dataGridDensity,
         dataGridHeaderFilters: _dataGridHeaderFilters,
         imageGap: _imageGap,
@@ -141,7 +190,7 @@ export function adaptGalleryControlsToDenseSettings(controls: GalleryDenseContro
     return {
         ...denseSettings,
         dataGrid: {
-            cellBlockPadding: dataGridCellBlockPadding,
+            contentVerticalPadding: dataGridContentVerticalPadding,
             density: dataGridDensity,
         },
     };

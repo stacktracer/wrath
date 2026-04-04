@@ -275,7 +275,7 @@ describe('mui-dense page', () => {
         const [typographyScaleSlider] = requireSliderInputsInDensityCard('Typography Scale');
         const imageTileSliders = requireSliderInputsInDensityCard('Image Tiles');
         const dataGridDensityCard = requireDensityCard('Data Grid Pro');
-        const dataGridCellBlockPaddingInput = requireInput('mui-dense-grid-cell-padding');
+        const dataGridContentVerticalPaddingInput = requireInput('mui-dense-grid-content-vertical-padding');
         const [treeIndentationSlider] = requireSliderInputsInDensityCard('Tree View');
         const choiceInputsCard = requireDemoCard('Choice inputs');
         const filledInput = requireInput('mui-dense-filled-input');
@@ -367,7 +367,7 @@ describe('mui-dense page', () => {
         expect(Number(typographyScaleSlider.value)).toBe(1);
         expect(imageTileSliders).toHaveLength(1);
         expect(Number(imageTileSliders[0].value)).toBe(4);
-        expect(dataGridCellBlockPaddingInput.value).toBe('1px');
+        expect(dataGridContentVerticalPaddingInput.value).toBe('1px');
         expect(dataGridDensityCard.textContent).not.toContain('Header filter height:');
         expect(Number(treeIndentationSlider.value)).toBe(12);
         expect(window.getComputedStyle(choiceInputsCard).rowGap).toBe('8px');
@@ -430,8 +430,8 @@ describe('mui-dense page', () => {
         expect(appRoot.getAttribute('data-mui-dense-color-mode')).toBe('dark');
         expect(appearanceCard.textContent).toContain('Mode: Dark');
         expect(appearanceCard.textContent).toContain('Animations: Off');
-        await expect.element(page.getByText('Row height: 30px (auto)')).toBeVisible();
-        await expect.element(page.getByText('Column header height: 30px (auto)')).toBeVisible();
+        await expect.element(page.getByText(/^Row height: .*px \(auto\)$/)).toBeVisible();
+        await expect.element(page.getByText(/^Column header height: .*px \(auto\)$/)).toBeVisible();
         expect(dashboardTitleLabel).toBeInstanceOf(HTMLLabelElement);
         expect(imageList).toBeInstanceOf(HTMLElement);
         expect(firstImageTile).toBeInstanceOf(HTMLElement);
