@@ -6,7 +6,7 @@ import { DataGridPro, type DataGridProProps, gridClasses } from '@mui/x-data-gri
 
 import type { DenseDataGridCellBlockPadding, DenseDataGridOptions } from './types';
 
-const HIDDEN_MEASUREMENT_STYLE = {
+const HIDDEN_PROBE_STYLE = {
     height: 0,
     left: '-10000px',
     overflow: 'hidden',
@@ -17,19 +17,10 @@ const HIDDEN_MEASUREMENT_STYLE = {
     width: 0,
 } as const;
 
-type DenseDataGridMeasurementTuning = {
+type DenseDataGridSizingTuning = {
     checkboxPadding: number;
     fallbackTextLineHeightRatio: number;
     fallbackXHeightRatio: number;
-};
-
-type DenseDataGridMeasurement = {
-    checkboxHeight: number;
-    devicePixelRatio: number;
-    textLineHeight: number;
-    cellBlockPadding: DenseDataGridCellBlockPadding;
-    tuning?: Partial<DenseDataGridMeasurementTuning>;
-    xHeight: number;
 };
 
 export type DenseDataGridDensity = NonNullable<DataGridProProps['density']>;
@@ -61,23 +52,24 @@ export const DEFAULT_DENSE_DATA_GRID_OPTIONS: DenseDataGridOptions = {
     headerFilterHeight: 52,
 };
 
-const DEFAULT_DENSE_DATA_GRID_MEASUREMENT_TUNING: DenseDataGridMeasurementTuning = {
+const DEFAULT_DENSE_DATA_GRID_SIZING_TUNING: DenseDataGridSizingTuning = {
     checkboxPadding: 6,
     fallbackTextLineHeightRatio: 1.43,
     fallbackXHeightRatio: 0.57,
 };
 
-function resolveDenseDataGridMeasurementTuning(
-    tuning: Partial<DenseDataGridMeasurementTuning> | undefined,
-): DenseDataGridMeasurementTuning {
+const DENSE_DATA_GRID_METRICS_EPSILON = 0.01;
+
+function resolveDenseDataGridSizingTuning(
+    tuning: Partial<DenseDataGridSizingTuning> | undefined,
+): DenseDataGridSizingTuning {
     return {
-        checkboxPadding:
-            tuning?.checkboxPadding ?? DEFAULT_DENSE_DATA_GRID_MEASUREMENT_TUNING.checkboxPadding,
+        checkboxPadding: tuning?.checkboxPadding ?? DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.checkboxPadding,
         fallbackTextLineHeightRatio:
             tuning?.fallbackTextLineHeightRatio ??
-            DEFAULT_DENSE_DATA_GRID_MEASUREMENT_TUNING.fallbackTextLineHeightRatio,
+            DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackTextLineHeightRatio,
         fallbackXHeightRatio:
-            tuning?.fallbackXHeightRatio ?? DEFAULT_DENSE_DATA_GRID_MEASUREMENT_TUNING.fallbackXHeightRatio,
+            tuning?.fallbackXHeightRatio ?? DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackXHeightRatio,
     };
 }
 
@@ -176,15 +168,22 @@ export function formatPixelValue(value: number) {
     return Number.isInteger(value) ? String(value) : value.toFixed(2).replace(/\.?0+$/, '');
 }
 
-function calculateDenseDataGridMetrics({
+function createDenseDataGridMetrics({
     checkboxHeight,
     devicePixelRatio,
     textLineHeight,
     cellBlockPadding,
     tuning,
     xHeight,
-}: DenseDataGridMeasurement): DenseDataGridMetrics {
-    const resolvedTuning = resolveDenseDataGridMeasurementTuning(tuning);
+}: {
+    checkboxHeight: number;
+    devicePixelRatio: number;
+    textLineHeight: number;
+    cellBlockPadding: DenseDataGridCellBlockPadding;
+    tuning?: Partial<DenseDataGridSizingTuning>;
+    xHeight: number;
+}): DenseDataGridMetrics {
+    const resolvedTuning = resolveDenseDataGridSizingTuning(tuning);
     const textPadding = resolveDenseDataGridCellBlockPaddingPixels(cellBlockPadding, xHeight) * 2;
     const computedHeight = snapToDevicePixel(
         Math.max(
@@ -204,17 +203,31 @@ function calculateDenseDataGridMetrics({
     };
 }
 
+function areDenseDataGridMetricsEqual(left: DenseDataGridMetrics, right: DenseDataGridMetrics) {
+    const areClose = (leftValue: number, rightValue: number) =>
+        Math.abs(leftValue - rightValue) < DENSE_DATA_GRID_METRICS_EPSILON;
+
+    return (
+        left.devicePixelRatio === right.devicePixelRatio &&
+        areClose(left.rowHeight, right.rowHeight) &&
+        areClose(left.columnHeaderHeight, right.columnHeaderHeight) &&
+        areClose(left.textLineHeight, right.textLineHeight) &&
+        areClose(left.xHeight, right.xHeight) &&
+        areClose(left.checkboxHeight, right.checkboxHeight)
+    );
+}
+
 function createFallbackDenseDataGridMetrics(
     baseBodyFontSize: number,
     devicePixelRatio: number,
     dense?: Partial<DenseDataGridOptions>,
-    tuning?: Partial<DenseDataGridMeasurementTuning>,
+    tuning?: Partial<DenseDataGridSizingTuning>,
 ): DenseDataGridMetrics {
-    const resolvedTuning = resolveDenseDataGridMeasurementTuning(tuning);
+    const resolvedTuning = resolveDenseDataGridSizingTuning(tuning);
     const resolvedDense = resolveDenseDataGridOptions(dense);
     const fallbackXHeight = baseBodyFontSize * resolvedTuning.fallbackXHeightRatio;
 
-    return calculateDenseDataGridMetrics({
+    return createDenseDataGridMetrics({
         checkboxHeight: 0,
         devicePixelRatio,
         cellBlockPadding: resolvedDense.cellBlockPadding,
@@ -238,9 +251,9 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
             resolvedDense,
         ),
     );
-    const rootRef = useRef<HTMLDivElement | null>(null);
-    const body2ProbeRef = useRef<HTMLSpanElement | null>(null);
-    const exProbeRef = useRef<HTMLSpanElement | null>(null);
+    const gridRootRef = useRef<HTMLDivElement | null>(null);
+    const body2TextProbeRef = useRef<HTMLSpanElement | null>(null);
+    const xHeightProbeRef = useRef<HTMLSpanElement | null>(null);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -266,27 +279,33 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
             return undefined;
         }
 
-        const body2Probe = body2ProbeRef.current;
-        const exProbe = exProbeRef.current;
+        const body2TextProbe = body2TextProbeRef.current;
+        const xHeightProbe = xHeightProbeRef.current;
 
-        if (body2Probe === null || exProbe === null) {
+        if (body2TextProbe === null || xHeightProbe === null) {
             return undefined;
         }
 
         const frame = window.requestAnimationFrame(() => {
-            const computedStyles = window.getComputedStyle(body2Probe);
+            // These hidden probes let the grid size itself from the same typography the page already uses.
+            // We read `body2` line height from computed styles, use a `1ex` probe as an approximation of lowercase
+            // text height, and sample the checkbox icon because selection columns can demand more height than text
+            // alone. The final row/header size is the taller of the text stack plus block padding or the checkbox
+            // icon plus tuned breathing room. This remains a little fragile because it depends on MUI X class
+            // selectors and on `1ex`, which can vary slightly by font and browser.
+            const computedStyles = window.getComputedStyle(body2TextProbe);
             const textLineHeight = parsePixelValue(
                 computedStyles.lineHeight,
-                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_MEASUREMENT_TUNING.fallbackTextLineHeightRatio,
+                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackTextLineHeightRatio,
             );
             const xHeight =
-                exProbe.getBoundingClientRect().height ||
-                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_MEASUREMENT_TUNING.fallbackXHeightRatio;
-            const checkboxProbe = rootRef.current?.querySelector<HTMLElement>(
+                xHeightProbe.getBoundingClientRect().height ||
+                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_SIZING_TUNING.fallbackXHeightRatio;
+            const checkboxProbe = gridRootRef.current?.querySelector<HTMLElement>(
                 `.${gridClasses.cellCheckbox} .MuiSvgIcon-root, .${gridClasses.columnHeaderCheckbox} .MuiSvgIcon-root`,
             );
             const checkboxHeight = checkboxProbe?.getBoundingClientRect().height ?? 0;
-            const nextMetrics = calculateDenseDataGridMetrics({
+            const nextMetrics = createDenseDataGridMetrics({
                 checkboxHeight,
                 devicePixelRatio,
                 textLineHeight,
@@ -294,19 +313,11 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
                 xHeight,
             });
 
-            setMetrics(current => {
-                if (
-                    current.devicePixelRatio === nextMetrics.devicePixelRatio &&
-                    Math.abs(current.rowHeight - nextMetrics.rowHeight) < 0.01 &&
-                    Math.abs(current.columnHeaderHeight - nextMetrics.columnHeaderHeight) < 0.01 &&
-                    Math.abs(current.textLineHeight - nextMetrics.textLineHeight) < 0.01 &&
-                    Math.abs(current.xHeight - nextMetrics.xHeight) < 0.01 &&
-                    Math.abs(current.checkboxHeight - nextMetrics.checkboxHeight) < 0.01
-                ) {
-                    return current;
-                }
-
-                return nextMetrics;
+            // This runs in the next animation frame, so `currentMetrics` may not be the same as `metrics`.
+            setMetrics(currentMetrics => {
+                return areDenseDataGridMetricsEqual(currentMetrics, nextMetrics)
+                    ? currentMetrics
+                    : nextMetrics;
             });
         });
 
@@ -328,7 +339,7 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
     return (
         <>
             <div
-                ref={rootRef}
+                ref={gridRootRef}
                 style={{
                     height: '100%',
                     minWidth: 0,
@@ -345,13 +356,13 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
                 />
             </div>
 
-            <div aria-hidden="true" style={HIDDEN_MEASUREMENT_STYLE}>
-                <Typography component="span" ref={body2ProbeRef} variant="body2">
+            <div aria-hidden="true" style={HIDDEN_PROBE_STYLE}>
+                <Typography component="span" ref={body2TextProbeRef} variant="body2">
                     Body2 probe
                 </Typography>
                 <Box
                     component="span"
-                    ref={exProbeRef}
+                    ref={xHeightProbeRef}
                     sx={currentTheme => ({
                         ...currentTheme.typography.body2,
                         display: 'block',
