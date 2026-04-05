@@ -1,8 +1,8 @@
-import { Box, Typography } from '@mui/material';
+import { type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Box, Typography, type TypographyProps } from '@mui/material';
 import { useTheme, type SxProps, type Theme } from '@mui/material/styles';
 import type { SystemStyleObject } from '@mui/system';
 import { DataGridPro, gridClasses, type DataGridProProps } from '@mui/x-data-grid-pro';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import type { DenseSettings } from './settings';
 
@@ -19,16 +19,57 @@ const HIDDEN_PROBE_STYLE = {
 
 type DenseDataGridSettings = DenseSettings['dataGrid'];
 
+export type DenseDataGridLineHeights = {
+    header?: number;
+    row?: number;
+};
+
 export type DenseDataGridMetrics = {
     columnHeaderHeight: number;
     devicePixelRatio: number;
     rowHeight: number;
 };
 
-export type DenseDataGridProps = Omit<DataGridProProps, 'columnHeaderHeight' | 'density' | 'rowHeight'> & {
-    dense?: Partial<DenseDataGridSettings>;
-    onMetricsChange?: (metrics: DenseDataGridMetrics) => void;
+export type DenseDataGridHeightProps = Pick<DataGridProProps, 'columnHeaderHeight' | 'rowHeight'>;
+
+export type DenseDataGridSizingInput = DenseDataGridLineHeights & {
+    devicePixelRatio: number;
+    fallbackFontSize?: number;
+    textVerticalPaddingPixels: number;
 };
+
+export type DenseDataGridTextProbeDefinition = {
+    children?: ReactNode;
+    sx?: SxProps<Theme>;
+    variant?: TypographyProps['variant'];
+};
+
+type DenseDataGridProbeTypographyOverride = {
+    font?: string;
+    fontWeight?: number | string;
+    letterSpacing?: string;
+};
+
+type DenseDataGridBaseProps = Omit<DataGridProProps, 'columnHeaderHeight' | 'density' | 'rowHeight'> & {
+    dense?: Partial<DenseDataGridSettings>;
+};
+
+type DenseDataGridMetricsProps = {
+    headerProbe?: never;
+    metrics: DenseDataGridMetrics;
+    onMetricsChange?: never;
+    rowProbe?: never;
+};
+
+type DenseDataGridProbeProps = {
+    headerProbe?: DenseDataGridTextProbeDefinition;
+    metrics?: undefined;
+    onMetricsChange?: (metrics: DenseDataGridMetrics) => void;
+    rowProbe?: DenseDataGridTextProbeDefinition;
+};
+
+export type DenseDataGridProps = DenseDataGridBaseProps &
+    (DenseDataGridMetricsProps | DenseDataGridProbeProps);
 
 const DEFAULT_DENSE_DATA_GRID_SETTINGS: DenseDataGridSettings = {
     textVerticalPadding: '1px',
@@ -36,6 +77,20 @@ const DEFAULT_DENSE_DATA_GRID_SETTINGS: DenseDataGridSettings = {
 };
 
 const DEFAULT_DENSE_DATA_GRID_FALLBACK_TEXT_LINE_HEIGHT_RATIO = 1.43;
+
+const DEFAULT_DENSE_DATA_GRID_ROW_PROBE: Required<DenseDataGridTextProbeDefinition> = {
+    children: 'Body2 probe',
+    sx: {},
+    variant: 'body2',
+};
+
+const DEFAULT_DENSE_DATA_GRID_HEADER_PROBE: Required<DenseDataGridTextProbeDefinition> = {
+    children: 'Header probe',
+    sx: theme => ({
+        fontWeight: theme.typography.fontWeightMedium,
+    }),
+    variant: 'body2',
+};
 
 const DENSE_DATA_GRID_METRICS_EPSILON = 0.01;
 
@@ -70,7 +125,24 @@ function resolveSupportedDenseDataGridTextVerticalPadding(textVerticalPadding: s
     return DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding;
 }
 
-function resolveDenseDataGridTextVerticalPaddingPixels(textVerticalPaddingProbe: HTMLElement) {
+function resolveDenseDataGridFallbackTextVerticalPaddingPixels(textVerticalPadding: string) {
+    const normalized = normalizeDenseDataGridTextVerticalPadding(textVerticalPadding);
+
+    if (normalized === '0') {
+        return 0;
+    }
+
+    if (/^-?(?:\d+|\d*\.\d+)px$/u.test(normalized)) {
+        return parsePixelValue(
+            normalized,
+            Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding) || 1,
+        );
+    }
+
+    return Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding) || 1;
+}
+
+function measureDenseDataGridTextVerticalPaddingPixels(textVerticalPaddingProbe: HTMLElement) {
     return parsePixelValue(
         window.getComputedStyle(textVerticalPaddingProbe).paddingTop,
         Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding) || 1,
@@ -152,25 +224,85 @@ const DENSE_DATA_GRID_DENSITY_FACTORS: Record<DenseDataGridSettings['density'], 
 function resolveDenseDataGridHeightProp(targetHeight: number, density: DenseDataGridSettings['density']) {
     const densityFactor = DENSE_DATA_GRID_DENSITY_FACTORS[density] ?? 1;
 
-    return Math.max(1, Math.ceil(targetHeight / densityFactor));
+    return Math.max(1, Math.ceil(targetHeight / densityFactor - DENSE_DATA_GRID_METRICS_EPSILON));
 }
 
-function createDenseDataGridMetrics({
-    textVerticalPaddingPixels,
-    devicePixelRatio,
-    textLineHeight,
-}: {
-    textVerticalPaddingPixels: number;
-    devicePixelRatio: number;
-    textLineHeight: number;
-}): DenseDataGridMetrics {
-    const textVerticalPadding = textVerticalPaddingPixels * 2;
-    const computedHeight = snapToDevicePixel(textLineHeight + textVerticalPadding, devicePixelRatio);
+function resolveDenseDataGridFallbackLineHeight(fallbackFontSize: number) {
+    return fallbackFontSize * DEFAULT_DENSE_DATA_GRID_FALLBACK_TEXT_LINE_HEIGHT_RATIO;
+}
+
+function resolveDenseDataGridLineHeights({
+    fallbackFontSize = 14,
+    header,
+    row,
+}: DenseDataGridLineHeights & { fallbackFontSize?: number }) {
+    const resolvedRow = row ?? resolveDenseDataGridFallbackLineHeight(fallbackFontSize);
+    const resolvedHeader = header ?? resolvedRow;
 
     return {
-        columnHeaderHeight: computedHeight,
+        header: resolvedHeader,
+        row: resolvedRow,
+    };
+}
+
+function measureDenseDataGridLineHeight(element: HTMLElement | null, fallback: number) {
+    if (element === null) {
+        return fallback;
+    }
+
+    return parsePixelValue(window.getComputedStyle(element).lineHeight, fallback);
+}
+
+export function measureDenseDataGridLineHeights({
+    fallbackFontSize = 14,
+    headerElement,
+    rowElement,
+}: {
+    fallbackFontSize?: number;
+    headerElement?: HTMLElement | null;
+    rowElement?: HTMLElement | null;
+}) {
+    const fallbackRow = resolveDenseDataGridFallbackLineHeight(fallbackFontSize);
+    const row = measureDenseDataGridLineHeight(rowElement ?? null, fallbackRow);
+    const header = measureDenseDataGridLineHeight(headerElement ?? null, row);
+
+    return {
+        header,
+        row,
+    };
+}
+
+export function createDenseDataGridMetrics({
+    devicePixelRatio,
+    fallbackFontSize = 14,
+    header,
+    row,
+    textVerticalPaddingPixels,
+}: DenseDataGridSizingInput): DenseDataGridMetrics {
+    const resolvedLineHeights = resolveDenseDataGridLineHeights({
+        fallbackFontSize,
+        header,
+        row,
+    });
+    const textVerticalPadding = textVerticalPaddingPixels * 2;
+
+    return {
+        columnHeaderHeight: snapToDevicePixel(
+            resolvedLineHeights.header + textVerticalPadding,
+            devicePixelRatio,
+        ),
         devicePixelRatio,
-        rowHeight: computedHeight,
+        rowHeight: snapToDevicePixel(resolvedLineHeights.row + textVerticalPadding, devicePixelRatio),
+    };
+}
+
+export function createDenseDataGridHeightProps(
+    metrics: DenseDataGridMetrics,
+    density: DenseDataGridSettings['density'],
+): DenseDataGridHeightProps {
+    return {
+        columnHeaderHeight: resolveDenseDataGridHeightProp(metrics.columnHeaderHeight, density),
+        rowHeight: resolveDenseDataGridHeightProp(metrics.rowHeight, density),
     };
 }
 
@@ -185,41 +317,10 @@ function areDenseDataGridMetricsEqual(left: DenseDataGridMetrics, right: DenseDa
     );
 }
 
-function createFallbackDenseDataGridMetrics(
-    baseBodyFontSize: number,
-    devicePixelRatio: number,
-): DenseDataGridMetrics {
-    return createDenseDataGridMetrics({
-        textVerticalPaddingPixels:
-            Number.parseFloat(DEFAULT_DENSE_DATA_GRID_SETTINGS.textVerticalPadding) || 1,
-        devicePixelRatio,
-        textLineHeight: baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_FALLBACK_TEXT_LINE_HEIGHT_RATIO,
-    });
-}
-
-export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: DenseDataGridProps) {
-    const theme = useTheme();
+function useDenseDataGridDevicePixelRatio() {
     const [devicePixelRatio, setDevicePixelRatio] = useState(() =>
         typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
     );
-    const resolvedDense = resolveDenseDataGridSettings(dense);
-    const resolvedTextVerticalPadding = resolveSupportedDenseDataGridTextVerticalPadding(
-        resolvedDense.textVerticalPadding,
-    );
-    const baseBodyFontSize = typeof theme.typography.fontSize === 'number' ? theme.typography.fontSize : 14;
-    const [metrics, setMetrics] = useState<DenseDataGridMetrics>(() =>
-        createFallbackDenseDataGridMetrics(
-            baseBodyFontSize,
-            typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1,
-        ),
-    );
-    const resolvedRowHeight = resolveDenseDataGridHeightProp(metrics.rowHeight, resolvedDense.density);
-    const resolvedColumnHeaderHeight = resolveDenseDataGridHeightProp(
-        metrics.columnHeaderHeight,
-        resolvedDense.density,
-    );
-    const body2TextProbeRef = useRef<HTMLSpanElement | null>(null);
-    const textVerticalPaddingProbeRef = useRef<HTMLSpanElement | null>(null);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -240,90 +341,321 @@ export function DenseDataGrid({ dense, onMetricsChange, sx, ...dataGridProps }: 
         };
     }, []);
 
+    return devicePixelRatio;
+}
+
+function readDenseDataGridProbeTypographyOverride(gridRoot: HTMLElement | null) {
+    if (gridRoot === null) {
+        return null;
+    }
+
+    const computedStyles = window.getComputedStyle(gridRoot);
+    const font = computedStyles.font || undefined;
+    const fontWeight = computedStyles.getPropertyValue('--unstable_DataGrid-headWeight').trim() || undefined;
+    const letterSpacing = computedStyles.letterSpacing || undefined;
+
+    return {
+        header: {
+            ...(font ? { font } : {}),
+            ...(fontWeight ? { fontWeight } : {}),
+            ...(letterSpacing ? { letterSpacing } : {}),
+        },
+        row: {
+            ...(font ? { font } : {}),
+            ...(letterSpacing ? { letterSpacing } : {}),
+        },
+    };
+}
+
+function areDenseDataGridProbeTypographyOverridesEqual(
+    left: {
+        header: DenseDataGridProbeTypographyOverride;
+        row: DenseDataGridProbeTypographyOverride;
+    } | null,
+    right: {
+        header: DenseDataGridProbeTypographyOverride;
+        row: DenseDataGridProbeTypographyOverride;
+    } | null,
+) {
+    if (left === right) {
+        return true;
+    }
+
+    if (left === null || right === null) {
+        return false;
+    }
+
+    const areEqual = (
+        leftOverride: DenseDataGridProbeTypographyOverride,
+        rightOverride: DenseDataGridProbeTypographyOverride,
+    ) =>
+        leftOverride.font === rightOverride.font &&
+        leftOverride.fontWeight === rightOverride.fontWeight &&
+        leftOverride.letterSpacing === rightOverride.letterSpacing;
+
+    return areEqual(left.row, right.row) && areEqual(left.header, right.header);
+}
+
+function renderDenseDataGridTextProbe({
+    computedTypographyOverride,
+    defaultProbe,
+    probe,
+    probeRef,
+}: {
+    computedTypographyOverride?: DenseDataGridProbeTypographyOverride;
+    defaultProbe: Required<DenseDataGridTextProbeDefinition>;
+    probe: DenseDataGridTextProbeDefinition | undefined;
+    probeRef: React.RefObject<HTMLSpanElement | null>;
+}) {
+    const resolvedChildren = probe?.children ?? defaultProbe.children;
+    const resolvedVariant = probe?.variant ?? defaultProbe.variant;
+    const shouldUseComputedTypography = probe?.sx === undefined && probe?.variant === undefined;
+
+    return (
+        <Typography
+            component="span"
+            ref={probeRef}
+            sx={theme => ({
+                ...resolveDenseDataGridProbeTypographyStyles(theme, resolvedVariant),
+                ...(defaultProbe.sx ? resolveDenseDataGridCallerSx(defaultProbe.sx, theme) : {}),
+                ...(shouldUseComputedTypography ? computedTypographyOverride : {}),
+                ...(probe?.sx ? resolveDenseDataGridCallerSx(probe.sx, theme) : {}),
+            })}
+            variant={resolvedVariant}
+        >
+            {resolvedChildren}
+        </Typography>
+    );
+}
+
+function resolveDenseDataGridProbeTypographyStyles(
+    theme: Theme,
+    variant: DenseDataGridTextProbeDefinition['variant'],
+): SystemStyleObject<Theme> {
+    if (typeof variant === 'string' && variant !== 'inherit' && variant in theme.typography) {
+        return theme.typography[variant as keyof Theme['typography']] as SystemStyleObject<Theme>;
+    }
+
+    return theme.typography.body2 as SystemStyleObject<Theme>;
+}
+
+type DenseDataGridInternalProbeProps = {
+    fallbackFontSize: number;
+    gridRoot: HTMLElement | null;
+    headerProbe?: DenseDataGridTextProbeDefinition;
+    onMetricsChange: (metrics: DenseDataGridMetrics) => void;
+    rowProbe?: DenseDataGridTextProbeDefinition;
+    textVerticalPadding: string;
+};
+
+function DenseDataGridInternalProbe({
+    fallbackFontSize,
+    gridRoot,
+    headerProbe,
+    onMetricsChange,
+    rowProbe,
+    textVerticalPadding,
+}: DenseDataGridInternalProbeProps) {
+    const theme = useTheme();
+    const devicePixelRatio = useDenseDataGridDevicePixelRatio();
+    const resolvedTextVerticalPadding = resolveSupportedDenseDataGridTextVerticalPadding(textVerticalPadding);
+    const rowProbeRef = useRef<HTMLSpanElement | null>(null);
+    const headerProbeRef = useRef<HTMLSpanElement | null>(null);
+    const textVerticalPaddingProbeRef = useRef<HTMLSpanElement | null>(null);
+    const resolvedRowProbe = rowProbe ?? DEFAULT_DENSE_DATA_GRID_ROW_PROBE;
+    const [defaultProbeTypographyOverride, setDefaultProbeTypographyOverride] = useState(() =>
+        readDenseDataGridProbeTypographyOverride(gridRoot),
+    );
+
+    useLayoutEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const nextOverride = readDenseDataGridProbeTypographyOverride(gridRoot);
+
+        setDefaultProbeTypographyOverride(currentOverride =>
+            areDenseDataGridProbeTypographyOverridesEqual(currentOverride, nextOverride)
+                ? currentOverride
+                : nextOverride,
+        );
+    }, [gridRoot, theme]);
+
     useLayoutEffect(() => {
         if (typeof window === 'undefined') {
             return undefined;
         }
 
-        const body2TextProbe = body2TextProbeRef.current;
+        const rowElement = rowProbeRef.current;
         const textVerticalPaddingProbe = textVerticalPaddingProbeRef.current;
 
-        if (body2TextProbe === null || textVerticalPaddingProbe === null) {
+        if (rowElement === null || textVerticalPaddingProbe === null) {
             return undefined;
         }
 
         const frame = window.requestAnimationFrame(() => {
-            // These hidden probes let the grid size itself from the same typography the page already uses.
-            // We read `body2` line height from computed styles and resolve the requested extra text padding by
-            // letting the browser compute a hidden probe. The wrapper's automatic row and header heights are now
-            // text-driven on purpose, so non-text content like selection checkboxes no longer changes the computed
-            // size floor.
-            const computedStyles = window.getComputedStyle(body2TextProbe);
-            const textLineHeight = parsePixelValue(
-                computedStyles.lineHeight,
-                baseBodyFontSize * DEFAULT_DENSE_DATA_GRID_FALLBACK_TEXT_LINE_HEIGHT_RATIO,
-            );
-            const textVerticalPaddingPixels =
-                resolveDenseDataGridTextVerticalPaddingPixels(textVerticalPaddingProbe);
-            const nextMetrics = createDenseDataGridMetrics({
-                textVerticalPaddingPixels,
-                devicePixelRatio,
-                textLineHeight,
+            const lineHeights = measureDenseDataGridLineHeights({
+                fallbackFontSize,
+                headerElement: headerProbeRef.current,
+                rowElement,
             });
 
-            // This runs in the next animation frame, so `currentMetrics` may not be the same as `metrics`.
-            setMetrics(currentMetrics => {
-                return areDenseDataGridMetricsEqual(currentMetrics, nextMetrics)
-                    ? currentMetrics
-                    : nextMetrics;
-            });
+            onMetricsChange(
+                createDenseDataGridMetrics({
+                    devicePixelRatio,
+                    fallbackFontSize,
+                    header: lineHeights.header,
+                    row: lineHeights.row,
+                    textVerticalPaddingPixels:
+                        measureDenseDataGridTextVerticalPaddingPixels(textVerticalPaddingProbe),
+                }),
+            );
         });
 
         return () => {
             window.cancelAnimationFrame(frame);
         };
-    }, [baseBodyFontSize, devicePixelRatio, resolvedDense.density, resolvedTextVerticalPadding]);
-
-    useEffect(() => {
-        onMetricsChange?.(metrics);
-    }, [metrics, onMetricsChange]);
+    }, [
+        defaultProbeTypographyOverride,
+        devicePixelRatio,
+        fallbackFontSize,
+        headerProbe,
+        onMetricsChange,
+        resolvedTextVerticalPadding,
+        rowProbe,
+    ]);
 
     return (
-        <>
-            <div
-                style={{
-                    height: '100%',
-                    minWidth: 0,
-                }}
-            >
-                <DataGridPro
-                    {...dataGridProps}
-                    // MUI X multiplies explicit row and header heights by the current density factor.
-                    // The wrapper metrics describe the rendered pixels, so compensate before handing them back.
-                    columnHeaderHeight={resolvedColumnHeaderHeight}
-                    density={resolvedDense.density}
-                    rowHeight={resolvedRowHeight}
-                    sx={createDenseDataGridSx(sx)}
-                />
-            </div>
+        <div aria-hidden="true" style={HIDDEN_PROBE_STYLE}>
+            {renderDenseDataGridTextProbe({
+                computedTypographyOverride: defaultProbeTypographyOverride?.row,
+                defaultProbe: DEFAULT_DENSE_DATA_GRID_ROW_PROBE,
+                probe: rowProbe,
+                probeRef: rowProbeRef,
+            })}
+            {renderDenseDataGridTextProbe({
+                computedTypographyOverride: defaultProbeTypographyOverride?.header,
+                defaultProbe: DEFAULT_DENSE_DATA_GRID_HEADER_PROBE,
+                probe: headerProbe,
+                probeRef: headerProbeRef,
+            })}
+            <Box
+                component="span"
+                ref={textVerticalPaddingProbeRef}
+                sx={currentTheme => ({
+                    ...resolveDenseDataGridProbeTypographyStyles(currentTheme, resolvedRowProbe.variant),
+                    ...(resolvedRowProbe.sx
+                        ? resolveDenseDataGridCallerSx(resolvedRowProbe.sx, currentTheme)
+                        : {}),
+                    ...(rowProbe?.sx === undefined && rowProbe?.variant === undefined
+                        ? defaultProbeTypographyOverride?.row
+                        : {}),
+                    boxSizing: 'content-box',
+                    display: 'block',
+                    height: 0,
+                    paddingBlock: resolvedTextVerticalPadding,
+                    width: 0,
+                })}
+            />
+        </div>
+    );
+}
 
-            <div aria-hidden="true" style={HIDDEN_PROBE_STYLE}>
-                <Typography component="span" ref={body2TextProbeRef} variant="body2">
-                    Body2 probe
-                </Typography>
-                <Box
-                    component="span"
-                    ref={textVerticalPaddingProbeRef}
-                    sx={currentTheme => ({
-                        ...currentTheme.typography.body2,
-                        boxSizing: 'content-box',
-                        display: 'block',
-                        height: 0,
-                        paddingBlock: resolvedTextVerticalPadding,
-                        width: 0,
-                    })}
+export function DenseDataGrid(props: DenseDataGridProps) {
+    const theme = useTheme();
+    const devicePixelRatio = useDenseDataGridDevicePixelRatio();
+    const resolvedDense = resolveDenseDataGridSettings(props.dense);
+    const fallbackFontSize = typeof theme.typography.fontSize === 'number' ? theme.typography.fontSize : 14;
+    const explicitMetrics = props.metrics;
+    let dataGridProps: Omit<DataGridProProps, 'columnHeaderHeight' | 'density' | 'rowHeight'>;
+    let probeProps: DenseDataGridProbeProps | null = null;
+
+    if (explicitMetrics !== undefined) {
+        const { dense: _dense, metrics: _metrics, sx: _sx, ...restDataGridProps } = props;
+        dataGridProps = restDataGridProps;
+    } else {
+        const {
+            dense: _dense,
+            headerProbe,
+            metrics: _metrics,
+            onMetricsChange,
+            rowProbe,
+            sx: _sx,
+            ...restDataGridProps
+        } = props;
+        dataGridProps = restDataGridProps;
+        probeProps = {
+            headerProbe,
+            onMetricsChange,
+            rowProbe,
+        };
+    }
+
+    const [gridRoot, setGridRoot] = useState<HTMLDivElement | null>(null);
+    const [probeMetrics, setProbeMetrics] = useState<DenseDataGridMetrics>(() =>
+        createDenseDataGridMetrics({
+            devicePixelRatio,
+            fallbackFontSize,
+            textVerticalPaddingPixels: resolveDenseDataGridFallbackTextVerticalPaddingPixels(
+                resolvedDense.textVerticalPadding,
+            ),
+        }),
+    );
+    const probeMetricsRef = useRef(probeMetrics);
+    const hasPublishedMeasuredProbeMetricsRef = useRef(false);
+    const externalOnMetricsChange = probeProps?.onMetricsChange;
+    const resolvedMetrics = explicitMetrics ?? probeMetrics;
+    const resolvedHeightProps = createDenseDataGridHeightProps(resolvedMetrics, resolvedDense.density);
+
+    useEffect(() => {
+        probeMetricsRef.current = probeMetrics;
+    }, [probeMetrics]);
+
+    const reportMeasuredMetrics = useCallback(
+        (nextMetrics: DenseDataGridMetrics) => {
+            const hasChanged = !areDenseDataGridMetricsEqual(probeMetricsRef.current, nextMetrics);
+            const shouldPublish = hasChanged || !hasPublishedMeasuredProbeMetricsRef.current;
+
+            // The first measured result can legitimately match the fallback metrics we started with.
+            // Publish it anyway so callers can distinguish "probe completed" from "still on fallback".
+            hasPublishedMeasuredProbeMetricsRef.current = true;
+
+            if (hasChanged) {
+                probeMetricsRef.current = nextMetrics;
+                setProbeMetrics(nextMetrics);
+            }
+
+            if (shouldPublish) {
+                externalOnMetricsChange?.(nextMetrics);
+            }
+        },
+        [externalOnMetricsChange],
+    );
+
+    return (
+        <div
+            style={{
+                height: '100%',
+                minWidth: 0,
+            }}
+        >
+            {probeProps ? (
+                <DenseDataGridInternalProbe
+                    fallbackFontSize={fallbackFontSize}
+                    gridRoot={gridRoot}
+                    headerProbe={probeProps.headerProbe}
+                    onMetricsChange={reportMeasuredMetrics}
+                    rowProbe={probeProps.rowProbe}
+                    textVerticalPadding={resolvedDense.textVerticalPadding}
                 />
-            </div>
-        </>
+            ) : null}
+            <DataGridPro
+                {...dataGridProps}
+                {...resolvedHeightProps}
+                ref={probeProps ? setGridRoot : undefined}
+                density={resolvedDense.density}
+                sx={createDenseDataGridSx(props.sx)}
+            />
+        </div>
     );
 }

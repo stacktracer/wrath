@@ -194,7 +194,6 @@ export function GalleryWorkspace({ dense, onDataGridMetricsChange, uiControls }:
     const [proTreeItems, setProTreeItems] = useState<TreeDemoItem[]>(PRO_TREE_ITEMS);
     const [treeMoveSummary, setTreeMoveSummary] = useState('Drag items in the Pro tree to reorder them.');
     const [statusSpinnerAnimating, setStatusSpinnerAnimating] = useState(false);
-
     const menuOpen = Boolean(menuAnchorEl);
     const popoverOpen = Boolean(popoverAnchorEl);
     const popperOpen = Boolean(popperAnchorEl);
@@ -706,12 +705,12 @@ export function GalleryWorkspace({ dense, onDataGridMetricsChange, uiControls }:
                             <div className="mui-dense-data-grid">
                                 <DenseDataGrid
                                     dense={dense.dataGrid}
+                                    onMetricsChange={onDataGridMetricsChange}
                                     checkboxSelection
                                     columns={SHIPMENT_COLUMNS}
                                     disableRowSelectionOnClick
                                     headerFilters={uiControls.dataGridHeaderFilters}
                                     label="Shipment lanes"
-                                    onMetricsChange={onDataGridMetricsChange}
                                     pagination
                                     rows={SHIPMENT_ROWS}
                                     showToolbar

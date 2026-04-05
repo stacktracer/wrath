@@ -417,7 +417,7 @@ export function GallerySidebar({
                                         {formatPixelValue(rowMetrics.columnHeaderHeight)}px (auto)
                                     </Typography>
                                     <Typography color="textSecondary" variant="caption">
-                                        Uses the live body text line-height and DPR{' '}
+                                        Uses DenseDataGrid's internal line-height probes and DPR{' '}
                                         {formatPixelValue(rowMetrics.devicePixelRatio)}.
                                     </Typography>
                                     <Typography color="textSecondary" variant="caption">

@@ -5,7 +5,13 @@ import { gridClasses } from '@mui/x-data-grid-pro';
 import { page } from 'vitest/browser';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { DenseDataGrid, type DenseDataGridMetrics, createDenseTheme } from './lib';
+import {
+    DenseDataGrid,
+    createDenseDataGridMetrics,
+    createDenseTheme,
+    type DenseDataGridMetrics,
+    type DenseDataGridTextProbeDefinition,
+} from './lib';
 import { GALLERY_DENSE_PRESETS, adaptGalleryControlsToDenseSettings } from './gallery-dense';
 
 const DENSE_SETTINGS = adaptGalleryControlsToDenseSettings(GALLERY_DENSE_PRESETS.dense);
@@ -158,13 +164,27 @@ async function waitForMetrics() {
 }
 
 function DenseDataGridHarness({
+    explicitMetrics,
+    headerProbe,
     textVerticalPadding,
     headerFilters = false,
+    rowProbe,
 }: {
+    explicitMetrics?: DenseDataGridMetrics;
+    headerProbe?: DenseDataGridTextProbeDefinition;
     textVerticalPadding?: string;
     headerFilters?: boolean;
+    rowProbe?: DenseDataGridTextProbeDefinition;
 }) {
-    const [metrics, setMetrics] = useState<DenseDataGridMetrics | null>(null);
+    const [measuredMetrics, setMeasuredMetrics] = useState<DenseDataGridMetrics | null>(null);
+    const metrics = explicitMetrics ?? measuredMetrics;
+    const resolvedDense =
+        textVerticalPadding === undefined
+            ? DENSE_SETTINGS.dataGrid
+            : {
+                  ...DENSE_SETTINGS.dataGrid,
+                  textVerticalPadding,
+              };
 
     return (
         <ThemeProvider theme={createDenseTheme(DENSE_SETTINGS, { mode: 'light' })}>
@@ -174,22 +194,29 @@ function DenseDataGridHarness({
                     width: '720px',
                 }}
             >
-                <DenseDataGrid
-                    dense={
-                        textVerticalPadding === undefined
-                            ? DENSE_SETTINGS.dataGrid
-                            : {
-                                  ...DENSE_SETTINGS.dataGrid,
-                                  textVerticalPadding,
-                              }
-                    }
-                    checkboxSelection
-                    columns={GRID_COLUMNS}
-                    disableRowSelectionOnClick
-                    headerFilters={headerFilters}
-                    rows={GRID_ROWS}
-                    onMetricsChange={setMetrics}
-                />
+                {explicitMetrics === undefined ? (
+                    <DenseDataGrid
+                        dense={resolvedDense}
+                        headerProbe={headerProbe}
+                        onMetricsChange={setMeasuredMetrics}
+                        rowProbe={rowProbe}
+                        checkboxSelection
+                        columns={GRID_COLUMNS}
+                        disableRowSelectionOnClick
+                        headerFilters={headerFilters}
+                        rows={GRID_ROWS}
+                    />
+                ) : (
+                    <DenseDataGrid
+                        dense={resolvedDense}
+                        metrics={metrics}
+                        checkboxSelection
+                        columns={GRID_COLUMNS}
+                        disableRowSelectionOnClick
+                        headerFilters={headerFilters}
+                        rows={GRID_ROWS}
+                    />
+                )}
             </div>
 
             <output data-testid="dense-grid-metrics">{metrics ? JSON.stringify(metrics) : 'pending'}</output>
@@ -204,7 +231,7 @@ afterEach(() => {
 });
 
 describe('mui-dense DenseDataGrid', () => {
-    it('publishes measured metrics and applies the default text vertical padding', async () => {
+    it('aligns the default probe metrics with the DataGrid typography', async () => {
         await page.viewport(1000, 700);
         mount(<DenseDataGridHarness />);
 
@@ -286,5 +313,30 @@ describe('mui-dense DenseDataGrid', () => {
             laneHeaderFilterInput.getBoundingClientRect(),
             laneHeaderFilterCell.getBoundingClientRect(),
         );
+    });
+
+    it('accepts separate row and header metrics without changing the wrapper API again', async () => {
+        await page.viewport(1000, 700);
+        mount(
+            <DenseDataGridHarness
+                explicitMetrics={createDenseDataGridMetrics({
+                    devicePixelRatio: 1,
+                    header: 28,
+                    row: 18,
+                    textVerticalPaddingPixels: 1,
+                })}
+            />,
+        );
+
+        await expect.element(page.getByRole('grid')).toBeVisible();
+        await waitForMetrics();
+
+        const metrics = requireMetrics();
+        const laneCell = requireGridCell('lane', 'ATL to LHR');
+        const laneHeader = requireGridColumnHeader('lane');
+
+        expect(metrics.columnHeaderHeight).toBeGreaterThan(metrics.rowHeight);
+        expectHeightClose(laneCell.getBoundingClientRect().height, metrics.rowHeight);
+        expectHeightClose(laneHeader.getBoundingClientRect().height, metrics.columnHeaderHeight);
     });
 });
